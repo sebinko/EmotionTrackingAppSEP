@@ -2,18 +2,18 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 option java_package = "dk.via.JavaDAO.Status";
+option csharp_namespace = "Protobuf";
 
-package Status;
+    package Status;
 
-service StatusService{
+service StatusService {
   rpc GetStatusMethod(StatusRequest) returns (StatusMessage) {}
 }
 
-message StatusRequest{}
+message StatusRequest {}
 
-message StatusMessage{
+message StatusMessage {
   string status = 1;
   string message = 2;
   string data = 3;
 }
-

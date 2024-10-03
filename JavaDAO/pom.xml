@@ -84,15 +84,15 @@
 <!--                            <includeDirectories>-->
 <!--                                <include>src/main/more_proto_imports</include>-->
 <!--                            </includeDirectories>-->
-                            <inputDirectories>
-                                <include>src/main/proto</include>
-                            </inputDirectories>
+<!--                            <inputDirectories>-->
+<!--                                <include>../ProtoBuf/proto/</include>-->
+<!--                            </inputDirectories>-->
 
                             <outputTargets>
                                 <outputTarget>
-                                    <type>java</type>
+                                    <type>csharp</type>
                                     <addSources>none</addSources>
-                                    <outputDirectory>src/main/java/</outputDirectory>
+                                    <outputDirectory>../Shared/Protobuf/</outputDirectory>
                                 </outputTarget>
                             </outputTargets>
                         </configuration>
