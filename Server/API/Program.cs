@@ -1,3 +1,6 @@
+using Frontend.Services.Interfaces;
+using Protobuf.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

@@ -11,6 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Client\Frontend\Frontend.csproj" />
       <ProjectReference Include="..\..\Shared\Entities\Entities.csproj" />
       <ProjectReference Include="..\..\Shared\Protobuf\Protobuf.csproj" />
     </ItemGroup>
