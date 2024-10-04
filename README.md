@@ -10,3 +10,5 @@ Semester Project
 	- Protobuf - Protobuf client to connect to JavaDAO
 ### ProtoBuf
 - Has .proto files
+### Client/Frontend
+- Blazor SSR frontend
