@@ -9,7 +9,7 @@ Semester Project
 ```
 #### Running migrations (runs SQL files)
 ```bash
-mvn mvn flyway:migrate
+mvn flyway:migrate
 ```
 ### C# API
 - Consists of multiple Projects:
