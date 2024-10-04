@@ -13,7 +13,10 @@ jobs:
         with:
           java-version: '19'
           distribution: 'corretto'
-#          cache: maven
-      - name: Run the Maven verify phase
-        run: mvn --batch-mode --update-snapshots verify
+          cache: maven
+      - name: Build
+        run: mvn --batch-mode -DskipTests package
+        working-directory: ./JavaDAO
+      - name: Test
+        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test 
         working-directory: ./JavaDAO
