@@ -9,7 +9,7 @@ public class PasswordHasherUtilTest {
 
     @BeforeEach
     public void setUp() {
-        passwordHasherUtil = new PasswordHasherUtil().getInstance();
+        passwordHasherUtil = PasswordHasherUtil.getInstance();
     }
 
     @Test
