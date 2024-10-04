@@ -7,7 +7,9 @@ public class PasswordHasherUtil {
     private static PasswordHasherUtil instance;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public PasswordHasherUtil getInstance() {
+    private PasswordHasherUtil() {}
+
+    public static PasswordHasherUtil getInstance() {
         if (instance == null) {
             instance = new PasswordHasherUtil();
         }
