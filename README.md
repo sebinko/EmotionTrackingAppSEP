@@ -8,4 +8,5 @@ Semester Project
 	- Server/Api - C# Api Project
 	- Shared/Entities  - Has the Entity classes of the domain
 	- Protobuf - Protobuf client to connect to JavaDAO
-
+### ProtoBuf
+- Has .proto files
