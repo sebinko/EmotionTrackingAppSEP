@@ -4,7 +4,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class PasswordHasherUtil {
-    private PasswordHasherUtil instance;
+    private static PasswordHasherUtil instance;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public PasswordHasherUtil getInstance() {
