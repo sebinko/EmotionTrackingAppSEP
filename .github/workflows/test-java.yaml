@@ -12,8 +12,8 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           java-version: '19'
-          distribution: 'temurin'
-          cache: maven
+          distribution: 'corretto'
+#          cache: maven
       - name: Run the Maven verify phase
         run: mvn --batch-mode --update-snapshots verify
         working-directory: ./JavaDAO
