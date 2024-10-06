@@ -1,5 +1,7 @@
 package dk.via.JavaDAO;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import dk.via.JavaDAO.Status.StatusServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -15,8 +17,10 @@ public class Main {
    * @param args command line arguments
    */
   public static void main(String[] args) {
+    Injector injector = Guice.createInjector(new AppModule());
+
     Server server = ServerBuilder.forPort(8888)
-        .addService(new StatusServiceImpl())
+        .addService(injector.getInstance(StatusServiceImpl.class))
         .build();
 
     try {
