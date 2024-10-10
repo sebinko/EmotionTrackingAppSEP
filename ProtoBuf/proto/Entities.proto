@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+message User {
+  string id = 1;
+  string username = 2;
+  string password = 3;
+  string email = 4;
+  string streak = 5;
+  string createdAt = 6;
+  string updatedAt = 7;
+}
+
+message Emotion {
+  string id = 1;
+  string emotion = 2;
+  string createdAt = 3;
+  string updatedAt = 4;
+  string userId = 5;
+}
+
+message Reaction {
+  string userId = 1;
+  string emotionId = 2;
+  string emoji = 3;
+  string createdAt = 4;
+  string updatedAt = 5;
+}
+
+message Tag {
+  string id = 1;
+  string key = 2;
+  string createdAt = 3;
+  string updatedAt = 4;
+  string userId = 5;
+}
+
+message UserFriend {
+  string userId = 1;
+  string friendId = 2;
+}
+
+message EmotionTag {
+  string emotionId = 1;
+  string tagId = 2;
+}
