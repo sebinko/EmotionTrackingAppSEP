@@ -1,8 +1,8 @@
 create table users(
     id serial primary key,
-    username varchar(16) not null unique,
-    password varchar(16) not null,
-    email varchar(30) not null unique,
+    username varchar not null unique,
+    password varchar not null,
+    email varchar not null unique,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp
 );
@@ -17,7 +17,7 @@ create table user_friends(
 
 create table emotion_checkins(
     id serial primary key,
-    emotion varchar(255) not null,
+    emotion varchar not null,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp,
     user_id int,
@@ -26,8 +26,8 @@ create table emotion_checkins(
 
 create table reactions(
     user_id int,
-    emotion_id int,
-    emoji varchar(255) not null,
+    emotion_checkin_id int,
+    emoji varchar not null,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp,
     primary key (user_id, emotion_id),
@@ -37,7 +37,7 @@ create table reactions(
 
 create table tags(
     id serial primary key,
-    key varchar(255) not null,
+    key varchar not null,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp,
     user_id int,
