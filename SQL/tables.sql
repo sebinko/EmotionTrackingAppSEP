@@ -30,9 +30,9 @@ create table reactions(
     emoji varchar not null,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp,
-    primary key (user_id, emotion_id),
+    primary key (user_id, emotion_checkin_id),
     foreign key (user_id) references users(id) on delete cascade,
-    foreign key (emotion_id) references emotion_checkins(id) on delete cascade
+    foreign key (emotion_checkin_id) references emotion_checkins(id) on delete cascade
 );
 
 create table tags(
@@ -45,9 +45,9 @@ create table tags(
 );
 
 create table tag_emotions(
-    emotion_id int,
+    emotion_checkin_id int,
     tag_id int,
-    primary key (emotion_id, tag_id),
-    foreign key (emotion_id) references emotion_checkins(id) on delete cascade,
+    primary key (emotion_checkin_id, tag_id),
+    foreign key (emotion_checkin_id) references emotion_checkins(id) on delete cascade,
     foreign key (tag_id) references tags(id) on delete cascade
 );
