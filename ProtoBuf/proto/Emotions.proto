@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "dk.via.JavaDAO.Protobuf.Emotions";
+option csharp_namespace = "Protobuf";
+
+package Emotions;
+
+service EmotionsService {
+  rpc GetEmotionsMethod(EmotionsRequest) returns (EmotionsMessage) {}
+}
+
+message EmotionsRequest {
+  string emotion = 1;
+  string color = 2;
+}
+
+message Emotion {
+    string emotion = 1;
+    string color = 2;
+    string description = 3;
+}
+
+message EmotionsMessage {
+  repeated Emotion emotions = 1;
+}
