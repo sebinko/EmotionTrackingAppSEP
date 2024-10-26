@@ -18,7 +18,7 @@ public final class AppConfig {
   }
 
   public String getDbUrl() {
-    return properties.getProperty("db.url") == null ? "jdbc:postgresql://localhost:5432/"
+    return properties.getProperty("db.url") == null ? "jdbc:postgresql://localhost:5432/emotionstrackingwebsites"
         : properties.getProperty("db.url");
   }
 
@@ -28,7 +28,7 @@ public final class AppConfig {
   }
 
   public String getDbPassword() {
-    return properties.getProperty("db.password") == null ? ""
+    return properties.getProperty("db.password") == null ? "1848"
         : properties.getProperty("db.password");
   }
 }

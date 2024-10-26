@@ -2,6 +2,8 @@ package dk.via.JavaDAO;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import dk.via.JavaDAO.DAO.UsersDAO;
+import dk.via.JavaDAO.Models.User;
 import dk.via.JavaDAO.Protobuf.Emotions.EmotionsServiceImpl;
 import dk.via.JavaDAO.Services.EmotionListService;
 import dk.via.JavaDAO.Status.StatusServiceImpl;
@@ -10,6 +12,7 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
 
 /**
  * Main class to start the server.
@@ -25,16 +28,26 @@ public class Main {
   public static void main(String[] args) {
     Injector injector = Guice.createInjector(new AppModule());
 
-    Server server = ServerBuilder.forPort(8888)
-        .addService(injector.getInstance(StatusServiceImpl.class))
-        .addService(injector.getInstance(EmotionsServiceImpl.class))
-        .build();
+//    Server server = ServerBuilder.forPort(8888)
+//        .addService(injector.getInstance(StatusServiceImpl.class))
+//        .addService(injector.getInstance(EmotionsServiceImpl.class))
+//        .build();
+//
+//    try {
+//      server.start();
+//      server.awaitTermination();
+//    } catch (Exception e) {
+//      logger.error("Error starting server: {}", e.getMessage());
+//    }
+    UsersDAO usersDAO= injector.getInstance(UsersDAO.class);
+   User user= usersDAO.GetSingle(7);
+   usersDAO.Delete(user);
 
-    try {
-      server.start();
-      server.awaitTermination();
-    } catch (Exception e) {
-      logger.error("Error starting server: {}", e.getMessage());
-    }
+      System.out.println(user.getUsername());
+
+
+
+
   }
+
 }
