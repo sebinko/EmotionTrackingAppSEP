@@ -1,7 +1,15 @@
+using System.Text;
+using API.Auth;
 using Frontend.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Protobuf.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = new ConfigurationBuilder()
+  .SetBasePath(Directory.GetCurrentDirectory())
+  .AddJsonFile("appsettings.json")
+  .Build();
 
 // Add services to the container.
 
@@ -10,6 +18,26 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<Protobuf.Services.StatusService>();
+builder.Services.AddSingleton<AuthUtilities>();
+
+builder.Services.AddAuthentication(cfg => {
+  cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+  cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+  cfg.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x => {
+  x.RequireHttpsMetadata = false;
+  x.SaveToken = false;
+  x.TokenValidationParameters = new TokenValidationParameters {
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = new SymmetricSecurityKey(
+      Encoding.UTF8
+        .GetBytes(configuration["ApplicationSettings:JWT_Secret"])
+    ),
+    ValidateIssuer = false,
+    ValidateAudience = false,
+    ClockSkew = TimeSpan.Zero
+  };
+});
 
 var app = builder.Build();
 
@@ -22,8 +50,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
