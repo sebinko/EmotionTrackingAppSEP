@@ -60,6 +60,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     userBuilder.setUsername(newUser.getUsername());
     userBuilder.setEmail(newUser.getEmail());
     // TODO Exception Handling
+    // TODO fetch new user
 
     responseObserver.onNext(userBuilder.build());
     responseObserver.onCompleted();
