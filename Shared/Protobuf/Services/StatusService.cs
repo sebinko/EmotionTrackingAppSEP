@@ -10,9 +10,9 @@ public class StatusService
         try
         {
             using var channel = GrpcChannel.ForAddress("http://localhost:8888");
-            var client = new Protobuf.StatusService.StatusServiceClient(channel);
-            var reply = client.GetStatusMethod(new Protobuf.StatusRequest());
-
+            var client = new Protobuf.Status.StatusService.StatusServiceClient(channel);
+            var reply = client.GetStatusMethod(new Protobuf.Status.StatusRequest());
+        
             if (reply.Status != "OK")
             {
                 throw new Exception($"{reply.Message} : {reply.Data}");
@@ -24,7 +24,7 @@ public class StatusService
             {
                 throw new Exception("JavaDAO: Service is unavailable");
             }
-
+        
             throw new Exception($"JavaDAO: {e.Message}");
         }
         catch (Exception e)
