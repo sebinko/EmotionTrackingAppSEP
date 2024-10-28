@@ -16,13 +16,13 @@ import org.slf4j.LoggerFactory;
 public final class PostgresConnector implements DBConnector {
 
   /**
-   * The connection to the database
-   */
-  private Connection connection;
-  /**
    * The logger for the DBConnector class
    */
   private static final Logger logger = LoggerFactory.getLogger(PostgresConnector.class.getName());
+  /**
+   * The connection to the database
+   */
+  private Connection connection;
 
   /**
    * Constructor for the DBConnector class

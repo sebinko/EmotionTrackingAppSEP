@@ -5,13 +5,13 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import dk.via.JavaDAO.Models.Color;
 import dk.via.JavaDAO.Models.Emotion;
-import dk.via.JavaDAO.Util.AppConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.io.FileReader;
 import java.util.HashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmotionListService {
+
   private final Logger logger = LoggerFactory.getLogger(EmotionListService.class.getName());
 
   private final HashSet<Emotion> emotions = new HashSet<>();

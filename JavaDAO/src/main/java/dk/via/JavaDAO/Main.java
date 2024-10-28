@@ -3,7 +3,10 @@ package dk.via.JavaDAO;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import dk.via.JavaDAO.Protobuf.Emotions.EmotionsServiceImpl;
+import dk.via.JavaDAO.Protobuf.Users.UsersServiceImpl;
 import dk.via.JavaDAO.Status.StatusServiceImpl;
+import dk.via.JavaDAO.Util.AppConfig;
+import dk.via.JavaDAO.Util.PasswordHasherUtil;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.slf4j.Logger;
@@ -24,17 +27,19 @@ public class Main {
   public static void main(String[] args) {
     Injector injector = Guice.createInjector(new AppModule());
 
+    AppConfig appConfig = injector.getInstance(AppConfig.class);
+    PasswordHasherUtil.setAppConfig(appConfig);
+
     logger.info("Starting server on port 8888");
 
     Server server = ServerBuilder.forPort(8888)
         .addService(injector.getInstance(StatusServiceImpl.class))
         .addService(injector.getInstance(EmotionsServiceImpl.class))
+        .addService(injector.getInstance(UsersServiceImpl.class))
         .build();
 
     try {
       server.start();
-
-      logger.info("Server started on port 8888");
       server.awaitTermination();
     } catch (Exception e) {
       logger.error("Error starting server: {}", e.getMessage());
