@@ -3,6 +3,7 @@ package dk.via.JavaDAO;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import dk.via.JavaDAO.Protobuf.Emotions.EmotionsServiceImpl;
+import dk.via.JavaDAO.Protobuf.Users.UsersServiceImpl;
 import dk.via.JavaDAO.Status.StatusServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -29,6 +30,7 @@ public class Main {
     Server server = ServerBuilder.forPort(8888)
         .addService(injector.getInstance(StatusServiceImpl.class))
         .addService(injector.getInstance(EmotionsServiceImpl.class))
+        .addService(injector.getInstance(UsersServiceImpl.class))
         .build();
 
     try {
