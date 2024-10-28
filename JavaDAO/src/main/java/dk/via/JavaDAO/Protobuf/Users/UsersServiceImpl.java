@@ -1,15 +1,13 @@
 package dk.via.JavaDAO.Protobuf.Users;
 
+import com.google.inject.Inject;
 import dk.via.JavaDAO.DAO.UsersDAO;
-import dk.via.JavaDAO.Main;
 import dk.via.JavaDAO.Protobuf.Users.UsersServiceGrpc.UsersServiceImplBase;
 import dk.via.JavaDAO.Util.PasswordHasherUtil;
 import io.grpc.stub.StreamObserver;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import com.google.inject.Inject;
 
 
 public class UsersServiceImpl extends UsersServiceImplBase {
@@ -38,6 +36,8 @@ public class UsersServiceImpl extends UsersServiceImplBase {
           setUpdatedAt(user.getUpdatedAt())
       );
     }
+    // TODO Exception Handling
+
     responseObserver.onNext(builder.build());
     responseObserver.onCompleted();
   }
@@ -53,14 +53,14 @@ public class UsersServiceImpl extends UsersServiceImplBase {
         request.getEmail(),
         null,
         null
-        );
+    );
     newUser = usersDAO.Create(newUser);
     User.Builder userBuilder = User.newBuilder();
     userBuilder.setId(newUser.getId().toString());
     userBuilder.setUsername(newUser.getUsername());
     userBuilder.setEmail(newUser.getEmail());
-//    userBuilder.setCreatedAt(newUser.getCreatedAt());
-//    userBuilder.setUpdatedAt(newUser.getUpdatedAt());
+    // TODO Exception Handling
+
     responseObserver.onNext(userBuilder.build());
     responseObserver.onCompleted();
   }
@@ -69,22 +69,21 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   public void update(User request,
       StreamObserver<User> responseObserver) {
     dk.via.JavaDAO.Models.User updatedUser = usersDAO.GetSingle(Integer.parseInt(request.getId()));
-    if(!request.getUsername().isEmpty()){
+    if (!request.getUsername().isEmpty()) {
       updatedUser.setUsername(request.getUsername());
     }
-    if(!request.getEmail().isEmpty()){
+    if (!request.getEmail().isEmpty()) {
       updatedUser.setEmail(request.getEmail());
     }
-    if(!request.getPassword().isEmpty()){
+    if (!request.getPassword().isEmpty()) {
       updatedUser.setPassword(PasswordHasherUtil.getInstance().hashPassword(request.getPassword()));
     }
+    // TODO Exception Handling
 
     usersDAO.Update(updatedUser);
     responseObserver.onNext(request);
     responseObserver.onCompleted();
   }
-
-
 
 
   @Override
@@ -94,6 +93,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     usersDAO.Delete(userToDelete);
     responseObserver.onNext(request);
     responseObserver.onCompleted();
+    // TODO Exception Handling
 
   }
 
@@ -101,6 +101,9 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   public void getById(UserId request,
       StreamObserver<User> responseObserver) {
     dk.via.JavaDAO.Models.User userById = usersDAO.GetSingle(request.getId());
+
+    // TODO Exception Handling
+
     User.Builder userBuilder = User.newBuilder();
     userBuilder.setId(userById.getId().toString());
     userBuilder.setUsername(userById.getUsername());
@@ -114,8 +117,13 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   @Override
   public void getByUsername(Username request,
       StreamObserver<User> responseObserver) {
-    ArrayList<dk.via.JavaDAO.Models.User> users  = usersDAO.GetAll();
-    dk.via.JavaDAO.Models.User user = users.stream().filter(user1 -> user1.getUsername().equals(request.getUsername())).findFirst().orElse(null);
+    ArrayList<dk.via.JavaDAO.Models.User> users = usersDAO.GetAll();
+    dk.via.JavaDAO.Models.User user = users.stream()
+        .filter(user1 -> user1.getUsername().equals(request.getUsername())).findFirst()
+        .orElse(null);
+
+    // TODO Exception Handling
+
     User.Builder userBuilder = User.newBuilder();
     userBuilder.setId(user.getId().toString());
     userBuilder.setUsername(user.getUsername());
@@ -129,15 +137,16 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   @Override
   public void getByUsernameAndPassword(UsernameAndPassword request,
       StreamObserver<User> responseObserver) {
-    ArrayList<dk.via.JavaDAO.Models.User> users  = usersDAO.GetAll();
-    for (
-        dk.via.JavaDAO.Models.User user : users
-    ){
-      System.out.println(PasswordHasherUtil.getInstance().hashPassword(request.getPassword()));
-    }
-    System.out.println();
-    dk.via.JavaDAO.Models.User user = users.stream().
-        filter(user1 -> user1.getUsername().equals(request.getUsername())).filter(user1 -> user1.getPassword().equals(PasswordHasherUtil.getInstance().hashPassword(request.getPassword()))).findFirst().orElse(null);
+    ArrayList<dk.via.JavaDAO.Models.User> users = usersDAO.GetAll();
+    dk.via.JavaDAO.Models.User user = users.stream()
+        .filter(user1 -> user1.getUsername().equals(request.getUsername()))
+        .filter(
+            user1 -> PasswordHasherUtil.getInstance()
+                .verifyPassword(request.getPassword(), user1.getPassword()))
+        .findFirst().orElse(null);
+
+    // TODO Exception Handling
+
     User.Builder userBuilder = User.newBuilder();
     userBuilder.setId(user.getId().toString());
     userBuilder.setUsername(user.getUsername());

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EmotionsServiceImpl extends EmotionsServiceImplBase {
+
   private final EmotionListService emotionListService;
   private final Logger logger = LoggerFactory.getLogger(Main.class.getName());
 
@@ -24,9 +25,8 @@ public class EmotionsServiceImpl extends EmotionsServiceImplBase {
   public void getEmotionsMethod(EmotionsRequest request,
       StreamObserver<EmotionsMessage> responseObserver) {
 
-
     if (request.hasField(EmotionsRequest.getDescriptor().findFieldByName("emotion"))) {
-      handleSingleEmotion(request,responseObserver);
+      handleSingleEmotion(request, responseObserver);
     } else if (request.hasField(EmotionsRequest.getDescriptor().findFieldByName("color"))) {
       handleFilterByColor(request, responseObserver);
     } else {
@@ -35,7 +35,9 @@ public class EmotionsServiceImpl extends EmotionsServiceImplBase {
       EmotionsMessage.Builder builder = EmotionsMessage.newBuilder();
 
       emotionListService.getEmotions().forEach(e -> {
-        builder.addEmotions(Emotion.newBuilder().setEmotion(e.getEmotion()).setColor(e.getColor().toString()).setDescription(e.getDescription()));
+        builder.addEmotions(
+            Emotion.newBuilder().setEmotion(e.getEmotion()).setColor(e.getColor().toString())
+                .setDescription(e.getDescription()));
         System.out.println(e.getEmotion());
       });
 
@@ -45,19 +47,20 @@ public class EmotionsServiceImpl extends EmotionsServiceImplBase {
     }
 
 
-
-
   }
 
-  private void handleSingleEmotion(EmotionsRequest request, StreamObserver<EmotionsMessage> responseObserver) {
+  private void handleSingleEmotion(EmotionsRequest request,
+      StreamObserver<EmotionsMessage> responseObserver) {
     logger.info("GetEmotionsMethod - GET SINGLE");
 
     String query = request.getEmotion();
     dk.via.JavaDAO.Models.Emotion emotion = emotionListService.getEmotion(query);
 
-
     if (emotion != null) {
-      responseObserver.onNext(EmotionsMessage.newBuilder().addEmotions(Emotion.newBuilder().setEmotion(emotion.getEmotion()).setColor(emotion.getColor().toString()).setDescription(emotion.getDescription())).build());
+      responseObserver.onNext(EmotionsMessage.newBuilder().addEmotions(
+              Emotion.newBuilder().setEmotion(emotion.getEmotion())
+                  .setColor(emotion.getColor().toString()).setDescription(emotion.getDescription()))
+          .build());
     } else {
       responseObserver.onNext(EmotionsMessage.newBuilder().build());
     }
@@ -66,7 +69,8 @@ public class EmotionsServiceImpl extends EmotionsServiceImplBase {
 
   }
 
-  private void handleFilterByColor(EmotionsRequest request, StreamObserver<EmotionsMessage> responseObserver) {
+  private void handleFilterByColor(EmotionsRequest request,
+      StreamObserver<EmotionsMessage> responseObserver) {
     logger.info("GetEmotionsMethod - GET BY COLOR");
 
     String query = request.getColor();
@@ -75,7 +79,9 @@ public class EmotionsServiceImpl extends EmotionsServiceImplBase {
     EmotionsMessage.Builder builder = EmotionsMessage.newBuilder();
 
     emotionListService.getEmotionsByColor(color).forEach(e -> {
-      builder.addEmotions(Emotion.newBuilder().setEmotion(e.getEmotion()).setColor(e.getColor().toString()).setDescription(e.getDescription()));
+      builder.addEmotions(
+          Emotion.newBuilder().setEmotion(e.getEmotion()).setColor(e.getColor().toString())
+              .setDescription(e.getDescription()));
     });
 
     responseObserver.onNext(builder.build());

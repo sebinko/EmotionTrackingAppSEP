@@ -40,10 +40,12 @@ public class Emotion {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
+    if (this == o) {
       return true;
-    if (o == null || getClass() != o.getClass())
+    }
+    if (o == null || getClass() != o.getClass()) {
       return false;
+    }
     Emotion emotion1 = (Emotion) o;
     return Objects.equals(emotion, emotion1.emotion) && color == emotion1.color && Objects.equals(
         description, emotion1.description);

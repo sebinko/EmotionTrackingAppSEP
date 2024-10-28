@@ -15,7 +15,7 @@ public class AppModule extends AbstractModule {
     bind(DBConnector.class).to(PostgresConnector.class);
     bind(AppConfig.class).asEagerSingleton();
     bind(EmotionListService.class).asEagerSingleton();
-    bind(UsersDAO.class ).to(UsersDAODB.class);
+    bind(UsersDAO.class).to(UsersDAODB.class);
 
   }
 }
