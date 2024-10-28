@@ -1,5 +1,6 @@
 using System.Text;
 using API.Auth;
+using API.Middlewares;
 using Frontend.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -17,7 +18,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<GlobalExceptionMiddleware>();
 builder.Services.AddScoped<Protobuf.Services.StatusService>();
+builder.Services.AddScoped<Protobuf.Services.UsersService>();
 builder.Services.AddSingleton<AuthUtilities>();
 
 builder.Services.AddAuthentication(cfg => {
@@ -47,7 +50,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

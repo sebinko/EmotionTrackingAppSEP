@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option csharp_namespace = "Protobuf.Entities";
+
 message User {
   string id = 1;
   string username = 2;

@@ -1,33 +1,50 @@
 using API.Auth;
 using API.DTO;
-using API.Models;
+using Entities;
 using Microsoft.AspNetCore.Mvc;
+using Protobuf.Services;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthController : ControllerBase
+public class AuthController(AuthUtilities authUtilities, UsersService usersService) : ControllerBase
 {
-  private AuthUtilities _authUtilities;
-
-  public AuthController(AuthUtilities authUtilities)
+  [HttpPost("login")]
+  public async Task<IActionResult> Login([FromBody]UserLoginDTO userLoginDTO)
   {
-    _authUtilities = authUtilities;
+    var user = await usersService.GetByUsernameAndPassword(userLoginDTO.Username, userLoginDTO.Password);
+    
+    if (user == null)
+    {
+      return Unauthorized();
+    }
+    
+    var token = authUtilities.GenerateJWTToken(user);
+    
+    return Ok(new UserWithTokenDTO()
+    {
+      User = user,
+      Token = token
+    });
   }
 
-  [HttpPost("login")]
-  public async Task<IActionResult> Login(UserLoginDTO userLoginDTO)
+  [HttpPost("register")]
+  public async Task<IActionResult> Create([FromBody] UserRegisterDTO userRegisterDto)
   {
-    // TODO reimplement
     var user = new User()
     {
-      Id = 1,
-      Username = userLoginDTO.Username
+      Username = userRegisterDto.Username,
+      Password = userRegisterDto.Password,
+      Email = userRegisterDto.Email
     };
 
-    var token = _authUtilities.GenerateJWTToken(user);
+    await usersService.Create(user);
 
-    return Ok(new { token });
+    return Ok(new UserWithTokenDTO()
+    {
+      User = user,
+      Token = authUtilities.GenerateJWTToken(user)
+    });
   }
 }
