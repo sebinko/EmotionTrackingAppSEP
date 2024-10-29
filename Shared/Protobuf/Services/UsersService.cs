@@ -6,7 +6,7 @@ namespace Protobuf.Services;
 
 public class UsersService
 {
-  public async Task Create(User user)
+  public async Task<User> Create(User user)
   {
     try
     {
@@ -21,6 +21,11 @@ public class UsersService
       });
 
       user.Id = Convert.ToInt32(reply.Id);
+      user.Username = reply.Username;
+      user.Email = reply.Email;
+      user.CreatedAt = DateTime.Parse(reply.CreatedAt);
+      user.UpdatedAt = DateTime.Parse(reply.UpdatedAt);
+      return user;
     }
     catch (RpcException e)
     {
