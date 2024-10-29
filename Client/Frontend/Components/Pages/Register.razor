@@ -1,0 +1,78 @@
+@page "/Register"
+@using System.ComponentModel.DataAnnotations
+@using Entities
+@using Frontend.Components.Shared
+@using Frontend.Services.Interfaces
+@inject IAuthService AuthService;
+
+<h1>Register</h1>
+<div class="row">
+  <div class="col-md-4">
+
+    <Alert @ref="alert"/>
+    <section>
+      <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="Register">
+        <DataAnnotationsValidator/>
+        <hr/>
+        <div class="form-floating mb-3">
+          <InputText type="username" @bind-Value="Input.Username" class="form-control" aria-required="true"/>
+          <label for="username" class="form-label">Username</label>
+          <ValidationMessage For="() => Input.Username" class="text-danger"/>
+        </div>
+        <div class="form-floating mb-3">
+          <InputText type="password" @bind-Value="Input.Password" class="form-control" aria-required="true"/>
+          <label for="password" class="form-label">Password</label>
+          <ValidationMessage For="() => Input.Password" class="text-danger"/>
+        </div>
+        <div class="form-floating mb-3">
+          <InputText @bind-Value="Input.Email" class="form-control" aria-required="true"/>
+          <label for="email" class="form-label">Email</label>
+          <ValidationMessage For="() => Input.Email" class="text-danger"/>
+        </div>
+        <div>
+          <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+        </div>
+      </EditForm>
+    </section>
+  </div>
+</div>
+
+@code {
+  private Alert alert;
+  [SupplyParameterFromForm] private InputModel Input { get; } = new();
+
+  public async Task RegisterUser()
+  {
+    try
+    {
+      var newUser = new User
+      {
+        Username = Input.Username,
+        Password = Input.Password,
+        Email = Input.Email
+      };
+
+      var authResponse = await AuthService.Register(newUser);
+      if (authResponse is not null)
+      {
+        alert.ShowSuccess($"LoggedIn: {authResponse.user.Username}; token: {authResponse.token}");
+      }
+    }
+    catch (Exception e)
+    {
+      alert.ShowFailed(e.Message);
+    }
+  }
+
+  private sealed class InputModel
+  {
+    [Required] public string Username { get; set; } = "";
+
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; set; } = "";
+
+    [Required] [EmailAddress] public string Email { get; set; } = "";
+  }
+
+}

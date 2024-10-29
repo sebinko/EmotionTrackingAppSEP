@@ -1,0 +1,64 @@
+@page "/login"
+@using System.ComponentModel.DataAnnotations
+@using Frontend.Components.Shared
+@using Frontend.Services.Interfaces
+@inject IAuthService AuthService;
+
+<h1>Login</h1>
+<div class="row">
+  <div class="col-md-4">
+    <Alert @ref="alert"/>
+    <section>
+      <EditForm Model="Input" method="post" OnValidSubmit="OnLogin" FormName="Login">
+        <DataAnnotationsValidator/>
+        <hr/>
+        <div class="form-floating mb-3">
+          <InputText @bind-Value="Input.Username" class="form-control" aria-required="true"/>
+          <label for="username" class="form-label">Username</label>
+          <ValidationMessage For="() => Input.Username" class="text-danger"/>
+        </div>
+        <div class="form-floating mb-3">
+          <InputText type="password" @bind-Value="Input.Password" class="form-control" aria-required="true"/>
+          <label for="password" class="form-label">Password</label>
+          <ValidationMessage For="() => Input.Password" class="text-danger"/>
+        </div>
+        <div>
+          <button type="submit" class="w-100 btn btn-lg btn-primary">Login</button>
+        </div>
+      </EditForm>
+    </section>
+  </div>
+</div>
+
+@code {
+  private Alert alert;
+
+  [SupplyParameterFromForm] private InputModel Input { get; } = new();
+
+  public async Task OnLogin()
+  {
+    try
+    {
+      var authResponse = await AuthService.Login(Input.Username, Input.Password);
+
+      if (authResponse is not null)
+      {
+        alert.ShowSuccess($"LoggedIn: {authResponse.user.Username}; token: {authResponse.token}");
+      }
+    }
+    catch (Exception e)
+    {
+      alert.ShowFailed(e.Message);
+    }
+  }
+
+  private sealed class InputModel
+  {
+    [Required] public string Username { get; set; } = "";
+
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; set; } = "";
+  }
+
+}

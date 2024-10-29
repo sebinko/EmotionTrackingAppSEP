@@ -1,5 +1,3 @@
-using Entities;
-
 namespace API.DTO;
 
 public class UserWithTokenDTO

@@ -16,16 +16,13 @@ public class AuthController(AuthUtilities authUtilities, UsersService usersServi
     var user =
       await usersService.GetByUsernameAndPassword(userLoginDTO.Username, userLoginDTO.Password);
 
-    if (user == null)
-    {
-      return Unauthorized();
-    }
+    if (user == null) return Unauthorized();
 
     var token = authUtilities.GenerateJWTToken(user);
 
-    return Ok(new UserWithTokenDTO()
+    return Ok(new UserWithTokenDTO
     {
-      User = new UserReturnDTO()
+      User = new UserReturnDTO
       {
         Id = user.Id,
         Username = user.Username,
@@ -41,7 +38,7 @@ public class AuthController(AuthUtilities authUtilities, UsersService usersServi
   [HttpPost("register")]
   public async Task<IActionResult> Create([FromBody] UserRegisterDTO userRegisterDto)
   {
-    var user = new User()
+    var user = new User
     {
       Username = userRegisterDto.Username,
       Password = userRegisterDto.Password,
@@ -50,9 +47,9 @@ public class AuthController(AuthUtilities authUtilities, UsersService usersServi
 
     user = await usersService.Create(user);
 
-    return Ok(new UserWithTokenDTO()
+    return Ok(new UserWithTokenDTO
     {
-      User = new UserReturnDTO()
+      User = new UserReturnDTO
       {
         Id = user.Id,
         Username = user.Username,

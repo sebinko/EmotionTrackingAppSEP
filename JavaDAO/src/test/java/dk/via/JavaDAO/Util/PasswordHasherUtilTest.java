@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import dk.via.JavaDAO.AppModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +17,11 @@ public class PasswordHasherUtilTest {
 
   @BeforeEach
   public void setUp() {
+    Injector injector = Guice.createInjector(new AppModule());
+
+    AppConfig appConfig = injector.getInstance(AppConfig.class);
+    PasswordHasherUtil.setAppConfig(appConfig);
+
     passwordHasherUtil = PasswordHasherUtil.getInstance();
   }
 

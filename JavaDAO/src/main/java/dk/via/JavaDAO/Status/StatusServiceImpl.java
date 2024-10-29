@@ -10,7 +10,7 @@ import java.sql.Connection;
  */
 public class StatusServiceImpl extends StatusServiceImplBase {
 
-  private DBConnector dbConnector;
+  private final DBConnector dbConnector;
 
   @Inject
   public StatusServiceImpl(DBConnector dbConnector) {

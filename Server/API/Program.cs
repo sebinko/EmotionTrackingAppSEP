@@ -1,7 +1,6 @@
 using System.Text;
 using API.Auth;
 using API.Middlewares;
-using Frontend.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Protobuf.Services;
@@ -19,18 +18,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<GlobalExceptionMiddleware>();
-builder.Services.AddScoped<Protobuf.Services.StatusService>();
-builder.Services.AddScoped<Protobuf.Services.UsersService>();
+builder.Services.AddScoped<StatusService>();
+builder.Services.AddScoped<UsersService>();
 builder.Services.AddSingleton<AuthUtilities>();
 
-builder.Services.AddAuthentication(cfg => {
+builder.Services.AddAuthentication(cfg =>
+{
   cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
   cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
   cfg.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(x => {
+}).AddJwtBearer(x =>
+{
   x.RequireHttpsMetadata = false;
   x.SaveToken = false;
-  x.TokenValidationParameters = new TokenValidationParameters {
+  x.TokenValidationParameters = new TokenValidationParameters
+  {
     ValidateIssuerSigningKey = true,
     IssuerSigningKey = new SymmetricSecurityKey(
       Encoding.UTF8
@@ -47,9 +49,10 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  app.UseSwagger();
+  app.UseSwaggerUI();
 }
+
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
 

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import dk.via.JavaDAO.DAO.UsersDAO;
 import dk.via.JavaDAO.Protobuf.Users.UsersServiceGrpc.UsersServiceImplBase;
 import dk.via.JavaDAO.Util.PasswordHasherUtil;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
 import org.slf4j.Logger;
@@ -59,6 +60,8 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     userBuilder.setId(newUser.getId().toString());
     userBuilder.setUsername(newUser.getUsername());
     userBuilder.setEmail(newUser.getEmail());
+    userBuilder.setCreatedAt(newUser.getCreatedAt());
+    userBuilder.setUpdatedAt(newUser.getUpdatedAt());
     // TODO Exception Handling
     // TODO fetch new user
 
@@ -147,6 +150,12 @@ public class UsersServiceImpl extends UsersServiceImplBase {
         .findFirst().orElse(null);
 
     // TODO Exception Handling
+    if (user == null) {
+      responseObserver.onError(Status.NOT_FOUND.asException());
+      responseObserver.onCompleted();
+      return;
+
+    }
 
     User.Builder userBuilder = User.newBuilder();
     userBuilder.setId(user.getId().toString());
