@@ -5,14 +5,14 @@ import java.util.ArrayList;
 
 public interface UsersDAO {
 
-  public ArrayList<User> GetAll();
+  ArrayList<User> GetAll();
 
-  public User GetSingle(int id);
+  User GetSingle(int id);
 
-  public User Update(User user);
+  User Update(User user);
 
-  public User Create(User user);
+  User Create(User user);
 
-  public User Delete(User user);
+  User Delete(User user);
 
 }

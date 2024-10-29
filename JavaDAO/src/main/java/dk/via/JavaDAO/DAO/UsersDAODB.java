@@ -7,10 +7,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UsersDAODB implements UsersDAO {
 
-  private DBConnector connector;
+  private final DBConnector connector;
+  private final Logger logger = LoggerFactory.getLogger(UsersDAODB.class.getName());
 
   @Inject
   public UsersDAODB(DBConnector connector) {
@@ -33,15 +36,13 @@ public class UsersDAODB implements UsersDAO {
             resultSet.getObject(2).toString(),
             resultSet.getObject(3).toString(),
             resultSet.getObject(4).toString(),
-   null,
-            null
-//            resultSet.getObject(5).toString(),
-//            resultSet.getObject(6).toString()
+            resultSet.getObject(5).toString(),
+            resultSet.getObject(6).toString()
         );
         users.add(user);
       }
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      logger.error(e.getMessage());
     }
     return users;
   }
@@ -69,7 +70,7 @@ public class UsersDAODB implements UsersDAO {
 
       }
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      logger.error(e.getMessage());
     }
     return user;
   }
@@ -90,6 +91,8 @@ public class UsersDAODB implements UsersDAO {
       statement.setString(3, user.getEmail());
       statement.setInt(4, user.getId());
       statement.executeUpdate();
+
+      // TODO refetch user from db before returning
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -100,7 +103,7 @@ public class UsersDAODB implements UsersDAO {
   public User Create(User user) {
     Connection connection = connector.getConnection();
 
-    String sql = "insert into \"EmotionsTrackingWebsite\".users (username, password, email)  values (?,?,?) returning id;";
+    String sql = "insert into \"EmotionsTrackingWebsite\".users (username, password, email)  values (?,?,?) returning *;";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setString(1, user.getUsername());
@@ -110,6 +113,11 @@ public class UsersDAODB implements UsersDAO {
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {
         user.setId(Integer.parseInt(resultSet.getObject(1).toString()));
+        user.setUsername(resultSet.getObject(2).toString());
+        user.setPassword(resultSet.getObject(3).toString());
+        user.setEmail(resultSet.getObject(4).toString());
+        user.setCreatedAt(resultSet.getObject(5).toString());
+        user.setUpdatedAt(resultSet.getObject(6).toString());
       }
     } catch (Exception e) {
       throw new RuntimeException(e);

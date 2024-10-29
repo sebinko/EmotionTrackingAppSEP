@@ -8,7 +8,7 @@ namespace API.Auth;
 
 public class AuthUtilities
 {
-  private IConfigurationRoot _configuration;
+  private readonly IConfigurationRoot _configuration;
 
   public AuthUtilities()
   {
@@ -23,7 +23,7 @@ public class AuthUtilities
     var claims = new List<Claim>
     {
       new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-      new(ClaimTypes.Name, user.Username),
+      new(ClaimTypes.Name, user.Username)
     };
 
     var jwtToken = new JwtSecurityToken(

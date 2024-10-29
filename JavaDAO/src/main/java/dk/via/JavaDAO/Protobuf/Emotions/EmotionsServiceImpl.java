@@ -38,7 +38,6 @@ public class EmotionsServiceImpl extends EmotionsServiceImplBase {
         builder.addEmotions(
             Emotion.newBuilder().setEmotion(e.getEmotion()).setColor(e.getColor().toString())
                 .setDescription(e.getDescription()));
-        System.out.println(e.getEmotion());
       });
 
       responseObserver.onNext(builder.build());

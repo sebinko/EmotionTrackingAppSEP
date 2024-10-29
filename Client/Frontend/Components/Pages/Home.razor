@@ -14,15 +14,16 @@ Welcome to your new app.
 <p>@serverStatus</p>
 
 @code {
-    private bool isServerRunning;
-    private string serverStatus;
-    private string statusCode;
-    
-    protected override async Task OnInitializedAsync()
-    {
-        var (isOkay, statusMsg, _statusCode) = await statusService.GetStatusAsync();
-        isServerRunning = isOkay;
-        serverStatus = statusMsg;
-        statusCode = _statusCode;
-    }
+  private bool isServerRunning;
+  private string serverStatus;
+  private string statusCode;
+
+  protected override async Task OnInitializedAsync()
+  {
+    var (isOkay, statusMsg, _statusCode) = await statusService.GetStatusAsync();
+    isServerRunning = isOkay;
+    serverStatus = statusMsg;
+    statusCode = _statusCode;
+  }
+
 }
