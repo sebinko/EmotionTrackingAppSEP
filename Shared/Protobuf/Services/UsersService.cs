@@ -23,8 +23,8 @@ public class UsersService
       user.Id = Convert.ToInt32(reply.Id);
       user.Username = reply.Username;
       user.Email = reply.Email;
-      user.CreatedAt = DateTime.Parse(reply.CreatedAt);
-      user.UpdatedAt = DateTime.Parse(reply.UpdatedAt);
+      //user.CreatedAt = DateTime.Parse(reply.CreatedAt);
+      //user.UpdatedAt = DateTime.Parse(reply.UpdatedAt);
       return user;
     }
     catch (RpcException e)
@@ -59,8 +59,8 @@ public class UsersService
         Password = reply.Password,
         Email = reply.Email,
         // Streak = Convert.ToInt32(reply.Streak),
-        CreatedAt = createdAt,
-        UpdatedAt = updatedAt
+        //CreatedAt = createdAt,
+        //UpdatedAt = updatedAt
       };
     }
     catch (RpcException e)

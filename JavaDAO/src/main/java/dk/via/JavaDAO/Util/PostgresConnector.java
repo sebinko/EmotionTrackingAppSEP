@@ -30,6 +30,7 @@ public final class PostgresConnector implements DBConnector {
   @Inject
   public PostgresConnector(AppConfig appConfig) {
     try {
+      logger.info(appConfig.getDbPassword());
       connection = DriverManager.getConnection(appConfig.getDbUrl(), appConfig.getDbUser(),
           appConfig.getDbPassword());
       logger.info("Connected to database {}", appConfig.getDbUrl());

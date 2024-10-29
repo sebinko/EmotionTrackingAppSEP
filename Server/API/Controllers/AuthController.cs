@@ -31,8 +31,8 @@ public class AuthController(AuthUtilities authUtilities, UsersService usersServi
         Username = user.Username,
         Email = user.Email,
         Streak = user.Streak,
-        CreatedAt = user.CreatedAt,
-        UpdatedAt = user.UpdatedAt
+        //CreatedAt = user.CreatedAt,
+        //UpdatedAt = user.UpdatedAt
       },
       Token = token
     });
@@ -58,8 +58,8 @@ public class AuthController(AuthUtilities authUtilities, UsersService usersServi
         Username = user.Username,
         Email = user.Email,
         Streak = user.Streak,
-        CreatedAt = user.CreatedAt,
-        UpdatedAt = user.UpdatedAt
+        //CreatedAt = user.CreatedAt,
+        //UpdatedAt = user.UpdatedAt
       },
       Token = authUtilities.GenerateJWTToken(user)
     });

@@ -10,7 +10,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddHttpClient<IStatusService, StatusService>();
-
+builder.Services.AddScoped<IUsersService, UsersService>();
 
 var app = builder.Build();
 

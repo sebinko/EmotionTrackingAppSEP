@@ -152,8 +152,8 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     userBuilder.setId(user.getId().toString());
     userBuilder.setUsername(user.getUsername());
     userBuilder.setEmail(user.getEmail());
-    userBuilder.setCreatedAt(user.getCreatedAt());
-    userBuilder.setUpdatedAt(user.getUpdatedAt());
+    //userBuilder.setCreatedAt(user.getCreatedAt());
+    //userBuilder.setUpdatedAt(user.getUpdatedAt());
     responseObserver.onNext(userBuilder.build());
     responseObserver.onCompleted();
   }

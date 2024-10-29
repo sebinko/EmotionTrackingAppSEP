@@ -1,0 +1,85 @@
+@page "/Register"
+@using System.ComponentModel.DataAnnotations
+@using Frontend.Components.Shared
+@using Frontend.Data
+@using Frontend.Services.Interfaces
+@inject IUsersService userService;
+
+@rendermode InteractiveServer
+
+<h1>Register</h1>
+<div class="row">
+  <div class="col-md-4">
+    
+    <Alert @ref="alert" />
+    <section>
+      <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="Register">
+        <DataAnnotationsValidator/>
+        <hr/>
+        <div class="form-floating mb-3">
+          <InputText type="username" @bind-Value="Input.Username" class="form-control" aria-required="true"/>
+          <label for="username" class="form-label">Username</label>
+          <ValidationMessage For="() => Input.Username" class="text-danger"/>
+        </div>
+        <div class="form-floating mb-3">
+          <InputText type="password" @bind-Value="Input.Password" class="form-control" aria-required="true"/>
+          <label for="password" class="form-label">Password</label>
+          <ValidationMessage For="() => Input.Password" class="text-danger"/>
+        </div>
+        <div class="form-floating mb-3">
+          <InputText @bind-Value="Input.Email" class="form-control" aria-required="true"/>
+          <label for="email" class="form-label">Email</label>
+          <ValidationMessage For="() => Input.Email" class="text-danger"/>
+        </div>
+        <div>
+          <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+        </div>
+      </EditForm>
+    </section>
+  </div>
+</div>
+
+@code {
+private Alert alert;
+[SupplyParameterFromForm]
+private InputModel Input { get; set; } = new();
+
+public void RegisterUser()
+{
+  var newUser = new User()
+  {
+    Username = Input.Username,
+    Password = Input.Password,
+    Email = Input.Email
+  };
+  
+  var user = userService.Create(newUser);
+
+  if (user is not null)
+  {
+    //register success
+    alert.ShowSuccess("Register Successfully");
+  }
+  else
+  {
+    //register failed
+    alert.ShowFailed("Register Failed");
+  }
+}
+
+private sealed class InputModel
+{ 
+  
+//[Required]  
+//[DataType(DataType.Custom)]
+public string Username { get; set; } = "";
+
+//[Required]
+//[DataType(DataType.Password)]
+public string Password { get; set; } = "";
+
+//[Required]
+//[EmailAddress]
+public string Email { get; set; } = "";
+}
+}

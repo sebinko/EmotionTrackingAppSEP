@@ -33,8 +33,10 @@ public class UsersDAODB implements UsersDAO {
             resultSet.getObject(2).toString(),
             resultSet.getObject(3).toString(),
             resultSet.getObject(4).toString(),
-            resultSet.getObject(5).toString(),
-            resultSet.getObject(6).toString()
+   null,
+            null
+//            resultSet.getObject(5).toString(),
+//            resultSet.getObject(6).toString()
         );
         users.add(user);
       }
