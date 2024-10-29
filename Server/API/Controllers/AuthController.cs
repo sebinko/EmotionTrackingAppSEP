@@ -11,20 +11,29 @@ namespace API.Controllers;
 public class AuthController(AuthUtilities authUtilities, UsersService usersService) : ControllerBase
 {
   [HttpPost("login")]
-  public async Task<IActionResult> Login([FromBody]UserLoginDTO userLoginDTO)
+  public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDTO)
   {
-    var user = await usersService.GetByUsernameAndPassword(userLoginDTO.Username, userLoginDTO.Password);
-    
+    var user =
+      await usersService.GetByUsernameAndPassword(userLoginDTO.Username, userLoginDTO.Password);
+
     if (user == null)
     {
       return Unauthorized();
     }
-    
+
     var token = authUtilities.GenerateJWTToken(user);
-    
+
     return Ok(new UserWithTokenDTO()
     {
-      User = user,
+      User = new UserReturnDTO()
+      {
+        Id = user.Id,
+        Username = user.Username,
+        Email = user.Email,
+        Streak = user.Streak,
+        CreatedAt = user.CreatedAt,
+        UpdatedAt = user.UpdatedAt
+      },
       Token = token
     });
   }
@@ -39,11 +48,19 @@ public class AuthController(AuthUtilities authUtilities, UsersService usersServi
       Email = userRegisterDto.Email
     };
 
-    await usersService.Create(user);
+    user = await usersService.Create(user);
 
     return Ok(new UserWithTokenDTO()
     {
-      User = user,
+      User = new UserReturnDTO()
+      {
+        Id = user.Id,
+        Username = user.Username,
+        Email = user.Email,
+        Streak = user.Streak,
+        CreatedAt = user.CreatedAt,
+        UpdatedAt = user.UpdatedAt
+      },
       Token = authUtilities.GenerateJWTToken(user)
     });
   }
