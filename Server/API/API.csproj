@@ -12,9 +12,14 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Shared\DTO\DTO.csproj" />
         <ProjectReference Include="..\..\Shared\Entities\Entities.csproj"/>
         <ProjectReference Include="..\..\Shared\Protobuf\Protobuf.csproj"/>
         <ProjectReference Include="..\..\Shared\SharedUtil\SharedUtil.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DTO\" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using API.DTO;
 using Entities;
 using Frontend.Models;
 using Frontend.Services.Interfaces;
@@ -9,7 +10,7 @@ namespace Frontend.Services;
 
 public class AuthService : IAuthService
 {
-  public async Task<AuthResponse?> Register(User user)
+  public async Task<UserWithTokenDTO?> Register(User user)
   {
     // TODO make the URL from config
     var url = "http://localhost:5195/Auth/register";
@@ -46,12 +47,12 @@ public class AuthService : IAuthService
       PropertyNameCaseInsensitive = true
     };
 
-    var auth = JsonSerializer.Deserialize<AuthResponse>(responseData, options);
+    var auth = JsonSerializer.Deserialize<UserWithTokenDTO>(responseData, options);
 
-    return auth?.user is null ? null : auth;
+    return auth?.User is null ? null : auth;
   }
 
-  public async Task<AuthResponse?> Login(string username, string password)
+  public async Task<UserWithTokenDTO?> Login(string username, string password)
   {
     // TODO make the URL from config
 
@@ -87,8 +88,8 @@ public class AuthService : IAuthService
       PropertyNameCaseInsensitive = true
     };
 
-    var auth = JsonSerializer.Deserialize<AuthResponse>(responseData, options);
+    var auth = JsonSerializer.Deserialize<UserWithTokenDTO>(responseData, options);
 
-    return auth?.user is null ? null : auth;
+    return auth?.User is null ? null : auth;
   }
 }
