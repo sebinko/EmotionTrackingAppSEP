@@ -39,7 +39,7 @@
 
 @code {
   private Alert alert;
-  [SupplyParameterFromForm] private InputModel Input { get; } = new();
+  [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
 
   public async Task RegisterUser()
   {
