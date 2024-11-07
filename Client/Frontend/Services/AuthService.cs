@@ -106,4 +106,9 @@ public class AuthService : IAuthService
     return await _localStorageService.GetItem<UserWithTokenDTO>("user");
     
   }
+
+  public async Task Logout()
+  {
+    await _localStorageService.RemoveItem("user");
+  }
 }
