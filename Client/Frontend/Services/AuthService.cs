@@ -10,6 +10,13 @@ namespace Frontend.Services;
 
 public class AuthService : IAuthService
 {
+  public User user;
+  private ILocalStorageService _localStorageService;
+
+  public AuthService(ILocalStorageService localStorageService)
+  {
+    _localStorageService = localStorageService;
+  }
   public async Task<UserWithTokenDTO?> Register(User user)
   {
     // TODO make the URL from config
@@ -48,7 +55,7 @@ public class AuthService : IAuthService
     };
 
     var auth = JsonSerializer.Deserialize<UserWithTokenDTO>(responseData, options);
-
+    await _localStorageService.SetItem("user", auth);
     return auth?.User is null ? null : auth;
   }
 
@@ -89,7 +96,19 @@ public class AuthService : IAuthService
     };
 
     var auth = JsonSerializer.Deserialize<UserWithTokenDTO>(responseData, options);
+    await _localStorageService.SetItem("user", auth);
 
     return auth?.User is null ? null : auth;
+  }
+
+  public async Task<UserWithTokenDTO?> GetUser()
+  {
+    return await _localStorageService.GetItem<UserWithTokenDTO>("user");
+    
+  }
+
+  public async Task Logout()
+  {
+    await _localStorageService.RemoveItem("user");
   }
 }
