@@ -44,7 +44,5 @@ public class Main {
     } catch (Exception e) {
       logger.error("Error starting server: {}", e.getMessage());
     }
-
   }
-
 }

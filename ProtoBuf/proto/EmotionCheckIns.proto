@@ -6,20 +6,35 @@ option csharp_namespace = "Protobuf.EmotionCheckIns";
 
 package EmotionCheckIns;
 
-
 service EmotionCheckInsService{
   rpc GetById(EmotionCheckInId) returns (EmotionCheckIn){}
   rpc Update(EmotionCheckIn) returns (EmotionCheckIn){}
 }
 
 message EmotionCheckIn {
-    string id = 1;
-    string emotion = 2;
-    string createdAt = 3;
-    string updatedAt = 4;
-    string userId = 5;
-  }
+  string id = 1;
+  string emotion = 2;
+  string createdAt = 3;
+  string updatedAt = 4;
+  string userId = 5;
+}
 
 message EmotionCheckInId {
-    string id= 1;
+  string id= 1;
+}
+
+message Tags{
+  repeated Tag tags = 1;
+}
+message EmotionCheckInTag{
+  EmotionCheckIn emotionCheckIn = 1;
+  Tag tags = 2;
+}
+
+message Tag {
+  string id = 1;
+  string key = 2;
+  string createdAt = 3;
+  string updatedAt = 4;
+  string userId = 5;
 }

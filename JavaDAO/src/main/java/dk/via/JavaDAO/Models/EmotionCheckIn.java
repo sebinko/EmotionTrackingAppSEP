@@ -1,6 +1,5 @@
 package dk.via.JavaDAO.Models;
 
-
 public class EmotionCheckIn {
 
   private Integer id;
@@ -66,4 +65,3 @@ public class EmotionCheckIn {
     this.userId = userId;
   }
 }
-
