@@ -3,13 +3,13 @@ package dk.via.JavaDAO.DAO;
 import com.google.inject.Inject;
 import dk.via.JavaDAO.Models.EmotionCheckIn;
 import dk.via.JavaDAO.Util.Interfaces.DBConnector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class EmotionCheckInsDAODB implements EmotionCheckInsDAO{
+public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
 
   private final DBConnector connector;
   private final Logger logger = LoggerFactory.getLogger(EmotionCheckInsDAODB.class.getName());
@@ -24,7 +24,7 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO{
   public EmotionCheckIn GetSingle(int id) {
 
     Connection connection = connector.getConnection();
-    String sql = "select * from \"EmotionsTrackingWebsite\".emotionCheckIns where id = ?;";
+    String sql = "select * from \"EmotionsTrackingWebsite\".emotion_checkins where id = ?;";
     EmotionCheckIn emotionCheckIn = null;
 
     try {
@@ -55,7 +55,7 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO{
     if (emotionCheckInToUpdate == null) {
       throw new RuntimeException("EmotionCheckIn not found");
     }
-    String sql = "delete from \"EmotionsTrackingWebsite\".emotionCheckIns where id= ?;";
+    String sql = "delete from \"EmotionsTrackingWebsite\".emotion_checkins where id= ?;";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, emotionCheckIn.getId());
