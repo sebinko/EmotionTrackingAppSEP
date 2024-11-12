@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "dk.via.JavaDAO.Protobuf.EmotionCheckIns";
+option csharp_namespace = "Protobuf.EmotionCheckIns";
+
+package Users;
+
+service UsersService{
+  rpc Create(EmotionCheckInTag) returns (EmotionCheckIn){}
+}
+
+message Tags{
+  repeated Tag tags = 1;
+}
+message EmotionCheckInTag{
+  EmotionCheckIn emotionCheckIn = 1;
+  Tag tags = 2;
+}
+
+message EmotionCheckIn{
+  int32 id = 1;
+  string createdAt = 2;
+  string updatedAt = 3;
+  int32 user_id = 4;
+  string emotion = 5;
+
+}
+
+message Tag {
+  string id = 1;
+  string key = 2;
+  string createdAt = 3;
+  string updatedAt = 4;
+  string userId = 5;
+}
