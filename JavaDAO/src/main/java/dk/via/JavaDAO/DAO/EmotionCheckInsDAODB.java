@@ -3,12 +3,12 @@ package dk.via.JavaDAO.DAO;
 import com.google.inject.Inject;
 import dk.via.JavaDAO.Models.EmotionCheckIn;
 import dk.via.JavaDAO.Util.Interfaces.DBConnector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
 
@@ -49,14 +49,13 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
   }
 
   @Override
-  public EmotionCheckIn Create(EmotionCheckIn emotionCheckIn,
-      ArrayList<String> tags) {
+  public EmotionCheckIn Create(EmotionCheckIn emotionCheckIn, ArrayList<String> tags) {
     Connection connection = connector.getConnection();
-    String sql = "insert into \"EmotionsTrackingWebsite\".emotion_checkins ()  values (?) returning *;";
+    String sql = "insert into \"EmotionsTrackingWebsite\".emotion_checkins (emotion, user_id)  values (?, ?) returning *;";
     try {
-
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setString(1, emotionCheckIn.getEmotion());
+      statement.setInt(2, emotionCheckIn.getUserId());
 
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {

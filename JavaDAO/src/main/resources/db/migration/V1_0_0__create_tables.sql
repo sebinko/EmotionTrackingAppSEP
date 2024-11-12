@@ -21,12 +21,12 @@ create table emotion_checkins(
     emotion varchar not null,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp,
-    user_id int,
+    user_id int not null,
     foreign key (user_id) references users(id) on delete cascade
 );
 
 create table reactions(
-    user_id int,
+    user_id int not null,
     emotion_checkin_id int,
     emoji varchar not null,
     created_at timestamp default current_timestamp,
@@ -41,7 +41,7 @@ create table tags(
     key varchar not null,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp,
-    user_id int,
+    user_id int not null,
     foreign key (user_id) references users(id) on delete cascade
 );
 
