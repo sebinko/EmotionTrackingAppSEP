@@ -6,6 +6,7 @@ import dk.via.JavaDAO.Util.Interfaces.DBConnector;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,30 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
     } catch (Exception e) {
       logger.error(e.getMessage());
     }
+    return emotionCheckIn;
+  }
+
+  @Override
+  public EmotionCheckIn Create(EmotionCheckIn emotionCheckIn, ArrayList<String> tags) {
+    Connection connection = connector.getConnection();
+    String sql = "insert into \"EmotionsTrackingWebsite\".emotion_checkins (emotion, user_id)  values (?, ?) returning *;";
+    try {
+      PreparedStatement statement = connection.prepareStatement(sql);
+      statement.setString(1, emotionCheckIn.getEmotion());
+      statement.setInt(2, emotionCheckIn.getUserId());
+
+      ResultSet resultSet = statement.executeQuery();
+      while (resultSet.next()) {
+        emotionCheckIn.setId(Integer.parseInt(resultSet.getObject(1).toString()));
+        emotionCheckIn.setEmotion(resultSet.getObject(2).toString());
+        emotionCheckIn.setCreatedAt(resultSet.getObject(3).toString());
+        emotionCheckIn.setUpdatedAt(resultSet.getObject(4).toString());
+        emotionCheckIn.setUserId(Integer.parseInt(resultSet.getObject(5).toString()));
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
     return emotionCheckIn;
   }
 
