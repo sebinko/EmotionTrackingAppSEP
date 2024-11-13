@@ -52,3 +52,23 @@ create table tag_emotions(
     foreign key (emotion_checkin_id) references emotion_checkins(id) on delete cascade,
     foreign key (tag_id) references tags(id) on delete cascade
 );
+
+with DateDifferences as( select user_id,
+    created_at::date as checkin_date,
+    created_at::date - (row_number() over (partition by user_id order by created_at::date) * interval '1 day') as streak_group
+    from public.emotion_checkins
+),
+
+Streaks as(
+  select user_id,
+    min(checkin_date) as streak_start,
+    max(checkin_date) as streak_end,
+    count(*) as streak_length
+  from DateDifferences
+  group by user_id, streak_group
+)
+
+select user_id, streak_length
+from Streaks
+where streak_end = CURRENT_DATE
+--in data grid it works!!!
