@@ -20,6 +20,7 @@
         <Protobuf Include="../../ProtoBuf/proto/Emotions.proto" GrpcServices="Emotions"/>
         <Protobuf Include="../../ProtoBuf/proto/Entities.proto" GrpcServices="Entities"/>
         <Protobuf Include="../../ProtoBuf/proto/Users.proto" GrpcServices="Users"/>
+        <Protobuf Include="../../ProtoBuf/proto/EmotionCheckIns.proto" GrpcServices="EmotionCheckIns"/>
     </ItemGroup>
 
     <ItemGroup>
