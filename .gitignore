@@ -6,3 +6,5 @@
 **/**/obj/
 **/bin/
 **/obj/
+flyway.conf
+src/main/resources/app.properties
