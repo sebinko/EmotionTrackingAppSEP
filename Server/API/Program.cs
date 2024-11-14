@@ -20,6 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<GlobalExceptionMiddleware>();
 builder.Services.AddScoped<StatusService>();
 builder.Services.AddScoped<UsersService>();
+builder.Services.AddScoped<EmotionCheckInService>();
 builder.Services.AddSingleton<AuthUtilities>();
 
 builder.Services.AddAuthentication(cfg =>
