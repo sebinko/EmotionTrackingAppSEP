@@ -8,7 +8,7 @@ package EmotionCheckIns;
 
 service EmotionCheckInsService{
   rpc GetById(EmotionCheckInId) returns (EmotionCheckIn){}
-  rpc Update(EmotionCheckIn) returns (EmotionCheckIn){}
+  rpc Update(EmotionCheckInUpdate) returns (EmotionCheckIn){}
 }
 
 message EmotionCheckIn {
@@ -37,4 +37,10 @@ message Tag {
   string createdAt = 3;
   string updatedAt = 4;
   string userId = 5;
+}
+
+message EmotionCheckInUpdate{
+  EmotionCheckIn emotionToUpdate=1;
+  repeated Tag existingTags=2;
+  repeated string newTags=3; 
 }
