@@ -7,53 +7,52 @@ option csharp_namespace = "Protobuf.EmotionCheckIns";
 package EmotionCheckIns;
 
 service EmotionCheckInsService{
-  rpc GetAll(GetAllEmotionCheckIns) returns (ListEmotionCheckIn){}
-  rpc GetById(EmotionCheckInId) returns (EmotionCheckIn){}
-  rpc Create(EmotionCheckInCreate) returns (EmotionCheckIn){}
-  rpc Update(EmotionCheckInUpdate) returns (EmotionCheckIn){}
-  rpc Delete(EmotionCheckIn) returns (EmotionCheckIn){}
+  rpc GetAll(GetAllEmotionCheckInsMessage) returns (ListEmotionCheckInMessage){}
+  rpc GetById(EmotionCheckInIdMessage) returns (EmotionCheckInMessage){}
+  rpc Create(EmotionCheckInCreateMessage) returns (EmotionCheckInMessage){}
+  rpc Update(EmotionCheckInUpdateMessage) returns (EmotionCheckInMessage){}
+  rpc Delete(EmotionCheckInIdMessage) returns (EmotionCheckInMessage){}
 }
 
-message EmotionCheckIn {
-  string id = 1;
+message EmotionCheckInMessage {
+  int32 id = 1;
   string emotion = 2;
   string createdAt = 3;
   string updatedAt = 4;
-  string userId = 5;
+  int32 userId = 5;
 }
 
-message EmotionCheckInId {
-  string id= 1;
+message EmotionCheckInIdMessage {
+  int32 id = 1;
 }
 
-message EmotionCheckInTag{
-  EmotionCheckIn emotionCheckIn = 1;
-  Tag tags = 2;
+message EmotionCheckInTagMessage {
+  EmotionCheckInMessage emotionCheckIn = 1;
+  repeated string tags = 2;
 }
 
-message ListEmotionCheckIn{
-  repeated EmotionCheckIn emotionCheckIns = 1;
+message ListEmotionCheckInMessage {
+  repeated EmotionCheckInMessage emotionCheckIns = 1;
 }
 
-message GetAllEmotionCheckIns{
+message GetAllEmotionCheckInsMessage{
   string userId = 1;
 }
 
-message Tag {
-  string id = 1;
-  string key = 2;
-  string createdAt = 3;
-  string updatedAt = 4;
-  string userId = 5;
+message TagUpdateMessage{
+  string key = 1;
+  string userId = 2;
 }
 
-message EmotionCheckInCreate{
-  EmotionCheckIn emotionToUpdate=1;
-  repeated string newTags=2; 
+message EmotionCheckInCreateMessage{
+  string emotion = 1;
+  int32 userId = 2;
+  repeated string newTags = 3;
 }
 
-message EmotionCheckInUpdate{
-  EmotionCheckIn emotionToUpdate=1;
-  repeated Tag existingTags=2;
-  repeated string newTags=3; 
+message EmotionCheckInUpdateMessage{
+  int32 id = 1;
+  string emotion = 2;
+  repeated string existingTags = 3;
+  repeated string newTags = 4;
 }
