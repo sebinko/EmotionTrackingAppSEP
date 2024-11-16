@@ -13,4 +13,9 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
   {
     return Ok(await emotionCheckInService.Create(emotionCheckInDto));
   }
+  
+  public async Task<IActionResult> Delete([FromBody] EmotionCheckInCreateDTO emotionCheckInDto)
+  {
+    return Ok(await emotionCheckInService.Delete(emotionCheckInDto));
+  }
 }
