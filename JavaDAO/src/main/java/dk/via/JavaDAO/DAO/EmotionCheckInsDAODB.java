@@ -4,13 +4,12 @@ import com.google.inject.Inject;
 import dk.via.JavaDAO.Models.EmotionCheckIn;
 import dk.via.JavaDAO.Models.Tag;
 import dk.via.JavaDAO.Util.Interfaces.DBConnector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
 
@@ -35,11 +34,11 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {
         emotionCheckIn = new EmotionCheckIn(
-                Integer.parseInt(resultSet.getObject(1).toString()),
-                resultSet.getObject(2).toString(),
-                resultSet.getObject(3).toString(),
-                resultSet.getObject(4).toString(),
-                Integer.parseInt(resultSet.getObject(5).toString())
+            Integer.parseInt(resultSet.getObject(1).toString()),
+            resultSet.getObject(2).toString(),
+            resultSet.getObject(3).toString(),
+            resultSet.getObject(4).toString(),
+            Integer.parseInt(resultSet.getObject(5).toString())
         );
 
       }
@@ -74,10 +73,11 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
   }
 
   @Override
-  public EmotionCheckIn Update(EmotionCheckIn emotion, ArrayList<Tag> existingTags, ArrayList<String> newTags) {
+  public EmotionCheckIn Update(EmotionCheckIn emotion, ArrayList<Tag> existingTags,
+      ArrayList<String> newTags) {
     Connection connection = connector.getConnection();
-    EmotionCheckIn emotionToUpdate = GetSingle(emotion.getId());
-    if (emotionToUpdate == null) {
+    EmotionCheckIn emotionCheckInToUpdate = GetSingle(emotion.getId());
+    if (emotionCheckInToUpdate == null) {
       throw new RuntimeException("Check-in not found");
     }
     String sql = "update \"EmotionsTrackingWebsite\".emotion_checkins set emotion= ?, updated_at= now() where id=?;";
@@ -94,21 +94,22 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
   }
 
   @Override
-  public EmotionCheckIn Delete(EmotionCheckIn emotionCheckIn) {
+  public EmotionCheckIn Delete(int id) {
     Connection connection = connector.getConnection();
 
-    EmotionCheckIn emotionCheckInToUpdate = GetSingle(emotionCheckIn.getId());
-    if (emotionCheckInToUpdate == null) {
+    EmotionCheckIn emotionCheckInToDelete = GetSingle(id);
+    if (emotionCheckInToDelete == null) {
       throw new RuntimeException("EmotionCheckIn not found");
     }
     String sql = "delete from \"EmotionsTrackingWebsite\".emotion_checkins where id= ?;";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
-      statement.setInt(1, emotionCheckIn.getId());
+      statement.setInt(1, id);
       statement.executeUpdate();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    return emotionCheckIn;
+
+    return emotionCheckInToDelete;
   }
 }

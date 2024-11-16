@@ -5,5 +5,7 @@ namespace API.DTO;
 public class EmotionCheckInCreateDTO
 {
   [Required] public required string Emotion { get; set; }
-  [Required] public required int? UserId { get; set; }
+  [Required] public required int UserId { get; set; }
+  
+  public List<string> Tags { get; set; }
 }

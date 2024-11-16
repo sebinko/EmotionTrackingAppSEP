@@ -17,29 +17,39 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
   }
 
   @Override
-  public void create(EmotionCheckInCreate request,
-      StreamObserver<EmotionCheckIn> responseObserver) {
+  public void create(EmotionCheckInCreateMessage request,
+      StreamObserver<EmotionCheckInMessage> responseObserver) {
     dk.via.JavaDAO.Models.EmotionCheckIn newEmotionCheckIn = new dk.via.JavaDAO.Models.EmotionCheckIn();
-    newEmotionCheckIn.setEmotion(request.getEmotionToUpdate().getEmotion());
-    newEmotionCheckIn.setUserId(Integer.parseInt(request.getEmotionToUpdate().getUserId()));
+    newEmotionCheckIn.setEmotion(request.getEmotion());
+    newEmotionCheckIn.setUserId((request.getUserId()));
     newEmotionCheckIn = emotionCheckInsDAO.Create(newEmotionCheckIn, null);
-    EmotionCheckIn.Builder emotionCheckInBuilder = EmotionCheckIn.newBuilder();
-    emotionCheckInBuilder.setEmotion(newEmotionCheckIn.getEmotion().toString());
-    emotionCheckInBuilder.setId(newEmotionCheckIn.getId().toString());
-    emotionCheckInBuilder.setCreatedAt(newEmotionCheckIn.getCreatedAt().toString());
-    emotionCheckInBuilder.setUpdatedAt(newEmotionCheckIn.getUpdatedAt().toString());
-    emotionCheckInBuilder.setUserId(newEmotionCheckIn.getUserId().toString());
+    EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
+    emotionCheckInBuilder.setEmotion(newEmotionCheckIn.getEmotion());
+    emotionCheckInBuilder.setId(newEmotionCheckIn.getId());
+    emotionCheckInBuilder.setCreatedAt(newEmotionCheckIn.getCreatedAt());
+    emotionCheckInBuilder.setUpdatedAt(newEmotionCheckIn.getUpdatedAt());
+    emotionCheckInBuilder.setUserId(newEmotionCheckIn.getUserId());
 
     responseObserver.onNext(emotionCheckInBuilder.build());
     responseObserver.onCompleted();
   }
 
   @Override
-  public void delete(EmotionCheckIn request,
-      StreamObserver<EmotionCheckIn> responseObserver) {
-    dk.via.JavaDAO.Models.EmotionCheckIn emotionCheckInToDelete = emotionCheckInsDAO.GetSingle(Integer.parseInt(request.getId()));
-    emotionCheckInsDAO.Delete(emotionCheckInToDelete);
-    responseObserver.onNext(request);
+  public void delete(EmotionCheckInIdMessage request,
+      StreamObserver<EmotionCheckInMessage> responseObserver) {
+    dk.via.JavaDAO.Models.EmotionCheckIn emotionCheckInToDelete = emotionCheckInsDAO.GetSingle(
+        request.getId());
+    emotionCheckInsDAO.Delete(request.getId());
+
+    responseObserver.onNext(EmotionCheckInMessage
+        .newBuilder()
+        .setId(emotionCheckInToDelete.getId())
+        .setEmotion(emotionCheckInToDelete.getEmotion())
+        .setCreatedAt(emotionCheckInToDelete.getCreatedAt())
+        .setUpdatedAt(emotionCheckInToDelete.getUpdatedAt())
+        .setUserId(emotionCheckInToDelete.getUserId())
+        .build()
+    );
     responseObserver.onCompleted();
   }
 }

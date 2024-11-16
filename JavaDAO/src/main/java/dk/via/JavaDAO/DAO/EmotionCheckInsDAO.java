@@ -10,7 +10,7 @@ public interface EmotionCheckInsDAO {
 
   EmotionCheckIn Create(EmotionCheckIn emotionCheckIn, ArrayList<String> tags);
 
-  EmotionCheckIn Delete(EmotionCheckIn emotionCheckIn);
+  EmotionCheckIn Delete(int id);
 
   EmotionCheckIn Update(EmotionCheckIn emotion, ArrayList<Tag> existingTags,
       ArrayList<String> newTags);
