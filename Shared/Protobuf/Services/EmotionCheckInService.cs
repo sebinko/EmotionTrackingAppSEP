@@ -13,14 +13,11 @@ public class EmotionCheckInService
       using var channel = GrpcChannel.ForAddress("http://localhost:8888");
       var client = new EmotionCheckIns.EmotionCheckInsService.EmotionCheckInsServiceClient(channel);
 
-      var reply = await client.CreateAsync(new EmotionCheckIns.EmotionCheckInCreate()
+      var reply = await client.CreateAsync(new EmotionCheckIns.EmotionCheckInCreateMessage()
       {
-        EmotionToUpdate = new EmotionCheckIns.EmotionCheckIn()
-        {
-          UserId = emotionCheckIn.UserId.ToString(),
-          Emotion = emotionCheckIn.Emotion,
-        },
-        NewTags = { }
+        UserId = emotionCheckIn.UserId,
+        Emotion = emotionCheckIn.Emotion,
+        NewTags = { emotionCheckIn.Tags }
       });
 
       return new EmotionCheckInDTO
@@ -38,17 +35,16 @@ public class EmotionCheckInService
     }
   }
 
-  public async Task<EmotionCheckInDTO> Delete(EmotionCheckInCreateDTO emotionCheckIn)
+  public async Task<EmotionCheckInDTO> Delete(int id)
   {
     try
     {
       using var channel = GrpcChannel.ForAddress("http://localhost:8888");
       var client = new EmotionCheckIns.EmotionCheckInsService.EmotionCheckInsServiceClient(channel);
 
-      var reply = await client.DeleteAsync(new EmotionCheckIns.EmotionCheckIn()
+      var reply = await client.DeleteAsync(new EmotionCheckIns.EmotionCheckInIdMessage()
       {
-        UserId = emotionCheckIn.UserId.ToString(),
-        Emotion = emotionCheckIn.Emotion,
+        Id = id
       });
 
       return new EmotionCheckInDTO
