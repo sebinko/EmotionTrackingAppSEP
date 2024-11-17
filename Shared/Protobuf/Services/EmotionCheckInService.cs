@@ -6,7 +6,7 @@ namespace Protobuf.Services;
 
 public class EmotionCheckInService
 {
-  public async Task<EmotionCheckInDTO> Create(EmotionCheckInCreateDTO emotionCheckIn)
+  public async Task<EmotionCheckInDTO> Create(EmotionCheckInCreateDTO emotionCheckIn, int userId)
   {
     try
     {
@@ -15,7 +15,7 @@ public class EmotionCheckInService
 
       var reply = await client.CreateAsync(new EmotionCheckIns.EmotionCheckInCreateMessage()
       {
-        UserId = emotionCheckIn.UserId,
+        UserId = userId,
         Emotion = emotionCheckIn.Emotion,
         NewTags = { emotionCheckIn.Tags }
       });

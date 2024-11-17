@@ -11,27 +11,28 @@ namespace Frontend.Services;
 public class AuthService : IAuthService
 {
   public User user;
-  private ILocalStorageService _localStorageService;
+  private readonly ILocalStorageService _localStorageService;
+  private readonly HttpClient _httpClient;
 
-  public AuthService(ILocalStorageService localStorageService)
+  public AuthService(ILocalStorageService localStorageService, HttpClient httpClient)
   {
     _localStorageService = localStorageService;
+    _httpClient = httpClient;
   }
+
   public async Task<UserWithTokenDTO?> Register(User user)
   {
-    // TODO make the URL from config
-    var url = "http://localhost:5195/Auth/register";
     var data = new
     {
       username = user.Username,
       password = user.Password,
       email = user.Email
     };
-    using var client = new HttpClient();
+
     var json = JsonSerializer.Serialize(data);
     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-    var response = await client.PostAsync(url, content);
+    var response = await _httpClient.PostAsync("Auth/register", content);
 
     if (!response.IsSuccessStatusCode)
     {
@@ -61,18 +62,15 @@ public class AuthService : IAuthService
 
   public async Task<UserWithTokenDTO?> Login(string username, string password)
   {
-    // TODO make the URL from config
-
-    var url = "http://localhost:5195/Auth/login";
     var data = new
     {
       username, password
     };
-    using var client = new HttpClient();
+
     var json = JsonSerializer.Serialize(data);
     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-    var response = await client.PostAsync(url, content);
+    var response = await _httpClient.PostAsync("Auth/login", content);
 
     if (!response.IsSuccessStatusCode)
     {
@@ -104,7 +102,6 @@ public class AuthService : IAuthService
   public async Task<UserWithTokenDTO?> GetUser()
   {
     return await _localStorageService.GetItem<UserWithTokenDTO>("user");
-    
   }
 
   public async Task Logout()

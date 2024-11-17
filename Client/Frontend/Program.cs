@@ -1,6 +1,7 @@
 using Frontend.Components;
 using Frontend.Services;
 using Frontend.Services.Interfaces;
+using Frontend.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,15 @@ builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddHttpClient<IStatusService, StatusService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
+
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5195") });
+builder.Services.AddHttpClient("AuthClient")
+  .ConfigureHttpClient(client => client.BaseAddress = new Uri("http://localhost:5195"))
+  .AddHttpMessageHandler(sp =>
+  {
+    var authService = sp.GetRequiredService<IAuthService>();
+    return new AuthTokenHandler(authService);
+  });
 
 var app = builder.Build();
 
