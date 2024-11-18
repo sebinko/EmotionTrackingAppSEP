@@ -35,6 +35,25 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
   }
 
   @Override
+  public void update(EmotionCheckInUpdateMessage request,
+      StreamObserver<EmotionCheckInMessage> responseObserver) {
+    dk.via.JavaDAO.Models.EmotionCheckIn existingEmotionCheckIn = emotionCheckInsDAO.GetSingle(request.getId());
+    existingEmotionCheckIn.setEmotion(request.getEmotion());
+    emotionCheckInsDAO.Update(existingEmotionCheckIn,null,null);
+
+    EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
+    emotionCheckInBuilder.setEmotion(request.getEmotion());
+    emotionCheckInBuilder.setId(existingEmotionCheckIn.getId());
+    emotionCheckInBuilder.setUpdatedAt(existingEmotionCheckIn.getUpdatedAt());
+    emotionCheckInBuilder.setUserId(existingEmotionCheckIn.getUserId());
+    emotionCheckInBuilder.setCreatedAt(existingEmotionCheckIn.getCreatedAt());
+
+    responseObserver.onNext(emotionCheckInBuilder.build());
+    responseObserver.onCompleted();
+
+  }
+
+  @Override
   public void delete(EmotionCheckInIdMessage request,
       StreamObserver<EmotionCheckInMessage> responseObserver) {
     dk.via.JavaDAO.Models.EmotionCheckIn emotionCheckInToDelete = emotionCheckInsDAO.GetSingle(

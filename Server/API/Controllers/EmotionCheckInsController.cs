@@ -24,6 +24,13 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
     return Ok(await emotionCheckInService.Create(emotionCheckInDto, int.Parse(userId)));
   }
 
+  [HttpPatch]
+  public async Task<IActionResult> Update(
+    [FromBody] EmotionCheckInUpdateDTO emotionCheckInDto)
+  {
+    return Ok(await emotionCheckInService.Update(emotionCheckInDto));
+  }
+  
   [HttpDelete]
   [Authorize]
   public async Task<IActionResult> Delete([FromBody] int id)
