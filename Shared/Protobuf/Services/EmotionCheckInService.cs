@@ -35,7 +35,7 @@ public class EmotionCheckInService
     }
   }
 
-  public async Task<EmotionCheckInDTO> Update(EmotionCheckInUpdateDTO emotionCheckIn)
+  public async Task<EmotionCheckInDTO> Update(EmotionCheckInUpdateDTO emotionCheckIn, int userId)
   {
     try
     {
@@ -45,7 +45,8 @@ public class EmotionCheckInService
       var reply = await client.UpdateAsync(new EmotionCheckIns.EmotionCheckInUpdateMessage()
       {
         Emotion = emotionCheckIn.Emotion,
-        Id = emotionCheckIn.id
+        Id = emotionCheckIn.id,
+        UserId = userId,
       }
       );
 

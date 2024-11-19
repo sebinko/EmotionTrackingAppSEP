@@ -2,6 +2,7 @@ package dk.via.JavaDAO.Protobuf.EmotionCheckIns;
 
 import dk.via.JavaDAO.DAO.EmotionCheckInsDAO;
 import dk.via.JavaDAO.Protobuf.EmotionCheckIns.EmotionCheckInsServiceGrpc.EmotionCheckInsServiceImplBase;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import jakarta.inject.Inject;
 
@@ -38,6 +39,21 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
   public void update(EmotionCheckInUpdateMessage request,
       StreamObserver<EmotionCheckInMessage> responseObserver) {
     dk.via.JavaDAO.Models.EmotionCheckIn existingEmotionCheckIn = emotionCheckInsDAO.GetSingle(request.getId());
+
+    if (existingEmotionCheckIn == null) {
+      responseObserver.onError(Status.fromCode(Status.Code.NOT_FOUND)
+          .withDescription("Emotion check-in not found")
+          .asRuntimeException());
+      return;
+    }
+
+    if (existingEmotionCheckIn.getUserId() != request.getUserId()) {
+      responseObserver.onError(Status.fromCode(Status.Code.PERMISSION_DENIED)
+          .withDescription("User does not have permission to update this emotion check-in")
+          .asRuntimeException());
+      return;
+    }
+
     existingEmotionCheckIn.setEmotion(request.getEmotion());
     emotionCheckInsDAO.Update(existingEmotionCheckIn,null,null);
 
@@ -58,6 +74,14 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
       StreamObserver<EmotionCheckInMessage> responseObserver) {
     dk.via.JavaDAO.Models.EmotionCheckIn emotionCheckInToDelete = emotionCheckInsDAO.GetSingle(
         request.getId());
+
+    if (emotionCheckInToDelete == null) {
+      responseObserver.onError(Status.fromCode(Status.Code.NOT_FOUND)
+          .withDescription("Emotion check-in not found")
+          .asRuntimeException());
+      return;
+    }
+    
     emotionCheckInsDAO.Delete(request.getId());
 
     responseObserver.onNext(EmotionCheckInMessage

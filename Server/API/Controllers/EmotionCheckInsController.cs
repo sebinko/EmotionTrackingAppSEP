@@ -28,7 +28,14 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
   public async Task<IActionResult> Update(
     [FromBody] EmotionCheckInUpdateDTO emotionCheckInDto)
   {
-    return Ok(await emotionCheckInService.Update(emotionCheckInDto));
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    
+    if (userId == null)
+    {
+      return Unauthorized();
+    }
+    
+    return Ok(await emotionCheckInService.Update(emotionCheckInDto, int.Parse(userId)));
   }
   
   [HttpDelete]
