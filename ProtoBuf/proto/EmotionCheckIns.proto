@@ -49,5 +49,6 @@ message EmotionCheckInCreateMessage {
 message EmotionCheckInUpdateMessage {
   int32 id = 1;
   string emotion = 2;
-  repeated string tags = 3;
+  int32 userId = 3;
+  repeated string tags = 4;
 }
