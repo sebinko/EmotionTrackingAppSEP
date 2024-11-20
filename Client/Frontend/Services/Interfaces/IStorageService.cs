@@ -1,6 +1,6 @@
 ﻿namespace Frontend.Services.Interfaces;
 
-public interface ILocalStorageService
+public interface IStorageService
 {
   Task<T> GetItem<T>(string key);
   Task SetItem<T>(string key, T value);

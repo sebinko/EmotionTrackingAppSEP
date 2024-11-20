@@ -1,0 +1,56 @@
+@page "/CheckIn/Create/{color}/{emotion}"
+@using API.DTO
+@using Frontend.Services
+@using Frontend.Services.Interfaces
+@inject IAuthService AuthService
+@inject IEmotionCheckInService EmotionCheckInService
+@inject NavigationManager NavigationManager
+
+<form method="post" @onsubmit="Submit" @formname="starship-plain-form">
+  <AntiforgeryToken/>
+  <div class="form-group">
+    <label for="description">Description</label>
+    <input type="text" class="form-control" id="description" placeholder="Enter Description">
+    <small id="emailHelp" class="form-text text-muted">Describe what were you doing.</small>
+  </div>
+
+  <div>
+    <button class="btn btn-outline-primary" type="submit">Submit</button>
+  </div>
+</form>
+
+@code {
+  [Parameter] public required string color { get; set; }
+  [Parameter] public required string emotion { get; set; }
+
+  private bool _isRendered;
+  private string token = "";
+
+  private async Task Submit()
+  {
+    if (_isRendered)
+    {
+      var data = new EmotionCheckInCreateDTO
+      {
+        Emotion = emotion,
+        Tags = new List<string>()
+      };
+
+      await EmotionCheckInService.Create(data, token);
+      
+      NavigationManager.NavigateTo("/CheckIn");
+    }
+  }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (firstRender)
+    {
+      _isRendered = true;
+    }
+
+    var user = await AuthService.GetUser();
+    token = user?.Token;
+  }
+
+}

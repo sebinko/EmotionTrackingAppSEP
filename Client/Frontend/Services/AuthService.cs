@@ -2,7 +2,6 @@ using System.Text;
 using System.Text.Json;
 using API.DTO;
 using Entities;
-using Frontend.Models;
 using Frontend.Services.Interfaces;
 using SharedUtil;
 
@@ -11,12 +10,12 @@ namespace Frontend.Services;
 public class AuthService : IAuthService
 {
   public User user;
-  private readonly ILocalStorageService _localStorageService;
+  private readonly IStorageService _storageService;
   private readonly HttpClient _httpClient;
 
-  public AuthService(ILocalStorageService localStorageService, HttpClient httpClient)
+  public AuthService(IStorageService storageService, HttpClient httpClient)
   {
-    _localStorageService = localStorageService;
+    _storageService = storageService;
     _httpClient = httpClient;
   }
 
@@ -56,7 +55,7 @@ public class AuthService : IAuthService
     };
 
     var auth = JsonSerializer.Deserialize<UserWithTokenDTO>(responseData, options);
-    await _localStorageService.SetItem("user", auth);
+    await _storageService.SetItem("user", auth);
     return auth?.User is null ? null : auth;
   }
 
@@ -94,18 +93,31 @@ public class AuthService : IAuthService
     };
 
     var auth = JsonSerializer.Deserialize<UserWithTokenDTO>(responseData, options);
-    await _localStorageService.SetItem("user", auth);
+    await _storageService.SetItem("user", auth);
 
     return auth?.User is null ? null : auth;
   }
 
   public async Task<UserWithTokenDTO?> GetUser()
   {
-    return await _localStorageService.GetItem<UserWithTokenDTO>("user");
+    var json = await _storageService.GetItem<string>("user");
+    Console.WriteLine("JSON from local storage: " + json);
+
+    if (string.IsNullOrEmpty(json))
+    {
+      return null;
+    }
+
+    var options = new JsonSerializerOptions
+    {
+      PropertyNameCaseInsensitive = true
+    };
+
+    return JsonSerializer.Deserialize<UserWithTokenDTO>(json, options);
   }
 
   public async Task Logout()
   {
-    await _localStorageService.RemoveItem("user");
+    await _storageService.RemoveItem("user");
   }
 }

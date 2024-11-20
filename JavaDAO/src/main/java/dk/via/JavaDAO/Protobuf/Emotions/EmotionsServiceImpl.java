@@ -25,9 +25,13 @@ public class EmotionsServiceImpl extends EmotionsServiceImplBase {
   public void getEmotionsMethod(EmotionsRequest request,
       StreamObserver<EmotionsMessage> responseObserver) {
 
-    if (request.hasField(EmotionsRequest.getDescriptor().findFieldByName("emotion"))) {
+    if (
+        request.hasField(EmotionsRequest.getDescriptor().findFieldByName("emotion")) &&
+            !request.getEmotion().isEmpty()
+    ) {
       handleSingleEmotion(request, responseObserver);
-    } else if (request.hasField(EmotionsRequest.getDescriptor().findFieldByName("color"))) {
+    } else if (request.hasField(EmotionsRequest.getDescriptor().findFieldByName("color"))
+        && !request.getColor().isEmpty()) {
       handleFilterByColor(request, responseObserver);
     } else {
       logger.info("GetEmotionsMethod - GET ALL");

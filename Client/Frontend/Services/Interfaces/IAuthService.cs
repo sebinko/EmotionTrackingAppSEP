@@ -1,6 +1,5 @@
 using API.DTO;
 using Entities;
-using Frontend.Models;
 
 namespace Frontend.Services.Interfaces;
 

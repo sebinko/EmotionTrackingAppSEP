@@ -1,0 +1,21 @@
+@page "/CheckIn/Create"
+@inject NavigationManager NavigationManager
+
+<div class="jumbotron text-center">
+  <h1 class="display-4">Describe how you feel</h1>
+  <div class="d-flex flex-column align-items-center">
+    <button class="btn btn-danger my-2" type="button" @onclick='() => RedirectToCheckIn("RED")'>High energy unpleasant</button>
+    <button class="btn btn-warning my-2" type="button" @onclick='() => RedirectToCheckIn("YELLOW")'>High energy pleasant</button>
+    <button class="btn btn-primary my-2" type="button" @onclick='() => RedirectToCheckIn("BLUE")'>Low energy unpleasant</button>
+    <button class="btn btn-success my-2" type="button" @onclick='() => RedirectToCheckIn("GREEN")'>Low energy pleasant</button>
+  </div>
+</div>
+
+@code {
+  // redirect function with parameter color
+  private void RedirectToCheckIn(string color)
+  {
+    NavigationManager.NavigateTo($"/CheckIn/Create/{color}");
+  }
+  
+}
