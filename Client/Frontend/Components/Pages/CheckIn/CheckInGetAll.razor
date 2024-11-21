@@ -29,6 +29,9 @@
           <td>@checkIn.Emotion</td>
           <td></td>
           <td>@checkIn.CreatedAt</td>
+          <td>
+            <button class="btn btn-secondary" @onclick="()=> EditEmotion(checkIn.Id.GetValueOrDefault())">Edit</button>
+          </td>
         </tr>
       }
       </tbody>
@@ -48,6 +51,11 @@
   {
     _checkIns = await EmotionCheckInService.GetAll();
     StateHasChanged();
+  }
+
+  private void EditEmotion(int id)
+  {
+    NavigationManager.NavigateTo($"/CheckIn/Edit/{id}");
   }
 
 }

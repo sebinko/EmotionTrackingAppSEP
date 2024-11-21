@@ -1,0 +1,34 @@
+@page "/CheckIn/Delete/{id:int}"
+@using Frontend.Services.Interfaces
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IEmotionCheckInService EmotionCheckInService
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+<Authorized>
+  <div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-5 shadow" style="width: 500px; background-color: black; color: white;">
+      <div class="card-body text-center">
+        <p style="font-size: 1.5rem; font-weight: bold;">Do you want to delete this emotion?</p>
+        <button class="btn btn-light me-2" style="font-size: 1.2rem;" @onclick="GoBack">No</button>
+        <button class="btn btn-danger" style="font-size: 1.2rem;" @onclick="ConfirmDelete">Yes</button>
+      </div>
+    </div>
+  </div>
+</Authorized>
+</AuthorizeView>
+
+  @code {
+  [Parameter] public int id { get; set; }
+
+  private void GoBack()
+  {
+    NavigationManager.NavigateTo($"/CheckIn/Edit/{id}");
+  }
+
+  private async Task ConfirmDelete()
+  {
+    await EmotionCheckInService.Delete(id);
+    NavigationManager.NavigateTo("/CheckIn");
+  }
+}

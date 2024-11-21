@@ -53,9 +53,10 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
     return Ok(await emotionCheckInService.Update(emotionCheckInDto, int.Parse(userId)));
   }
   
-  [HttpDelete]
+  [HttpDelete("{id}")]
   [Authorize]
-  public async Task<IActionResult> Delete([FromBody] int id)
+  
+  public async Task<IActionResult> Delete(int id)
   {
     // TODO CHECK IF IT BELONGS TO THE USER
     return Ok(await emotionCheckInService.Delete(id));

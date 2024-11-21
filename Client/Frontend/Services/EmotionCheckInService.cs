@@ -8,6 +8,7 @@ namespace Frontend.Services.Interfaces;
 
 public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInService
 {
+  
   public async Task<List<EmotionCheckInDTO>> GetAll()
   {
     var response = await httpClient.GetAsync("EmotionCheckIns");
@@ -81,6 +82,17 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
 
   public async Task<EmotionCheckInDTO> Delete(int id)
   {
-    throw new NotImplementedException();
+    var response = await httpClient.DeleteAsync($"EmotionCheckIns/{id}");
+    Console.WriteLine(response.StatusCode);
+
+    if (response.IsSuccessStatusCode)
+    {
+      var deletedEmotionCheckIn = await response.Content.ReadFromJsonAsync<EmotionCheckInDTO>();
+      return deletedEmotionCheckIn;
+    }
+    else
+    {
+      throw new Exception($"Failed to delete emotion check-in with ID: {id}");
+    }
   }
 }

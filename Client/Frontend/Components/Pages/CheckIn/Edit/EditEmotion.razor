@@ -1,0 +1,19 @@
+@page "/CheckIn/Edit/{id:int}"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+  <Authorized>
+    <h3>Edit Emotion</h3>
+    <button class="btn btn-danger" @onclick="GoToDeletePage">Delete</button>
+  </Authorized>
+</AuthorizeView>
+
+  @code {
+  [Parameter] public int Id { get; set; }
+
+  private void GoToDeletePage()
+  {
+    NavigationManager.NavigateTo($"/CheckIn/Delete/{Id}");
+  }
+}
