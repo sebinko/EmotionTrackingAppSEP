@@ -33,7 +33,7 @@ message ListEmotionCheckInMessage {
   repeated EmotionCheckInMessage emotionCheckIns = 1;
 }
 
-message GetAllEmotionCheckInsMessage { string userId = 1; }
+message GetAllEmotionCheckInsMessage { int32 userId = 1; }
 
 message TagUpdateMessage {
   string key = 1;

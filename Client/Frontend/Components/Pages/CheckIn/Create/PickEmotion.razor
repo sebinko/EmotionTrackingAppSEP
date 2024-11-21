@@ -1,0 +1,89 @@
+@page "/CheckIn/Create/{color}"
+@using API.DTO
+@using Frontend.Services
+@using Frontend.Services.Interfaces
+@using Microsoft.AspNetCore.Authorization
+@inject NavigationManager NavigationManager
+@inject IEmotionsService EmotionsService
+
+
+<h1>@color</h1>
+
+@if (emotions is not null)
+{
+  <div class="row">
+    @foreach (var emotion in emotions)
+    {
+      <div class="col-md-3 mb-4">
+        <div class="card @GetCardClass(emotion.Color)">
+          <div class="card-header">
+            @emotion.Color
+          </div>
+          <div class="card-body @GetCardBodyClass(emotion.Color)">
+            <h5 class="card-title">@emotion.Emotion</h5>
+            <p class="card-text">@emotion.Description</p>
+            <a class="btn @GetButtonClass(emotion.Color)" @onclick='() => RedirectToCheckIn(emotion.Emotion)'>Select</a>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+else
+{
+  <p>NIC</p>
+}
+
+@code {
+  [Parameter] public required string color { get; set; }
+
+  List<EmotionDTO>? emotions;
+
+  // on init
+  protected override async Task OnInitializedAsync()
+  {
+    emotions = await EmotionsService.GetAll(null, color);
+  }
+
+  private void RedirectToCheckIn(string emotion)
+  {
+    NavigationManager.NavigateTo($"/CheckIn/Create/{color}/{emotion}");
+  }
+
+  private string GetCardClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "bg-danger text-white",
+      "yellow" => "bg-warning text-dark",
+      "blue" => "bg-primary text-white",
+      "green" => "bg-success text-white",
+      _ => ""
+    };
+  }
+
+  private string GetCardBodyClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "bg-light text-dark",
+      "yellow" => "bg-light text-dark",
+      "blue" => "bg-light text-dark",
+      "green" => "bg-light text-dark",
+      _ => "bg-light text-dark"
+    };
+  }
+
+  private string GetButtonClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "btn-outline-danger",
+      "yellow" => "btn-outline-warning",
+      "blue" => "btn-outline-primary",
+      "green" => "btn-outline-success",
+      _ => "btn-outline-secondary"
+    };
+  }
+
+}

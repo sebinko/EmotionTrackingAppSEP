@@ -1,8 +1,11 @@
 @page "/login"
 @using System.ComponentModel.DataAnnotations
 @using Frontend.Components.Shared
+@using Frontend.Services
 @using Frontend.Services.Interfaces
-@inject IAuthService AuthService;
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthService;
+@inject NavigationManager NavigationManager;
 
 <h1>Login</h1>
 <div class="row">
@@ -39,11 +42,13 @@
   {
     try
     {
-      var authResponse = await AuthService.Login(Input.Username, Input.Password);
+      var authResponse = await ((AuthService)AuthService).Login(Input.Username, Input.Password);
+
 
       if (authResponse is not null)
       {
         alert.ShowSuccess($"LoggedIn: {authResponse.User.Username}; token: {authResponse.Token}");
+        NavigationManager.NavigateTo("/CheckIn");
       }
     }
     catch (Exception e)

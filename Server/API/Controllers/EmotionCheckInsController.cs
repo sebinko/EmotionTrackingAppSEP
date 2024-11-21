@@ -10,6 +10,21 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class EmotionCheckInsController(EmotionCheckInService emotionCheckInService) : ControllerBase
 {
+  [HttpGet]
+  [Authorize]
+  public async Task<IActionResult> GetAll()
+  {
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    
+    if (userId == null)
+    {
+      return Unauthorized();
+    }
+
+    return Ok(await emotionCheckInService.GetAll(int.Parse(userId)));
+  }
+  
+  
   [HttpPost]
   [Authorize]
   public async Task<IActionResult> Create([FromBody] EmotionCheckInCreateDTO emotionCheckInDto)

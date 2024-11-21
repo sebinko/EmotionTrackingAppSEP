@@ -49,6 +49,32 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
   }
 
   @Override
+  public ArrayList<EmotionCheckIn> GetAll(int userId) {
+    Connection connection = connector.getConnection();
+    String sql = "select * from \"EmotionsTrackingWebsite\".emotion_checkins where user_id = ?;";
+    ArrayList<EmotionCheckIn> emotionCheckIns = new ArrayList<>();
+
+    try {
+      PreparedStatement statement = connection.prepareStatement(sql);
+      statement.setInt(1, userId);
+      ResultSet resultSet = statement.executeQuery();
+      while (resultSet.next()) {
+        EmotionCheckIn emotionCheckIn = new EmotionCheckIn(
+            Integer.parseInt(resultSet.getObject(1).toString()),
+            resultSet.getObject(2).toString(),
+            resultSet.getObject(3).toString(),
+            resultSet.getObject(4).toString(),
+            Integer.parseInt(resultSet.getObject(5).toString())
+        );
+        emotionCheckIns.add(emotionCheckIn);
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    return emotionCheckIns;
+  }
+
+  @Override
   public EmotionCheckIn Create(EmotionCheckIn emotionCheckIn, ArrayList<String> tags) {
     Connection connection = connector.getConnection();
     String sql = "insert into \"EmotionsTrackingWebsite\".emotion_checkins (emotion, user_id)  values (?, ?) returning *;";

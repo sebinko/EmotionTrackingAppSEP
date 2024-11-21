@@ -1,35 +1,40 @@
 ﻿using System.Text.Json;
-using Frontend.Services.Interfaces;
 using Microsoft.JSInterop;
+using System.Threading.Tasks;
+using Frontend.Services.Interfaces;
 
-namespace Frontend.Services;
-
-public class LocalStorageService: ILocalStorageService
+namespace Frontend.Services
 {
-  private IJSRuntime _jsRuntime;
-
-  public LocalStorageService(IJSRuntime jsRuntime)
+  public class LocalStorageService : IStorageService
   {
-    _jsRuntime = jsRuntime;
-  }
+    private readonly IJSRuntime _jsRuntime;
 
-  public async Task<T> GetItem<T>(string key)
-  {
-    var json = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
+    public LocalStorageService(IJSRuntime jsRuntime)
+    {
+      _jsRuntime = jsRuntime;
+    }
 
-    if (json == null)
-      return default;
+    public async Task<T> GetItem<T>(string key)
+    {
+      var json = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
 
-    return JsonSerializer.Deserialize<T>(json);
-  }
+      if (typeof(T) == typeof(string))
+      {
+        return (T)(object)json;
+      }
 
-  public async Task SetItem<T>(string key, T value)
-  {
-    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, JsonSerializer.Serialize(value));
-  }
+      return JsonSerializer.Deserialize<T>(json);
+    }
 
-  public async Task RemoveItem(string key)
-  {
-    await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", key);
+    public async Task SetItem<T>(string key, T value)
+    {
+      var json = JsonSerializer.Serialize(value);
+      await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, json);
+    }
+
+    public async Task RemoveItem(string key)
+    {
+      await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", key);
+    }
   }
 }

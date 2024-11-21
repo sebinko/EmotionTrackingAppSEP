@@ -1,0 +1,53 @@
+@page "/CheckIn"
+@using API.DTO
+@using Frontend.Services.Interfaces
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IEmotionCheckInService EmotionCheckInService
+@inject NavigationManager NavigationManager
+
+
+<AuthorizeView>
+  <Authorized>
+    <h3>GetAll</h3>
+
+    <button class="btn btn-primary" @onclick="CreateCheckIn">Create CheckIn</button>
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Id</th>
+        <th>Emotion</th>
+        <th>Tags</th>
+        <th>Created</th>
+      </tr>
+      </thead>
+      <tbody>
+      @foreach (var checkIn in _checkIns)
+      {
+        <tr>
+          <td>@checkIn.Id</td>
+          <td>@checkIn.Emotion</td>
+          <td></td>
+          <td>@checkIn.CreatedAt</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  </Authorized>
+</AuthorizeView>
+
+@code {
+  private List<EmotionCheckInDTO> _checkIns = new List<EmotionCheckInDTO>();
+
+  private void CreateCheckIn()
+  {
+    NavigationManager.NavigateTo("/CheckIn/Create");
+  }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    _checkIns = await EmotionCheckInService.GetAll();
+    StateHasChanged();
+  }
+
+}

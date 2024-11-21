@@ -1,0 +1,39 @@
+@page "/CheckIn/Create/{color}/{emotion}"
+@using API.DTO
+@using Frontend.Services
+@using Frontend.Services.Interfaces
+@using Microsoft.AspNetCore.Authorization
+@inject IEmotionCheckInService EmotionCheckInService
+@inject NavigationManager NavigationManager
+
+<form method="post" @onsubmit="Submit" @formname="starship-plain-form">
+  <AntiforgeryToken/>
+  <div class="form-group">
+    <label for="description">Description</label>
+    <input type="text" class="form-control" id="description" placeholder="Enter Description">
+    <small id="emailHelp" class="form-text text-muted">Describe what were you doing.</small>
+  </div>
+
+  <div>
+    <button class="btn btn-outline-primary" type="submit">Submit</button>
+  </div>
+</form>
+
+@code {
+  [Parameter] public required string color { get; set; }
+  [Parameter] public required string emotion { get; set; }
+
+  private async Task Submit()
+  {
+    var data = new EmotionCheckInCreateDTO
+    {
+      Emotion = emotion,
+      Tags = new List<string>()
+    };
+
+    await EmotionCheckInService.Create(data);
+
+    NavigationManager.NavigateTo("/CheckIn");
+  }
+
+}

@@ -2,8 +2,11 @@
 @using System.ComponentModel.DataAnnotations
 @using Entities
 @using Frontend.Components.Shared
+@using Frontend.Services
 @using Frontend.Services.Interfaces
-@inject IAuthService AuthService;
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthService;
+@inject NavigationManager NavigationManager;
 
 <h1>Register</h1>
 <div class="row">
@@ -52,10 +55,11 @@
         Email = Input.Email
       };
 
-      var authResponse = await AuthService.Register(newUser);
+      var authResponse = await ((AuthService)AuthService).Register(newUser);
       if (authResponse is not null)
       {
         alert.ShowSuccess($"LoggedIn: {authResponse.User.Username}; token: {authResponse.Token}");
+        NavigationManager.NavigateTo("/CheckIn");
       }
     }
     catch (Exception e)

@@ -12,4 +12,9 @@
     <ProjectReference Include="..\..\Shared\SharedUtil\SharedUtil.csproj"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
+    <PackageReference Include="BlazorInputTags" Version="9.0.0" />
+  </ItemGroup>
+
 </Project>

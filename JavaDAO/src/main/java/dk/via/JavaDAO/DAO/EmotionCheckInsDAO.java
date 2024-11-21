@@ -14,4 +14,6 @@ public interface EmotionCheckInsDAO {
 
   EmotionCheckIn Update(EmotionCheckIn emotion, ArrayList<Tag> existingTags,
       ArrayList<String> newTags);
+
+  ArrayList<EmotionCheckIn> GetAll(int userId);
 }
