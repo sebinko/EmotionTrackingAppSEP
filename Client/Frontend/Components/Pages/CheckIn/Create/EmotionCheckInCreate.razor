@@ -2,7 +2,7 @@
 @using API.DTO
 @using Frontend.Services
 @using Frontend.Services.Interfaces
-@inject IAuthService AuthService
+@using Microsoft.AspNetCore.Authorization
 @inject IEmotionCheckInService EmotionCheckInService
 @inject NavigationManager NavigationManager
 
@@ -23,34 +23,17 @@
   [Parameter] public required string color { get; set; }
   [Parameter] public required string emotion { get; set; }
 
-  private bool _isRendered;
-  private string token = "";
-
   private async Task Submit()
   {
-    if (_isRendered)
+    var data = new EmotionCheckInCreateDTO
     {
-      var data = new EmotionCheckInCreateDTO
-      {
-        Emotion = emotion,
-        Tags = new List<string>()
-      };
+      Emotion = emotion,
+      Tags = new List<string>()
+    };
 
-      await EmotionCheckInService.Create(data, token);
-      
-      NavigationManager.NavigateTo("/CheckIn");
-    }
-  }
+    await EmotionCheckInService.Create(data);
 
-  protected override async Task OnAfterRenderAsync(bool firstRender)
-  {
-    if (firstRender)
-    {
-      _isRendered = true;
-    }
-
-    var user = await AuthService.GetUser();
-    token = user?.Token;
+    NavigationManager.NavigateTo("/CheckIn");
   }
 
 }

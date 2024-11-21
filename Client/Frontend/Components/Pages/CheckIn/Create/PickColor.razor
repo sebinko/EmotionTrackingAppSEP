@@ -1,5 +1,7 @@
 @page "/CheckIn/Create"
+@using Microsoft.AspNetCore.Authorization
 @inject NavigationManager NavigationManager
+
 
 <div class="jumbotron text-center">
   <h1 class="display-4">Describe how you feel</h1>
@@ -12,10 +14,11 @@
 </div>
 
 @code {
+
   // redirect function with parameter color
   private void RedirectToCheckIn(string color)
   {
     NavigationManager.NavigateTo($"/CheckIn/Create/{color}");
   }
-  
+
 }

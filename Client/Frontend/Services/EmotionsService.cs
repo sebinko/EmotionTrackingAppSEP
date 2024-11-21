@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Frontend.Services;
 
-public class EmotionsService (HttpClient httpClient): IEmotionsService
+public class EmotionsService(HttpClient httpClient) : IEmotionsService
 {
   public async Task<List<EmotionDTO>?> GetAll(string? emotionQuery, string? emotionColor)
   {
@@ -17,7 +17,7 @@ public class EmotionsService (HttpClient httpClient): IEmotionsService
       PropertyNameCaseInsensitive = true
     });
   }
-  
+
   private static string _buildEmotionUrl(string? emotionQuery = null, string? emotionColor = null)
   {
     var path = "/Emotions";
@@ -35,8 +35,8 @@ public class EmotionsService (HttpClient httpClient): IEmotionsService
     }
 
     // Return the built URL
-    return queryParameters.Count > 0 
-      ? QueryHelpers.AddQueryString(path, queryParameters) 
+    return queryParameters.Count > 0
+      ? QueryHelpers.AddQueryString(path, queryParameters)
       : path;
   }
 }

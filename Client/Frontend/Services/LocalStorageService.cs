@@ -22,7 +22,7 @@ namespace Frontend.Services
       {
         return (T)(object)json;
       }
-      
+
       return JsonSerializer.Deserialize<T>(json);
     }
 

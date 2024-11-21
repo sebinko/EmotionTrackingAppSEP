@@ -1,17 +1,19 @@
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using API.DTO;
 using Entities;
 using Frontend.Services.Interfaces;
+using Microsoft.AspNetCore.Components.Authorization;
 using SharedUtil;
 
 namespace Frontend.Services;
 
-public class AuthService : IAuthService
+public class AuthService : AuthenticationStateProvider
 {
-  public User user;
   private readonly IStorageService _storageService;
   private readonly HttpClient _httpClient;
+  private ClaimsPrincipal currentClaimsPrincipal;
 
   public AuthService(IStorageService storageService, HttpClient httpClient)
   {
@@ -55,7 +57,24 @@ public class AuthService : IAuthService
     };
 
     var auth = JsonSerializer.Deserialize<UserWithTokenDTO>(responseData, options);
-    await _storageService.SetItem("user", auth);
+
+    List<Claim> claims = new()
+    {
+      new Claim(ClaimTypes.Name, auth?.User?.Username),
+      new Claim(ClaimTypes.Email, auth?.User?.Email),
+      new Claim(ClaimTypes.NameIdentifier, auth?.User?.Id.ToString()),
+      new Claim("Token", auth?.Token.ToString())
+    };
+
+    ClaimsIdentity identity = new ClaimsIdentity(claims, "apiauth");
+    currentClaimsPrincipal = new ClaimsPrincipal(identity);
+
+
+    NotifyAuthenticationStateChanged(
+      Task.FromResult(new AuthenticationState(currentClaimsPrincipal)));
+
+    await _storageService.SetItem("auth", auth);
+
     return auth?.User is null ? null : auth;
   }
 
@@ -93,31 +112,51 @@ public class AuthService : IAuthService
     };
 
     var auth = JsonSerializer.Deserialize<UserWithTokenDTO>(responseData, options);
-    await _storageService.SetItem("user", auth);
+
+    List<Claim> claims = new()
+    {
+      new Claim(ClaimTypes.Name, auth?.User?.Username),
+      new Claim(ClaimTypes.Email, auth?.User?.Email),
+      new Claim(ClaimTypes.NameIdentifier, auth?.User?.Id.ToString()),
+      new Claim("Token", auth?.Token.ToString())
+    };
+
+    ClaimsIdentity identity = new ClaimsIdentity(claims, "apiauth");
+    currentClaimsPrincipal = new ClaimsPrincipal(identity);
+
+    NotifyAuthenticationStateChanged(
+      Task.FromResult(new AuthenticationState(currentClaimsPrincipal)));
+
+    await _storageService.SetItem("auth", auth);
 
     return auth?.User is null ? null : auth;
   }
 
-  public async Task<UserWithTokenDTO?> GetUser()
-  {
-    var json = await _storageService.GetItem<string>("user");
-    Console.WriteLine("JSON from local storage: " + json);
-
-    if (string.IsNullOrEmpty(json))
-    {
-      return null;
-    }
-
-    var options = new JsonSerializerOptions
-    {
-      PropertyNameCaseInsensitive = true
-    };
-
-    return JsonSerializer.Deserialize<UserWithTokenDTO>(json, options);
-  }
-
   public async Task Logout()
   {
-    await _storageService.RemoveItem("user");
+    await _storageService.RemoveItem("auth");
+  }
+
+  public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+  {
+    var auth = await _storageService.GetItem<UserWithTokenDTO>("auth");
+
+    if (auth is null)
+    {
+      return new AuthenticationState(new ClaimsPrincipal());
+    }
+
+    List<Claim> claims = new()
+    {
+      new Claim(ClaimTypes.Name, auth.User.Username),
+      new Claim(ClaimTypes.Email, auth.User.Email),
+      new Claim(ClaimTypes.NameIdentifier, auth.User.Id.ToString()),
+      new Claim("Token", auth.Token.ToString())
+    };
+
+    ClaimsIdentity identity = new ClaimsIdentity(claims, "apiauth");
+    currentClaimsPrincipal = new ClaimsPrincipal(identity);
+
+    return new AuthenticationState(currentClaimsPrincipal);
   }
 }

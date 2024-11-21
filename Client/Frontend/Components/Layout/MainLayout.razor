@@ -4,7 +4,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inherits LayoutComponentBase
 
-@inject IAuthService AuthService 
+@inject AuthenticationStateProvider AuthService 
 
 <div class="page">
   <div class="sidebar">
@@ -15,10 +15,7 @@
     <div class="top-row px-4">
       <AuthorizeView>
         <Authorized>
-          @if (_userWithTokenDto != null)
-          {
-            <a>@_userWithTokenDto.User.Username {@_userWithTokenDto.User.Id} - DEVELOPMENT</a>
-          }
+          <a>@context.User?.Identity?.Name {} - DEVELOPMENT</a>
         </Authorized>
         <NotAuthorized>
           <a>DEVELOPMENT</a>
@@ -40,10 +37,8 @@
 
 @code
 {
-  UserWithTokenDTO _userWithTokenDto;
   // on initialized async
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
-    _userWithTokenDto = await AuthService.GetUser();
   }
 }

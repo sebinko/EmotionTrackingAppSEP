@@ -2,8 +2,10 @@
 @using API.DTO
 @using Frontend.Services
 @using Frontend.Services.Interfaces
+@using Microsoft.AspNetCore.Authorization
 @inject NavigationManager NavigationManager
 @inject IEmotionsService EmotionsService
+
 
 <h1>@color</h1>
 
@@ -83,4 +85,5 @@ else
       _ => "btn-outline-secondary"
     };
   }
+
 }

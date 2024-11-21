@@ -2,9 +2,9 @@
 @using API.DTO
 @using Frontend.Services.Interfaces
 @using Microsoft.AspNetCore.Components.Authorization
-@inject IAuthService AuthService
 @inject IEmotionCheckInService EmotionCheckInService
 @inject NavigationManager NavigationManager
+
 
 <AuthorizeView>
   <Authorized>
@@ -37,8 +37,6 @@
 </AuthorizeView>
 
 @code {
-  private string token = "";
-  private bool _isRendered;
   private List<EmotionCheckInDTO> _checkIns = new List<EmotionCheckInDTO>();
 
   private void CreateCheckIn()
@@ -48,20 +46,8 @@
 
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
-    if (firstRender)
-    {
-      _isRendered = true;
-    }
-
-    var user = await AuthService.GetUser();
-    token = user?.Token;
-
-    if (firstRender)
-    {
-      _checkIns = await EmotionCheckInService.GetAll(token);
-      
-      StateHasChanged();
-    }
+    _checkIns = await EmotionCheckInService.GetAll();
+    StateHasChanged();
   }
 
 }
