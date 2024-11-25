@@ -1,4 +1,3 @@
--- SQL GOES HERE HEHE
 create table users(
     id serial primary key,
     username varchar not null unique,
@@ -52,3 +51,4 @@ create table tag_emotions(
     foreign key (emotion_checkin_id) references emotion_checkins(id) on delete cascade,
     foreign key (tag_id) references tags(id) on delete cascade
 );
+
