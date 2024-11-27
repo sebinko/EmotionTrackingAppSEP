@@ -24,6 +24,21 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
     return Ok(await emotionCheckInService.GetAll(int.Parse(userId)));
   }
   
+  [HttpGet("id")]
+  [Authorize]
+  public async Task<IActionResult> Get(int id)
+  {
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    if (userId == null)
+    {
+      return Unauthorized();
+    }
+
+    return Ok(
+      (await emotionCheckInService.GetAll(int.Parse(userId))).FirstOrDefault(e => e.Id == id));
+  }
+  
   
   [HttpPost]
   [Authorize]

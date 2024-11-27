@@ -1,19 +1,35 @@
 @page "/CheckIn/Edit/{id:int}"
-@using Microsoft.AspNetCore.Components.Authorization
+@using API.DTO
+@using Frontend.Services
+@using Frontend.Services.Interfaces
 @inject NavigationManager NavigationManager
+@inject IEmotionsService EmotionsService
 
 <AuthorizeView>
   <Authorized>
     <h3>Edit Emotion</h3>
     <button class="btn btn-danger" @onclick="NavigateToDeletePage">Delete</button>
+    <button class="btn btn-primary" @onclick="NavigateToPickColorUpdatePage">Edit Emotion</button>
+    <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
   </Authorized>
 </AuthorizeView>
 
-  @code {
+@code {
   [Parameter] public int Id { get; set; }
+  
+  private void NavigateToPickColorUpdatePage()
+  {
+    NavigationManager.NavigateTo($"/CheckIn/PickColorUpdate/{Id}");
+  }
+  
 
   private void NavigateToDeletePage()
   {
     NavigationManager.NavigateTo($"/CheckIn/Delete/{Id}");
+  }
+
+  private void CancelEdit()
+  {
+    NavigationManager.NavigateTo("/CheckIn");
   }
 }

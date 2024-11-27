@@ -1,0 +1,80 @@
+﻿@page "/CheckIn/PickEmotionUpdate/{Id:int}/{color}"
+@using API.DTO
+@using Frontend.Services
+@using Frontend.Services.Interfaces
+@using Microsoft.AspNetCore.Authorization
+@inject NavigationManager NavigationManager
+@inject IEmotionsService EmotionsService
+
+
+<h1>Select an Emotion</h1>
+
+
+@if (emotion != null)
+{
+  <div class="btn-group-vertical">
+    @foreach (var availableEmotion in emotionList)
+    {
+      <button class="btn btn-outline-primary" @onclick="() => PickEmotionToUpdate(availableEmotion)">@availableEmotion.Emotion</button>
+    }
+  </div>
+}
+else
+{
+  <p>NIC</p>
+}
+
+@code {
+  [Parameter] public int Id { get; set; }
+  [Parameter] public string Color { get; set; }
+  private EmotionCheckInDTO? emotion;
+  private List<EmotionDTO> emotionList = new List<EmotionDTO>();
+
+  protected override async Task OnInitializedAsync()
+  {
+    emotion = await EmotionsService.GetById(Id);
+    emotionList = await EmotionsService.GetEmotionByColor(Color);
+  }
+
+  private void PickEmotionToUpdate(EmotionDTO selectedEmotion)
+  {
+    NavigationManager.NavigateTo($"/CheckIn/EmotionCheckInUpdate/{Id}/{selectedEmotion.Emotion}");
+  }
+
+  private string GetCardClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "bg-danger text-white",
+      "yellow" => "bg-warning text-dark",
+      "blue" => "bg-primary text-white",
+      "green" => "bg-success text-white",
+      _ => ""
+    };
+  }
+
+  private string GetCardBodyClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "bg-light text-dark",
+      "yellow" => "bg-light text-dark",
+      "blue" => "bg-light text-dark",
+      "green" => "bg-light text-dark",
+      _ => "bg-light text-dark"
+    };
+  }
+
+  private string GetButtonClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "btn-outline-danger",
+      "yellow" => "btn-outline-warning",
+      "blue" => "btn-outline-primary",
+      "green" => "btn-outline-success",
+      _ => "btn-outline-secondary"
+    };
+  }
+
+}

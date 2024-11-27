@@ -1,0 +1,37 @@
+﻿@page "/CheckIn/PickColorUpdate/{Id:int}"
+@using API.DTO
+@using Frontend.Services
+@using Frontend.Services.Interfaces
+@inject NavigationManager NavigationManager
+@inject IEmotionCheckInService EmotionCheckInService
+
+<div class="jumbotron text-center">
+  <h1 class="display-4">Describe how you feel</h1>
+  <div class="d-flex flex-column align-items-center">
+    <button class="btn btn-danger my-2" type="button" @onclick='() => PickColorToUpdate("RED")'>High energy unpleasant</button>
+    <button class="btn btn-warning my-2" type="button" @onclick='() => PickColorToUpdate("YELLOW")'>High energy pleasant</button>
+    <button class="btn btn-primary my-2" type="button" @onclick='() => PickColorToUpdate("BLUE")'>Low energy unpleasant</button>
+    <button class="btn btn-success my-2" type="button" @onclick='() => PickColorToUpdate("GREEN")'>Low energy pleasant</button>
+  </div>
+</div>
+
+@code {
+  [Parameter] public int Id { get; set; }
+  private EmotionCheckInDTO? emotion;
+
+  // protected override async Task OnInitializedAsync()
+  // {
+  //   emotion = await EmotionsService.GetById(Id);
+  // }
+  
+  protected override async Task OnInitializedAsync()
+  {
+    Console.WriteLine($"Id: {Id}");
+    emotion = await EmotionCheckInService.Get(Id);
+  }
+
+  private void PickColorToUpdate(string color)
+  {
+    NavigationManager.NavigateTo($"/CheckIn/PickEmotionUpdate/{Id}/{color}");
+  }
+}

@@ -18,6 +18,29 @@ public class EmotionsService(HttpClient httpClient) : IEmotionsService
     });
   }
 
+  public async Task<EmotionCheckInDTO> GetById(int id)
+  {
+    var response = await httpClient.GetAsync($"EmotionCheckIns/{id}");
+    if (response.IsSuccessStatusCode)
+    {
+      var responseData = await response.Content.ReadAsStringAsync();
+      return JsonSerializer.Deserialize<EmotionCheckInDTO>(responseData);
+    }
+    throw new Exception("Emotion not found.");
+  }
+
+  public async Task<List<EmotionDTO>> GetEmotionByColor(string color)
+  {
+    var response = await httpClient.GetAsync($"/Emotions?EmotionColor={color}");
+    response.EnsureSuccessStatusCode();
+    var data = await response.Content.ReadAsStringAsync();
+    return JsonSerializer.Deserialize<List<EmotionDTO>>(data, new JsonSerializerOptions
+    {
+      PropertyNameCaseInsensitive = true
+    }) ?? new List<EmotionDTO>();
+  }
+
+
   private static string _buildEmotionUrl(string? emotionQuery = null, string? emotionColor = null)
   {
     var path = "/Emotions";
