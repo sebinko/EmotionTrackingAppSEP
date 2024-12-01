@@ -24,7 +24,7 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
     return Ok(await emotionCheckInService.GetAll(int.Parse(userId)));
   }
   
-  [HttpGet("id")]
+  [HttpGet("{id}")]
   [Authorize]
   public async Task<IActionResult> Get(int id)
   {

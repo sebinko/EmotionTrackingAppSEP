@@ -34,7 +34,12 @@
     if (emotionCheckIn != null)
     {
       emotionCheckIn.Emotion = Emotion;
-      await EmotionCheckInService.Update(Id, emotionCheckIn);
+      await EmotionCheckInService.Update(Id,new EmotionCheckInUpdateDTO
+      {
+        id = emotionCheckIn.Id.Value,
+        Emotion = emotionCheckIn.Emotion,
+        Tags = new List<string>()
+      });
       NavigationManager.NavigateTo("/CheckIn");
     }
   }

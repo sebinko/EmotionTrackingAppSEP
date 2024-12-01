@@ -101,12 +101,12 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
     return JsonSerializer.Deserialize<EmotionCheckInDTO>(responseData, options);
   }
 
-  public async Task<EmotionCheckInDTO> Update(int id, EmotionCheckInDTO emotionCheckIn)
+  public async Task<EmotionCheckInDTO> Update(int id, EmotionCheckInUpdateDTO emotionCheckIn)
   {
     var json = JsonSerializer.Serialize(emotionCheckIn);
     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-    var response = await httpClient.PutAsync($"EmotionCheckIns/{id}", content);
+    var response = await httpClient.PatchAsync($"EmotionCheckIns", content);
 
     if (!response.IsSuccessStatusCode)
     {
