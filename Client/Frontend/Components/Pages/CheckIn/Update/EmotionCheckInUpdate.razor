@@ -5,21 +5,27 @@
 @inject NavigationManager NavigationManager
 @inject IEmotionCheckInService EmotionCheckInService
 
-<h3>Update Emotion Check-In</h3>
+<h3 style="text-align: center;">Update Emotion Check-In</h3>
 
-@if (emotionCheckIn != null)
-{
-  <form method="post" @onsubmit="Submit">
-    <div class="form-group">
-      <label for="description">Description</label>
-      <input type="text" class="form-control" id="description" @bind="emotionCheckIn.Id" placeholder="Enter Description">
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+  <!-- Colorful Box -->
+  <div style="width: 50%; padding: 30px; background-color: @Color; text-align: center; font-size: 28px; font-weight: bold; border-radius: 10px;">
+    I feel @Emotion
+    <div style="margin-top: 20px; font-size: 18px;">
+      <label for="description">Description:</label>
+      <!-- here is going to be the description-->
     </div>
+  </div>
 
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-  </form>
-}
+  
+  <button @onclick="Submit" style="margin-top: 30px; padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    Complete Check-In
+  </button>
+</div>
 
 @code {
+  [Parameter] public int Description { get; set; }
+  [Parameter] public int Color { get; set; }
   [Parameter] public int Id { get; set; }
   [Parameter] public string Emotion { get; set; }
   private EmotionCheckInDTO? emotionCheckIn;
