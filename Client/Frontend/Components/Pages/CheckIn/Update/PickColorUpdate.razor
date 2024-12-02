@@ -18,17 +18,9 @@
 @code {
   [Parameter] public int Id { get; set; }
   private EmotionCheckInDTO? emotion;
-
-  // protected override async Task OnInitializedAsync()
-  // {
-  //   emotion = await EmotionsService.GetById(Id);
-  // }
   
-  protected override async Task OnInitializedAsync()
-  {
-    Console.WriteLine($"Id: {Id}");
-    emotion = await EmotionCheckInService.Get(Id);
-  }
+  
+  
 
   private void PickColorToUpdate(string color)
   {

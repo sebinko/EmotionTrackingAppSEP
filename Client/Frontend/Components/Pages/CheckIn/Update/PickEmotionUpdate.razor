@@ -9,19 +9,30 @@
 
 <h1>Select an Emotion</h1>
 
-
-@if (emotion != null)
+@if (emotionList != null && emotionList.Any())
 {
-  <div class="btn-group-vertical">
+  <div class="row">
     @foreach (var availableEmotion in emotionList)
     {
-      <button class="btn btn-outline-primary" @onclick="() => PickEmotionToUpdate(availableEmotion)">@availableEmotion.Emotion</button>
+      <div class="col-md-3 mb-4">
+        <div class="card @GetCardClass(Color)">
+          <div class="card-header">
+            @Color
+          </div>
+          <div class="card-body @GetCardBodyClass(Color)">
+            <h5 class="card-title">@availableEmotion.Emotion</h5>
+            <p class="card-text">@availableEmotion.Description</p>
+            <a class="btn @GetButtonClass(Color)" @onclick="() => NavigatePickEmotionToUpdate(availableEmotion)">Select</a>
+          </div>
+        </div>
+      </div>
     }
   </div>
 }
+
 else
 {
-  <p>NIC</p>
+  <p>Error loading emotions</p>
 }
 
 @code {
@@ -36,7 +47,7 @@ else
     emotionList = await EmotionsService.GetEmotionByColor(Color);
   }
 
-  private void PickEmotionToUpdate(EmotionDTO selectedEmotion)
+  private void NavigatePickEmotionToUpdate(EmotionDTO selectedEmotion)
   {
     NavigationManager.NavigateTo($"/CheckIn/EmotionCheckInUpdate/{Id}/{selectedEmotion.Emotion}");
   }
