@@ -58,8 +58,6 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
       }
   
       var responseData = await response.Content.ReadAsStringAsync();
-      Console.WriteLine("kokot");
-      Console.WriteLine(responseData);
 
       var options = new JsonSerializerOptions
       {
