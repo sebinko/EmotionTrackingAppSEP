@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Authorization
 @inject NavigationManager NavigationManager
 @inject IEmotionsService EmotionsService
+@inject IEmotionCheckInService EmotionCheckInService
 
 
 <h1>Select an Emotion</h1>
@@ -36,15 +37,13 @@ else
 }
 
 @code {
-  [Parameter] public int Id { get; set; }
-  [Parameter] public string Color { get; set; }
-  private EmotionCheckInDTO? emotion;
-  private List<EmotionDTO> emotionList = new List<EmotionDTO>();
+  [Parameter] public required int Id { get; set; }
+  [Parameter] public required string Color { get; set; }
+  private List<EmotionDTO> emotionList = new();
 
   protected override async Task OnInitializedAsync()
   {
-    emotion = await EmotionsService.GetById(Id);
-    emotionList = await EmotionsService.GetEmotionByColor(Color);
+    emotionList = await EmotionsService.GetAll(null, Color);
   }
 
   private void NavigatePickEmotionToUpdate(EmotionDTO selectedEmotion)

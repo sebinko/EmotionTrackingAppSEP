@@ -17,12 +17,10 @@
 
 @code {
   [Parameter] public int Id { get; set; }
-  
-  
-  
 
   private void PickColorToUpdate(string color)
   {
     NavigationManager.NavigateTo($"/CheckIn/PickEmotionUpdate/{Id}/{color}");
   }
+
 }

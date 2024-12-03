@@ -1,38 +1,47 @@
-﻿@page "/CheckIn/EmotionCheckInUpdate/{id:int}/{emotion}"
+﻿@page "/CheckIn/EmotionCheckInUpdate/{id:int}/{Emotion}"
 @using API.DTO
-@using Frontend.Services
 @using Frontend.Services.Interfaces
 @inject NavigationManager NavigationManager
 @inject IEmotionCheckInService EmotionCheckInService
+@inject IEmotionsService EmotionsService
 
 <h3 style="text-align: center;">Update Emotion Check-In</h3>
 
-<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
-  <!-- Colorful Box -->
-  <div style="width: 50%; padding: 30px; background-color: @Color; text-align: center; font-size: 28px; font-weight: bold; border-radius: 10px;">
-    I feel @Emotion
-    <div style="margin-top: 20px; font-size: 18px;">
-      <label for="description">Description:</label>
-      <!-- here is going to be the description-->
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+  <div class="col-md-5">
+    <div class="card @CardClass">
+      <div class="card-header">
+        <h1>
+          I feel @Emotion
+        </h1>
+      </div>
+      <div class="card-body @CardBodyClass">
+        <h5 class="card-title">Future fields</h5>
+        <p class="card-text">Description</p>
+        <a class="btn @ButtonClass" @onclick='Submit'>CheckIn Emotion</a>
+      </div>
     </div>
   </div>
-
-  
-  <button @onclick="Submit" style="margin-top: 30px; padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
-    Complete Check-In
-  </button>
 </div>
 
 @code {
-  [Parameter] public int Description { get; set; }
-  [Parameter] public int Color { get; set; }
-  [Parameter] public int Id { get; set; }
-  [Parameter] public string Emotion { get; set; }
+  public required string CardClass { get; set; }
+  public required string CardBodyClass { get; set; }
+  public required string ButtonClass { get; set; }
+  [Parameter] public required int Id { get; set; }
+  [Parameter] public required string Emotion { get; set; }
   private EmotionCheckInDTO? emotionCheckIn;
 
   protected override async Task OnInitializedAsync()
   {
     emotionCheckIn = await EmotionCheckInService.Get(Id);
+
+    var emotions = await EmotionsService.GetAll(Emotion, null);
+    var color = emotions.First().Color.ToLower();
+
+    CardClass = GetCardClass(color);
+    CardBodyClass = GetCardBodyClass(color);
+    ButtonClass = GetButtonClass(color);
   }
 
   private async Task Submit()
@@ -40,7 +49,7 @@
     if (emotionCheckIn != null)
     {
       emotionCheckIn.Emotion = Emotion;
-      await EmotionCheckInService.Update(Id,new EmotionCheckInUpdateDTO
+      await EmotionCheckInService.Update(Id, new EmotionCheckInUpdateDTO
       {
         id = emotionCheckIn.Id.Value,
         Emotion = emotionCheckIn.Emotion,
@@ -49,4 +58,41 @@
       NavigationManager.NavigateTo("/CheckIn");
     }
   }
+
+  private string GetCardClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "bg-danger text-white",
+      "yellow" => "bg-warning text-dark",
+      "blue" => "bg-primary text-white",
+      "green" => "bg-success text-white",
+      _ => ""
+    };
+  }
+
+  private string GetCardBodyClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "bg-light text-dark",
+      "yellow" => "bg-light text-dark",
+      "blue" => "bg-light text-dark",
+      "green" => "bg-light text-dark",
+      _ => "bg-light text-dark"
+    };
+  }
+
+  private string GetButtonClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "btn-outline-danger",
+      "yellow" => "btn-outline-warning",
+      "blue" => "btn-outline-primary",
+      "green" => "btn-outline-success",
+      _ => "btn-outline-secondary"
+    };
+  }
+
 }
