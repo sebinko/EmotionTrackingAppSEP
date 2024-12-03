@@ -5,12 +5,14 @@ using Frontend.Services.Interfaces;
 using Frontend.Utils;
 using Microsoft.AspNetCore.Components.Authorization;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
   .AddInteractiveServerComponents();
 builder.Services.AddBlazoredSessionStorage();
+
 
 builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddHttpClient<IStatusService, StatusService>();

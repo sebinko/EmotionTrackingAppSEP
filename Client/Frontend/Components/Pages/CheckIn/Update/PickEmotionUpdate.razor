@@ -1,0 +1,90 @@
+﻿@page "/CheckIn/PickEmotionUpdate/{Id:int}/{color}"
+@using API.DTO
+@using Frontend.Services
+@using Frontend.Services.Interfaces
+@using Microsoft.AspNetCore.Authorization
+@inject NavigationManager NavigationManager
+@inject IEmotionsService EmotionsService
+@inject IEmotionCheckInService EmotionCheckInService
+
+
+<h1>Select an Emotion</h1>
+
+@if (emotionList != null && emotionList.Any())
+{
+  <div class="row">
+    @foreach (var availableEmotion in emotionList)
+    {
+      <div class="col-md-3 mb-4">
+        <div class="card @GetCardClass(Color)">
+          <div class="card-header">
+            @Color
+          </div>
+          <div class="card-body @GetCardBodyClass(Color)">
+            <h5 class="card-title">@availableEmotion.Emotion</h5>
+            <p class="card-text">@availableEmotion.Description</p>
+            <a class="btn @GetButtonClass(Color)" @onclick="() => NavigatePickEmotionToUpdate(availableEmotion)">Select</a>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+else
+{
+  <p>Error loading emotions</p>
+}
+
+@code {
+  [Parameter] public required int Id { get; set; }
+  [Parameter] public required string Color { get; set; }
+  private List<EmotionDTO> emotionList = new();
+
+  protected override async Task OnInitializedAsync()
+  {
+    emotionList = await EmotionsService.GetAll(null, Color);
+  }
+
+  private void NavigatePickEmotionToUpdate(EmotionDTO selectedEmotion)
+  {
+    NavigationManager.NavigateTo($"/CheckIn/EmotionCheckInUpdate/{Id}/{selectedEmotion.Emotion}");
+  }
+
+  private string GetCardClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "bg-danger text-white",
+      "yellow" => "bg-warning text-dark",
+      "blue" => "bg-primary text-white",
+      "green" => "bg-success text-white",
+      _ => ""
+    };
+  }
+
+  private string GetCardBodyClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "bg-light text-dark",
+      "yellow" => "bg-light text-dark",
+      "blue" => "bg-light text-dark",
+      "green" => "bg-light text-dark",
+      _ => "bg-light text-dark"
+    };
+  }
+
+  private string GetButtonClass(string color)
+  {
+    return color.ToLower() switch
+    {
+      "red" => "btn-outline-danger",
+      "yellow" => "btn-outline-warning",
+      "blue" => "btn-outline-primary",
+      "green" => "btn-outline-success",
+      _ => "btn-outline-secondary"
+    };
+  }
+
+}
