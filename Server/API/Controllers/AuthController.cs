@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using API.Auth;
 using API.DTO;
 using Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Protobuf.Services;
 
@@ -59,6 +61,30 @@ public class AuthController(AuthUtilities authUtilities, UsersService usersServi
         UpdatedAt = user.UpdatedAt
       },
       Token = authUtilities.GenerateJWTToken(user)
+    });
+  }
+
+  [HttpPatch("change-password")]
+  [Authorize]
+  public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDTO)
+  {
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    if (userId == null)
+    {
+      return Unauthorized();
+    }
+
+    var user = await usersService.ChangePassword(int.Parse(userId), changePasswordDTO);
+
+    return Ok(new UserReturnDTO
+    {
+      Id = user.Id,
+      Username = user.Username,
+      Email = user.Email,
+      Streak = user.Streak,
+      CreatedAt = user.CreatedAt,
+      UpdatedAt = user.UpdatedAt
     });
   }
 }
