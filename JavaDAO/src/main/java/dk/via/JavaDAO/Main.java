@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import dk.via.JavaDAO.Protobuf.EmotionCheckIns.EmotionCheckInsServiceImpl;
 import dk.via.JavaDAO.Protobuf.Emotions.EmotionsServiceImpl;
+import dk.via.JavaDAO.Protobuf.Users.UserFriendsServiceImpl;
 import dk.via.JavaDAO.Protobuf.Users.UsersServiceImpl;
 import dk.via.JavaDAO.Status.StatusServiceImpl;
 import dk.via.JavaDAO.Util.AppConfig;
@@ -38,6 +39,7 @@ public class Main {
         .addService(injector.getInstance(EmotionsServiceImpl.class))
         .addService(injector.getInstance(UsersServiceImpl.class))
         .addService(injector.getInstance(EmotionCheckInsServiceImpl.class))
+        .addService(injector.getInstance(UserFriendsServiceImpl.class))
         .build();
 
     try {
