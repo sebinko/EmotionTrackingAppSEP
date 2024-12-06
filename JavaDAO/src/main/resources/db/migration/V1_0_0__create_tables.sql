@@ -10,6 +10,7 @@ create table users(
 create table user_friends(
     user_id int,
     friend_id int,
+    is_accepted boolean default false,
     primary key (user_id, friend_id),
     foreign key (user_id) references users(id) on delete cascade,
     foreign key (friend_id) references users(id) on delete cascade
