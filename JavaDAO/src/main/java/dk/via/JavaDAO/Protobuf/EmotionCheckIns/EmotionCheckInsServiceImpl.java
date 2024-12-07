@@ -77,6 +77,7 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
     }
 
     existingEmotionCheckIn.setEmotion(request.getEmotion());
+    existingEmotionCheckIn.setDescription(request.getDescription());
     emotionCheckInsDAO.Update(existingEmotionCheckIn,null,null);
 
     EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
