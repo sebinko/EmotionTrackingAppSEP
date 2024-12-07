@@ -24,7 +24,7 @@ public class UsersDAODB implements UsersDAO {
   @Override
   public ArrayList<User> GetAll() {
     Connection connection = connector.getConnection();
-    String sql = "select * from \"EmotionsTrackingWebsite\".users;";
+    String sql = "select * from \"EmotionsTrackingWebsite\".users_with_streaks;";
     ArrayList<User> users = new ArrayList<>();
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
@@ -37,7 +37,8 @@ public class UsersDAODB implements UsersDAO {
             resultSet.getObject(3).toString(),
             resultSet.getObject(4).toString(),
             resultSet.getObject(5).toString(),
-            resultSet.getObject(6).toString()
+            resultSet.getObject(6).toString(),
+            Integer.parseInt(resultSet.getObject(7).toString())
         );
         users.add(user);
       }
@@ -51,7 +52,7 @@ public class UsersDAODB implements UsersDAO {
   public User GetSingle(int id) {
 
     Connection connection = connector.getConnection();
-    String sql = "select * from \"EmotionsTrackingWebsite\".users where id = ?;";
+    String sql = "select * from \"EmotionsTrackingWebsite\".users_with_streaks where id = ?;";
     User user = null;
 
     try {
@@ -65,7 +66,8 @@ public class UsersDAODB implements UsersDAO {
             resultSet.getObject(3).toString(),
             resultSet.getObject(4).toString(),
             resultSet.getObject(5).toString(),
-            resultSet.getObject(6).toString()
+            resultSet.getObject(6).toString(),
+            Integer.parseInt(resultSet.getObject(7).toString())
         );
 
       }
@@ -83,13 +85,14 @@ public class UsersDAODB implements UsersDAO {
     if (userToUpdate == null) {
       throw new RuntimeException("User not found");
     }
-    String sql = "update \"EmotionsTrackingWebsite\".users set username=?, password= ?, email= ?, updated_at= now() where id=?;";
+    String sql = "update \"EmotionsTrackingWebsite\".users_with_streaks set username=?, password= ?, email= ?, updated_at= now() where id=?;";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setString(1, user.getUsername());
       statement.setString(2, user.getPassword());
       statement.setString(3, user.getEmail());
       statement.setInt(4, user.getId());
+
       statement.executeUpdate();
 
       // TODO refetch user from db before returning
@@ -103,7 +106,7 @@ public class UsersDAODB implements UsersDAO {
   public User Create(User user) {
     Connection connection = connector.getConnection();
 
-    String sql = "insert into \"EmotionsTrackingWebsite\".users (username, password, email)  values (?,?,?) returning *;";
+    String sql = "insert into \"EmotionsTrackingWebsite\".users_with_streaks (username, password, email)  values (?,?,?) returning *;";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setString(1, user.getUsername());
@@ -133,7 +136,7 @@ public class UsersDAODB implements UsersDAO {
     if (userToUpdate == null) {
       throw new RuntimeException("User not found");
     }
-    String sql = "delete from \"EmotionsTrackingWebsite\".users where id= ?;";
+    String sql = "delete from \"EmotionsTrackingWebsite\".users_with_streaks where id= ?;";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, user.getId());

@@ -8,24 +8,27 @@ public class User {
   private String email;
   private String createdAt;
   private String updatedAt;
+  private Integer streak;
 
   public User(Integer id, String username, String password, String email,
-      String createdAt, String updatedAt) {
+      String createdAt, String updatedAt, Integer streak) {
     this.id = id;
     this.username = username;
     this.password = password;
     this.email = email;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.streak = streak;
   }
 
   public User(String username, String password, String email, String createdAt,
-      String updatedAt) {
+      String updatedAt, Integer streak) {
     this.username = username;
     this.password = password;
     this.email = email;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.streak = streak;
   }
 
   public Integer getId() {
@@ -76,4 +79,11 @@ public class User {
     this.updatedAt = updatedAt;
   }
 
+  public int getStreak() {
+    return streak;
+  }
+
+  public void setStreak(Integer streak) {
+    this.streak = streak;
+  }
 }

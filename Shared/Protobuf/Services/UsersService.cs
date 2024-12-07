@@ -15,7 +15,7 @@ public class UsersService
       using var channel = GrpcChannel.ForAddress("http://localhost:8888");
       var client = new Users.UsersService.UsersServiceClient(channel);
 
-      var reply = await client.CreateAsync(new Users.User
+      var reply = await client.CreateAsync(new Users.UserCreate
       {
         Username = user.Username,
         Password = user.Password,
@@ -28,7 +28,7 @@ public class UsersService
       user.Id = Convert.ToInt32(reply.Id);
       user.Username = reply.Username;
       user.Email = reply.Email;
-      user.Streak = string.IsNullOrEmpty(reply.Streak) ? 0 : Convert.ToInt32(reply.Streak);
+      user.Streak = reply.Streak;
       user.CreatedAt = createdAt;
       user.UpdatedAt = updatedAt;
       return user;
@@ -62,7 +62,7 @@ public class UsersService
         Username = reply.Username,
         Password = reply.Password,
         Email = reply.Email,
-        Streak = string.IsNullOrEmpty(reply.Streak) ? 0 : Convert.ToInt32(reply.Streak),
+        Streak =reply.Streak,
         CreatedAt = createdAt,
         UpdatedAt = updatedAt
       };
@@ -103,7 +103,7 @@ public class UsersService
         Username = reply.Username,
         Password = null,
         Email = reply.Email,
-        Streak = string.IsNullOrEmpty(reply.Streak) ? 0 : Convert.ToInt32(reply.Streak),
+        Streak = reply.Streak,
         CreatedAt = createdAt,
         UpdatedAt = updatedAt
       };
