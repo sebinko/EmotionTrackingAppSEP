@@ -33,12 +33,14 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
       statement.setInt(1, id);
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {
+        String description = resultSet.getObject(3) != null ? resultSet.getObject(3).toString() : "";
         emotionCheckIn = new EmotionCheckIn(
             Integer.parseInt(resultSet.getObject(1).toString()),
             resultSet.getObject(2).toString(),
-            resultSet.getObject(3).toString(),
+            description,
             resultSet.getObject(4).toString(),
-            Integer.parseInt(resultSet.getObject(5).toString())
+            resultSet.getObject(5).toString(),
+            Integer.parseInt(resultSet.getObject(6).toString())
         );
 
       }
@@ -59,12 +61,14 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
       statement.setInt(1, userId);
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {
+        String description = resultSet.getObject(3) != null ? resultSet.getObject(3).toString() : "";
         EmotionCheckIn emotionCheckIn = new EmotionCheckIn(
             Integer.parseInt(resultSet.getObject(1).toString()),
             resultSet.getObject(2).toString(),
-            resultSet.getObject(3).toString(),
+            description,
             resultSet.getObject(4).toString(),
-            Integer.parseInt(resultSet.getObject(5).toString())
+            resultSet.getObject(5).toString(),
+            Integer.parseInt(resultSet.getObject(6).toString())
         );
         emotionCheckIns.add(emotionCheckIn);
       }
@@ -77,19 +81,22 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
   @Override
   public EmotionCheckIn Create(EmotionCheckIn emotionCheckIn, ArrayList<String> tags) {
     Connection connection = connector.getConnection();
-    String sql = "insert into \"EmotionsTrackingWebsite\".emotion_checkins (emotion, user_id)  values (?, ?) returning *;";
+    String sql = "insert into \"EmotionsTrackingWebsite\".emotion_checkins (emotion, user_id, description)  values (?, ?, ?) returning *;";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setString(1, emotionCheckIn.getEmotion());
       statement.setInt(2, emotionCheckIn.getUserId());
+      statement.setString(3, emotionCheckIn.getDescription());
 
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {
+        String description = resultSet.getObject(3) != null ? resultSet.getObject(3).toString() : "";
         emotionCheckIn.setId(Integer.parseInt(resultSet.getObject(1).toString()));
         emotionCheckIn.setEmotion(resultSet.getObject(2).toString());
-        emotionCheckIn.setCreatedAt(resultSet.getObject(3).toString());
-        emotionCheckIn.setUpdatedAt(resultSet.getObject(4).toString());
-        emotionCheckIn.setUserId(Integer.parseInt(resultSet.getObject(5).toString()));
+        emotionCheckIn.setDescription(description);
+        emotionCheckIn.setCreatedAt(resultSet.getObject(4).toString());
+        emotionCheckIn.setUpdatedAt(resultSet.getObject(5).toString());
+        emotionCheckIn.setUserId(Integer.parseInt(resultSet.getObject(6).toString()));
       }
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -106,11 +113,12 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
     if (emotionCheckInToUpdate == null) {
       throw new RuntimeException("Check-in not found");
     }
-    String sql = "update \"EmotionsTrackingWebsite\".emotion_checkins set emotion= ?, updated_at= now() where id=?;";
+    String sql = "update \"EmotionsTrackingWebsite\".emotion_checkins set emotion= ?, description= ?, updated_at= now() where id=?;";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setString(1, emotion.getEmotion());
-      statement.setInt(2, emotion.getId());
+      statement.setString(2, emotion.getDescription());
+      statement.setInt(3, emotion.getId());
       statement.executeUpdate();
       // TODO refetch user from db before returning
     } catch (Exception e) {

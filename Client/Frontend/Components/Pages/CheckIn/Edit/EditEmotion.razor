@@ -16,12 +16,14 @@
 
 @code {
   [Parameter] public int Id { get; set; }
+  private EmotionCheckInDTO? emotionCheckIn;
+  
+  
   
   private void NavigateToPickColorUpdatePage()
   {
     NavigationManager.NavigateTo($"/CheckIn/PickColorUpdate/{Id}");
   }
-  
 
   private void NavigateToDeletePage()
   {

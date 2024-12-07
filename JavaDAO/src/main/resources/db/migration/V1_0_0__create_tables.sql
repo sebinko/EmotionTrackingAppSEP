@@ -18,6 +18,7 @@ create table user_friends(
 create table emotion_checkins(
     id serial primary key,
     emotion varchar not null,
+    description varchar,
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp,
     user_id int not null,
