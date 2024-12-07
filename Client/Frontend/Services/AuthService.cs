@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -130,6 +131,55 @@ public class AuthService : AuthenticationStateProvider
     await _storageService.SetItem("auth", auth);
 
     return auth?.User is null ? null : auth;
+  }
+
+  public async Task<UserReturnDTO> ChangePassword(UserWithTokenDTO userWithTokenDto,
+    string newPassword)
+  {
+    var data = new ChangePasswordDTO
+    {
+      NewPassword = newPassword
+    };
+
+    var json = JsonSerializer.Serialize(data);
+    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+    // add jwt token to the request
+    _httpClient.DefaultRequestHeaders.Authorization =
+      new AuthenticationHeaderValue("Bearer", userWithTokenDto.Token);
+
+    var response = await _httpClient.PatchAsync("Auth/change-password", content);
+
+    if (!response.IsSuccessStatusCode)
+    {
+      var exStr = await response.Content.ReadAsStringAsync();
+      Console.WriteLine(response.StatusCode);
+      var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
+        new JsonSerializerOptions
+        {
+          PropertyNameCaseInsensitive = true
+        });
+
+      if (apiException is not null)
+        throw new Exception($"{response.StatusCode}: {apiException.Error}");
+      throw new Exception($"{response.StatusCode}: {exStr}");
+    }
+
+    var responseData = await response.Content.ReadAsStringAsync();
+
+    var options = new JsonSerializerOptions
+    {
+      PropertyNameCaseInsensitive = true
+    };
+
+    var user = JsonSerializer.Deserialize<UserReturnDTO>(responseData, options);
+
+    return user;
+  }
+
+  public async Task<UserWithTokenDTO> GetAuth()
+  {
+    return await _storageService.GetItem<UserWithTokenDTO>("auth");
   }
 
   public async Task Logout()

@@ -1,3 +1,4 @@
+using API.DTO;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Protobuf.Users;
@@ -69,6 +70,47 @@ public class UsersService
     catch (RpcException e)
     {
       throw new Exception($"JavaDAO: Error getting user by username and password: {e.Message}");
+    }
+  }
+
+  public async Task<User> ChangePassword(int userId, ChangePasswordDTO changePasswordDto)
+  {
+    try
+    {
+      using var channel = GrpcChannel.ForAddress("http://localhost:8888");
+      var client = new Users.UsersService.UsersServiceClient(channel);
+
+      var user = await client.GetByIdAsync(new UserId
+      {
+        Id = userId
+      });
+
+      if (user == null)
+      {
+        throw new Exception("User not found");
+      }
+
+      user.Password = changePasswordDto.NewPassword;
+
+      var reply = await client.UpdateAsync(user);
+
+      DateTime.TryParse(reply.CreatedAt, out var createdAt);
+      DateTime.TryParse(reply.UpdatedAt, out var updatedAt);
+
+      return new User
+      {
+        Id = Convert.ToInt32(reply.Id),
+        Username = reply.Username,
+        Password = null,
+        Email = reply.Email,
+        Streak = string.IsNullOrEmpty(reply.Streak) ? 0 : Convert.ToInt32(reply.Streak),
+        CreatedAt = createdAt,
+        UpdatedAt = updatedAt
+      };
+    }
+    catch (RpcException e)
+    {
+      throw new Exception($"JavaDAO: Error changing password: {e.Message}");
     }
   }
 }
