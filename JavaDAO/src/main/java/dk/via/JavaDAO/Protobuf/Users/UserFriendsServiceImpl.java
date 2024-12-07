@@ -23,6 +23,7 @@ public class UserFriendsServiceImpl extends UserFriendsServiceImplBase {
     } catch (Exception e) {
       responseObserver.onError(
           Status.INTERNAL.withDescription(e.getMessage()).asRuntimeException());
+      responseObserver.onCompleted();
     }
 
     responseObserver.onNext(FriendshipMessage
