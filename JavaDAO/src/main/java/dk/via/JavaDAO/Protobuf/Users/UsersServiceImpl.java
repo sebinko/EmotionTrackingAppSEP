@@ -165,5 +165,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     userBuilder.setUpdatedAt(user.getUpdatedAt());
     responseObserver.onNext(userBuilder.build());
     responseObserver.onCompleted();
+
   }
+
 }

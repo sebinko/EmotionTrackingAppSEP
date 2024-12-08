@@ -16,6 +16,16 @@ service UsersService{
   rpc Update(User) returns (User){}
   rpc Delete(User) returns (User){}
 }
+
+message FriendshipMessage{
+  int32 user1Id = 1;
+  int32 user2Id = 2;
+}
+
+service UserFriendsService{
+  rpc CreateFriendship(FriendshipMessage) returns (FriendshipMessage){}
+
+}
 message UserId{
   int32 id = 1;
 }

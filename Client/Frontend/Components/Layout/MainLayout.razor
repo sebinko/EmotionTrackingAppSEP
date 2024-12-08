@@ -13,14 +13,7 @@
 
   <main>
     <div class="top-row px-4">
-      <AuthorizeView>
-        <Authorized>
-          <a>@context.User?.Identity?.Name {} - DEVELOPMENT</a>
-        </Authorized>
-        <NotAuthorized>
-          <a>DEVELOPMENT</a>
-        </NotAuthorized>
-      </AuthorizeView>
+      @* page name *@
     </div>
 
     <article class="content px-4">
@@ -34,11 +27,3 @@
   <a href="" class="reload">Reload</a>
   <a class="dismiss">🗙</a>
 </div>
-
-@code
-{
-  // on initialized async
-  protected override async Task OnAfterRenderAsync(bool firstRender)
-  {
-  }
-}
