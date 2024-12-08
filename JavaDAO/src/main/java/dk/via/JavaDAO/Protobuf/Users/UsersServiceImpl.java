@@ -45,7 +45,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   }
 
   @Override
-  public void create(User request,
+  public void create(UserCreate request,
       StreamObserver<User> responseObserver) {
     String password = PasswordHasherUtil.getInstance().hashPassword(request.getPassword());
 
