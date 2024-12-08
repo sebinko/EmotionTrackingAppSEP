@@ -64,7 +64,8 @@ public class AuthService : AuthenticationStateProvider
       new Claim(ClaimTypes.Name, auth?.User?.Username),
       new Claim(ClaimTypes.Email, auth?.User?.Email),
       new Claim(ClaimTypes.NameIdentifier, auth?.User?.Id.ToString()),
-      new Claim("Token", auth?.Token.ToString())
+      new Claim("Token", auth?.Token.ToString()),
+      new Claim("Streak", auth.User.Streak?.ToString())
     };
 
     ClaimsIdentity identity = new ClaimsIdentity(claims, "apiauth");
@@ -119,7 +120,8 @@ public class AuthService : AuthenticationStateProvider
       new Claim(ClaimTypes.Name, auth?.User?.Username),
       new Claim(ClaimTypes.Email, auth?.User?.Email),
       new Claim(ClaimTypes.NameIdentifier, auth?.User?.Id.ToString()),
-      new Claim("Token", auth?.Token.ToString())
+      new Claim("Token", auth?.Token.ToString()),
+      new Claim("Streak", auth.User.Streak?.ToString())
     };
 
     ClaimsIdentity identity = new ClaimsIdentity(claims, "apiauth");
