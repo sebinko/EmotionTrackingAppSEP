@@ -25,7 +25,11 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
     emotionCheckInsDAO.GetAll(request.getUserId()).forEach(emotionCheckIn -> {
       EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
       emotionCheckInBuilder.setEmotion(emotionCheckIn.getEmotion());
-      emotionCheckInBuilder.setDescription(emotionCheckIn.getDescription());
+
+      if (emotionCheckIn.getDescription() != null) {
+        emotionCheckInBuilder.setDescription(emotionCheckIn.getDescription());
+      }
+
       emotionCheckInBuilder.setId(emotionCheckIn.getId());
       emotionCheckInBuilder.setCreatedAt(emotionCheckIn.getCreatedAt());
       emotionCheckInBuilder.setUpdatedAt(emotionCheckIn.getUpdatedAt());
@@ -51,7 +55,10 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
     emotionCheckInBuilder.setCreatedAt(newEmotionCheckIn.getCreatedAt());
     emotionCheckInBuilder.setUpdatedAt(newEmotionCheckIn.getUpdatedAt());
     emotionCheckInBuilder.setUserId(newEmotionCheckIn.getUserId());
-    emotionCheckInBuilder.setDescription(newEmotionCheckIn.getDescription());
+
+    if (newEmotionCheckIn.getDescription() != null) {
+      emotionCheckInBuilder.setDescription(newEmotionCheckIn.getDescription());
+    }
 
     responseObserver.onNext(emotionCheckInBuilder.build());
     responseObserver.onCompleted();
@@ -82,11 +89,14 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
 
     EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
     emotionCheckInBuilder.setEmotion(request.getEmotion());
-    emotionCheckInBuilder.setDescription(existingEmotionCheckIn.getDescription());
     emotionCheckInBuilder.setId(existingEmotionCheckIn.getId());
     emotionCheckInBuilder.setUpdatedAt(existingEmotionCheckIn.getUpdatedAt());
     emotionCheckInBuilder.setUserId(existingEmotionCheckIn.getUserId());
     emotionCheckInBuilder.setCreatedAt(existingEmotionCheckIn.getCreatedAt());
+
+    if (existingEmotionCheckIn.getDescription() != null) {
+      emotionCheckInBuilder.setDescription(existingEmotionCheckIn.getDescription());
+    }
 
     responseObserver.onNext(emotionCheckInBuilder.build());
     responseObserver.onCompleted();

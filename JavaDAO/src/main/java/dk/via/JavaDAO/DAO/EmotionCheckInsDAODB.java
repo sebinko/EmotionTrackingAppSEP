@@ -33,14 +33,13 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
       statement.setInt(1, id);
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {
-        String description = resultSet.getObject(3) != null ? resultSet.getObject(3).toString() : "";
         emotionCheckIn = new EmotionCheckIn(
-            Integer.parseInt(resultSet.getObject(1).toString()),
-            resultSet.getObject(2).toString(),
-            description,
-            resultSet.getObject(4).toString(),
-            resultSet.getObject(5).toString(),
-            Integer.parseInt(resultSet.getObject(6).toString())
+            resultSet.getInt("id"),
+            resultSet.getString("emotion"),
+            resultSet.getString("description"),
+            resultSet.getString("created_at"),
+            resultSet.getString("updated_at"),
+            resultSet.getInt("user_id")
         );
 
       }
@@ -63,12 +62,12 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
       while (resultSet.next()) {
         String description = resultSet.getObject(3) != null ? resultSet.getObject(3).toString() : "";
         EmotionCheckIn emotionCheckIn = new EmotionCheckIn(
-            Integer.parseInt(resultSet.getObject(1).toString()),
-            resultSet.getObject(2).toString(),
-            description,
-            resultSet.getObject(4).toString(),
-            resultSet.getObject(5).toString(),
-            Integer.parseInt(resultSet.getObject(6).toString())
+            resultSet.getInt("id"),
+            resultSet.getString("emotion"),
+            resultSet.getString("description"),
+            resultSet.getString("created_at"),
+            resultSet.getString("updated_at"),
+            resultSet.getInt("user_id")
         );
         emotionCheckIns.add(emotionCheckIn);
       }
@@ -90,13 +89,12 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
 
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {
-        String description = resultSet.getObject(3) != null ? resultSet.getObject(3).toString() : "";
-        emotionCheckIn.setId(Integer.parseInt(resultSet.getObject(1).toString()));
-        emotionCheckIn.setEmotion(resultSet.getObject(2).toString());
-        emotionCheckIn.setDescription(description);
-        emotionCheckIn.setCreatedAt(resultSet.getObject(4).toString());
-        emotionCheckIn.setUpdatedAt(resultSet.getObject(5).toString());
-        emotionCheckIn.setUserId(Integer.parseInt(resultSet.getObject(6).toString()));
+        emotionCheckIn.setId(resultSet.getInt("id"));
+        emotionCheckIn.setEmotion(resultSet.getString("emotion"));
+        emotionCheckIn.setDescription(resultSet.getString("description"));
+        emotionCheckIn.setCreatedAt(resultSet.getString("created_at"));
+        emotionCheckIn.setUpdatedAt(resultSet.getString("updated_at"));
+        emotionCheckIn.setUserId(resultSet.getInt("user_id"));
       }
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -113,7 +111,7 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
     if (emotionCheckInToUpdate == null) {
       throw new RuntimeException("Check-in not found");
     }
-    String sql = "update \"EmotionsTrackingWebsite\".emotion_checkins set emotion= ?, description= ?, updated_at= now() where id=?;";
+    String sql = "update \"EmotionsTrackingWebsite\".emotion_checkins set emotion= ?, description= ?, updated_at= now() where id=?";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setString(1, emotion.getEmotion());
