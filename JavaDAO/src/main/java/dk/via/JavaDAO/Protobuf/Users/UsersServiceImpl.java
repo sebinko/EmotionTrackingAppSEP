@@ -34,7 +34,8 @@ public class UsersServiceImpl extends UsersServiceImplBase {
           setUsername(user.getUsername()).
           setEmail(user.getEmail()).
           setCreatedAt(user.getCreatedAt()).
-          setUpdatedAt(user.getUpdatedAt())
+          setUpdatedAt(user.getUpdatedAt()).
+          setStreak(user.getStreak())
       );
     }
     // TODO Exception Handling
@@ -44,7 +45,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   }
 
   @Override
-  public void create(User request,
+  public void create(UserCreate request,
       StreamObserver<User> responseObserver) {
     String password = PasswordHasherUtil.getInstance().hashPassword(request.getPassword());
 
@@ -53,8 +54,9 @@ public class UsersServiceImpl extends UsersServiceImplBase {
         password,
         request.getEmail(),
         null,
+        null,
         null
-    );
+        );
     newUser = usersDAO.Create(newUser);
     User.Builder userBuilder = User.newBuilder();
     userBuilder.setId(newUser.getId().toString());
@@ -114,6 +116,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     userBuilder.setEmail(userById.getEmail());
     userBuilder.setCreatedAt(userById.getCreatedAt());
     userBuilder.setUpdatedAt(userById.getUpdatedAt());
+    userBuilder.setStreak(userById.getStreak());
     responseObserver.onNext(userBuilder.build());
     responseObserver.onCompleted();
   }
@@ -134,6 +137,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     userBuilder.setEmail(user.getEmail());
     userBuilder.setCreatedAt(user.getCreatedAt());
     userBuilder.setUpdatedAt(user.getUpdatedAt());
+    userBuilder.setStreak(user.getStreak());
     responseObserver.onNext(userBuilder.build());
     responseObserver.onCompleted();
   }
@@ -163,6 +167,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     userBuilder.setEmail(user.getEmail());
     userBuilder.setCreatedAt(user.getCreatedAt());
     userBuilder.setUpdatedAt(user.getUpdatedAt());
+    userBuilder.setStreak(user.getStreak());
     responseObserver.onNext(userBuilder.build());
     responseObserver.onCompleted();
 

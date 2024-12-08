@@ -12,7 +12,7 @@ service UsersService{
   rpc GetByUsername(Username) returns (User) {}
   rpc GetByUsernameAndPassword(UsernameAndPassword) returns(User) {}
   rpc GetAll(Empty) returns (UserList){}
-  rpc Create(User) returns (User){}
+  rpc Create(UserCreate) returns (User){}
   rpc Update(User) returns (User){}
   rpc Delete(User) returns (User){}
 }
@@ -45,12 +45,18 @@ message UserList{
   repeated User users = 1;
 }
 
+message UserCreate {
+  string username = 1;
+  string password = 2;
+  string email = 3;
+}
+
 message User {
   string id = 1;
   string username = 2;
   string password = 3;
   string email = 4;
-  string streak = 5;
+  int32 streak = 5;
   string createdAt = 6;
   string updatedAt = 7;
 }
