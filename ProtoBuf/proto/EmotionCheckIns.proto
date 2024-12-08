@@ -17,9 +17,10 @@ service EmotionCheckInsService {
 message EmotionCheckInMessage {
   int32 id = 1;
   string emotion = 2;
-  string createdAt = 3;
-  string updatedAt = 4;
-  int32 userId = 5;
+  string description = 3;
+  string createdAt = 4;
+  string updatedAt = 5;
+  int32 userId = 6;
 }
 
 message EmotionCheckInIdMessage { int32 id = 1; }
@@ -43,12 +44,14 @@ message TagUpdateMessage {
 message EmotionCheckInCreateMessage {
   string emotion = 1;
   int32 userId = 2;
-  repeated string newTags = 3;
+  string description = 3;
+  repeated string newTags = 4;
 }
 
 message EmotionCheckInUpdateMessage {
   int32 id = 1;
   string emotion = 2;
-  int32 userId = 3;
-  repeated string tags = 4;
+  string description = 3;
+  int32 userId = 4;
+  repeated string tags = 5;
 }

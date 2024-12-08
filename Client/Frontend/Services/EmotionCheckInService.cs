@@ -78,14 +78,15 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
     if (!response.IsSuccessStatusCode)
     {
       var exStr = await response.Content.ReadAsStringAsync();
-      var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
+      /*var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
         new JsonSerializerOptions
         {
           PropertyNameCaseInsensitive = true
         });
+        */
 
-      if (apiException is not null)
-        throw new Exception($"{response.StatusCode}: {apiException.Error}");
+      /*if (apiException is not null)
+        throw new Exception($"{response.StatusCode}: {apiException.Error}");*/
       throw new Exception($"{response.StatusCode}: {exStr}");
     }
 
@@ -109,7 +110,8 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
     if (!response.IsSuccessStatusCode)
     {
       var exStr = await response.Content.ReadAsStringAsync();
-      var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
+      Console.WriteLine(exStr);
+      /*var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
         new JsonSerializerOptions
         {
           PropertyNameCaseInsensitive = true
@@ -117,7 +119,7 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
 
       if (apiException is not null)
         throw new Exception($"{response.StatusCode}: {apiException.Error}");
-      throw new Exception($"{response.StatusCode}: {exStr}");
+      throw new Exception($"{response.StatusCode}: {exStr}");*/
     }
 
     var responseData = await response.Content.ReadAsStringAsync();

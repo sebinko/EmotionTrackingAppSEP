@@ -25,6 +25,11 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
     emotionCheckInsDAO.GetAll(request.getUserId()).forEach(emotionCheckIn -> {
       EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
       emotionCheckInBuilder.setEmotion(emotionCheckIn.getEmotion());
+
+      if (emotionCheckIn.getDescription() != null) {
+        emotionCheckInBuilder.setDescription(emotionCheckIn.getDescription());
+      }
+
       emotionCheckInBuilder.setId(emotionCheckIn.getId());
       emotionCheckInBuilder.setCreatedAt(emotionCheckIn.getCreatedAt());
       emotionCheckInBuilder.setUpdatedAt(emotionCheckIn.getUpdatedAt());
@@ -42,6 +47,7 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
     dk.via.JavaDAO.Models.EmotionCheckIn newEmotionCheckIn = new dk.via.JavaDAO.Models.EmotionCheckIn();
     newEmotionCheckIn.setEmotion(request.getEmotion());
     newEmotionCheckIn.setUserId((request.getUserId()));
+    newEmotionCheckIn.setDescription(request.getDescription());
     newEmotionCheckIn = emotionCheckInsDAO.Create(newEmotionCheckIn, null);
     EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
     emotionCheckInBuilder.setEmotion(newEmotionCheckIn.getEmotion());
@@ -49,6 +55,10 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
     emotionCheckInBuilder.setCreatedAt(newEmotionCheckIn.getCreatedAt());
     emotionCheckInBuilder.setUpdatedAt(newEmotionCheckIn.getUpdatedAt());
     emotionCheckInBuilder.setUserId(newEmotionCheckIn.getUserId());
+
+    if (newEmotionCheckIn.getDescription() != null) {
+      emotionCheckInBuilder.setDescription(newEmotionCheckIn.getDescription());
+    }
 
     responseObserver.onNext(emotionCheckInBuilder.build());
     responseObserver.onCompleted();
@@ -74,6 +84,7 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
     }
 
     existingEmotionCheckIn.setEmotion(request.getEmotion());
+    existingEmotionCheckIn.setDescription(request.getDescription());
     emotionCheckInsDAO.Update(existingEmotionCheckIn,null,null);
 
     EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
@@ -82,6 +93,10 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
     emotionCheckInBuilder.setUpdatedAt(existingEmotionCheckIn.getUpdatedAt());
     emotionCheckInBuilder.setUserId(existingEmotionCheckIn.getUserId());
     emotionCheckInBuilder.setCreatedAt(existingEmotionCheckIn.getCreatedAt());
+
+    if (existingEmotionCheckIn.getDescription() != null) {
+      emotionCheckInBuilder.setDescription(existingEmotionCheckIn.getDescription());
+    }
 
     responseObserver.onNext(emotionCheckInBuilder.build());
     responseObserver.onCompleted();

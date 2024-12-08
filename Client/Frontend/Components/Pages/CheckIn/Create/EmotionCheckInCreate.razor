@@ -10,7 +10,7 @@
   <AntiforgeryToken/>
   <div class="form-group">
     <label for="description">Description</label>
-    <input type="text" class="form-control" id="description" placeholder="Enter Description">
+    <input type="text" class="form-control" id="description" placeholder="Enter Description" @bind="description">
     <small id="emailHelp" class="form-text text-muted">Describe what were you doing.</small>
   </div>
 
@@ -22,18 +22,19 @@
 @code {
   [Parameter] public required string color { get; set; }
   [Parameter] public required string emotion { get; set; }
-
+  [Parameter] public string description { get; set; }
+  
   private async Task Submit()
   {
     var data = new EmotionCheckInCreateDTO
     {
       Emotion = emotion,
+      Description = description,
       Tags = new List<string>()
     };
-
+    Console.WriteLine(description);
     await EmotionCheckInService.Create(data);
-
-    NavigationManager.NavigateTo("/CheckIn");
+    
+    NavigationManager.NavigateTo($"/CheckIn/");  
   }
-
 }

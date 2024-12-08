@@ -4,6 +4,7 @@ public class EmotionCheckIn {
 
   private Integer id;
   private String emotion;
+  private String description;
   private String createdAt;
   private String updatedAt;
   private Integer userId;
@@ -11,15 +12,17 @@ public class EmotionCheckIn {
   public EmotionCheckIn() {
     id = null;
     emotion = null;
+    description = null;
     createdAt = null;
     updatedAt = null;
     userId = null;
   }
 
-  public EmotionCheckIn(Integer id, String emotion, String createdAt,
+  public EmotionCheckIn(Integer id, String emotion, String description, String createdAt,
       String updatedAt, Integer userId) {
     this.id = id;
     this.emotion = emotion;
+    this.description = description;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.userId = userId;
@@ -39,6 +42,14 @@ public class EmotionCheckIn {
 
   public void setEmotion(String emotion) {
     this.emotion = emotion;
+  }
+
+  public String getDescription(){
+    return description;
+  }
+
+  public void setDescription(String description){
+    this.description = description;
   }
 
   public String getCreatedAt() {

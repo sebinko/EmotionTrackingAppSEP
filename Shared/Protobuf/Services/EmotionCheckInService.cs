@@ -1,4 +1,5 @@
-﻿using API.DTO;
+﻿using System.ComponentModel;
+using API.DTO;
 using Grpc.Core;
 using Grpc.Net.Client;
 
@@ -22,6 +23,7 @@ public class EmotionCheckInService
       {
         UserId = Convert.ToInt32(emotionCheckIn.UserId),
         Emotion = emotionCheckIn.Emotion,
+        Description = emotionCheckIn.Description,
         CreatedAt = DateTime.Parse(emotionCheckIn.CreatedAt).ToString(),
         UpdatedAt = DateTime.Parse(emotionCheckIn.UpdatedAt).ToString(),
         Id = Convert.ToInt32(emotionCheckIn.Id)
@@ -44,6 +46,7 @@ public class EmotionCheckInService
       {
         UserId = userId,
         Emotion = emotionCheckIn.Emotion,
+        Description = emotionCheckIn.Description??"",
         NewTags = { emotionCheckIn.Tags }
       });
 
@@ -51,6 +54,7 @@ public class EmotionCheckInService
       {
         UserId = Convert.ToInt32(reply.UserId),
         Emotion = reply.Emotion,
+        Description = reply.Description,
         CreatedAt = DateTime.Parse(reply.CreatedAt).ToString(),
         UpdatedAt = DateTime.Parse(reply.UpdatedAt).ToString(),
         Id = Convert.ToInt32(reply.Id)
@@ -74,6 +78,7 @@ public class EmotionCheckInService
         Emotion = emotionCheckIn.Emotion,
         Id = emotionCheckIn.id,
         UserId = userId,
+        Description = emotionCheckIn.Description
       }
       );
 
@@ -81,6 +86,7 @@ public class EmotionCheckInService
       {
         UserId = Convert.ToInt32(reply.UserId),
         Emotion = reply.Emotion,
+        Description = reply.Description,
         CreatedAt = DateTime.Parse(reply.CreatedAt).ToString(),
         UpdatedAt = DateTime.Parse(reply.UpdatedAt).ToString(),
         Id = Convert.ToInt32(reply.Id)
@@ -108,6 +114,7 @@ public class EmotionCheckInService
       {
         UserId = Convert.ToInt32(reply.UserId),
         Emotion = reply.Emotion,
+        Description = reply.Description,
         CreatedAt = DateTime.Parse(reply.CreatedAt).ToString(),
         UpdatedAt = DateTime.Parse(reply.UpdatedAt).ToString(),
         Id = Convert.ToInt32(reply.Id)
