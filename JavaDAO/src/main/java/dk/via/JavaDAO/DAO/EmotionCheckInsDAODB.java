@@ -7,28 +7,32 @@ import dk.via.JavaDAO.Util.Interfaces.DBConnector;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import org.postgresql.util.PSQLState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
 
   private final DBConnector connector;
+  private final TagsDAO tagsDAO;
   private final Logger logger = LoggerFactory.getLogger(EmotionCheckInsDAODB.class.getName());
 
   @Inject
-  public EmotionCheckInsDAODB(DBConnector connector) {
+  public EmotionCheckInsDAODB(DBConnector connector, TagsDAO tagsDAO) {
     super();
     this.connector = connector;
+    this.tagsDAO = tagsDAO;
   }
 
   @Override
-  public EmotionCheckIn GetSingle(int id) {
+  public EmotionCheckIn GetSingle(int id) throws SQLException {
     Connection connection = connector.getConnection();
     String sql = "select * from \"EmotionsTrackingWebsite\".emotion_checkins where id = ?;";
     EmotionCheckIn emotionCheckIn = null;
 
-    try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, id);
       ResultSet resultSet = statement.executeQuery();
@@ -43,24 +47,22 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
         );
 
       }
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+
     return emotionCheckIn;
   }
 
   @Override
-  public ArrayList<EmotionCheckIn> GetAll(int userId) {
+  public ArrayList<EmotionCheckIn> GetAll(int userId) throws SQLException {
     Connection connection = connector.getConnection();
     String sql = "select * from \"EmotionsTrackingWebsite\".emotion_checkins where user_id = ?;";
     ArrayList<EmotionCheckIn> emotionCheckIns = new ArrayList<>();
 
-    try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, userId);
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {
-        String description = resultSet.getObject(3) != null ? resultSet.getObject(3).toString() : "";
+        String description =
+            resultSet.getObject(3) != null ? resultSet.getObject(3).toString() : "";
         EmotionCheckIn emotionCheckIn = new EmotionCheckIn(
             resultSet.getInt("id"),
             resultSet.getString("emotion"),
@@ -71,62 +73,76 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
         );
         emotionCheckIns.add(emotionCheckIn);
       }
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+
     return emotionCheckIns;
   }
 
   @Override
-  public EmotionCheckIn Create(EmotionCheckIn emotionCheckIn, ArrayList<String> tags) {
+  public EmotionCheckIn Create(EmotionCheckIn emotionCheckIn, List<Tag> tags)
+      throws SQLException {
     Connection connection = connector.getConnection();
     String sql = "insert into \"EmotionsTrackingWebsite\".emotion_checkins (emotion, user_id, description)  values (?, ?, ?) returning *;";
-    try {
-      PreparedStatement statement = connection.prepareStatement(sql);
-      statement.setString(1, emotionCheckIn.getEmotion());
-      statement.setInt(2, emotionCheckIn.getUserId());
-      statement.setString(3, emotionCheckIn.getDescription());
 
-      ResultSet resultSet = statement.executeQuery();
-      while (resultSet.next()) {
-        emotionCheckIn.setId(resultSet.getInt("id"));
-        emotionCheckIn.setEmotion(resultSet.getString("emotion"));
-        emotionCheckIn.setDescription(resultSet.getString("description"));
-        emotionCheckIn.setCreatedAt(resultSet.getString("created_at"));
-        emotionCheckIn.setUpdatedAt(resultSet.getString("updated_at"));
-        emotionCheckIn.setUserId(resultSet.getInt("user_id"));
+    PreparedStatement statement = connection.prepareStatement(sql);
+    statement.setString(1, emotionCheckIn.getEmotion());
+    statement.setInt(2, emotionCheckIn.getUserId());
+    statement.setString(3, emotionCheckIn.getDescription());
+
+    ResultSet resultSet = statement.executeQuery();
+    while (resultSet.next()) {
+      emotionCheckIn.setId(resultSet.getInt("id"));
+      emotionCheckIn.setEmotion(resultSet.getString("emotion"));
+      emotionCheckIn.setDescription(resultSet.getString("description"));
+      emotionCheckIn.setCreatedAt(resultSet.getString("created_at"));
+      emotionCheckIn.setUpdatedAt(resultSet.getString("updated_at"));
+      emotionCheckIn.setUserId(resultSet.getInt("user_id"));
+    }
+
+    if (tags != null) {
+      for (Tag tag : tags) {
+        System.out.println("Assigning tag: " + tag.getKey() + ";" + tag.getType());
+        tagsDAO.AssignTag(tag, emotionCheckIn);
       }
-    } catch (Exception e) {
-      throw new RuntimeException(e);
     }
 
     return emotionCheckIn;
   }
 
   @Override
-  public EmotionCheckIn Update(EmotionCheckIn emotion, ArrayList<Tag> existingTags,
-      ArrayList<String> newTags) {
+  public EmotionCheckIn Update(EmotionCheckIn emotion, List<Tag> tags) throws SQLException {
     Connection connection = connector.getConnection();
     EmotionCheckIn emotionCheckInToUpdate = GetSingle(emotion.getId());
     if (emotionCheckInToUpdate == null) {
-      throw new RuntimeException("Check-in not found");
+      throw new SQLException("EmotionCheckIn not found", PSQLState.NO_DATA.getState());
     }
+
     String sql = "update \"EmotionsTrackingWebsite\".emotion_checkins set emotion= ?, description= ?, updated_at= now() where id=?";
-    try {
-      PreparedStatement statement = connection.prepareStatement(sql);
-      statement.setString(1, emotion.getEmotion());
-      statement.setString(2, emotion.getDescription());
-      statement.setInt(3, emotion.getId());
-      statement.executeUpdate();
-      // TODO refetch user from db before returning
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+    PreparedStatement statement = connection.prepareStatement(sql);
+    statement.setString(1, emotion.getEmotion());
+    statement.setString(2, emotion.getDescription());
+    statement.setInt(3, emotion.getId());
+    statement.executeUpdate();
+
+    if (tags != null) {
+      List<Tag> existingTags = tagsDAO.GetAllForCheckIn(emotion);
+
+      for (Tag existingTag : existingTags) {
+        if (!tags.contains(existingTag)) {
+          tagsDAO.RemoveTag(existingTag, emotion);
+        }
+      }
+
+      for (Tag tag : tags) {
+        tagsDAO.AssignTag(tag, emotion);
+      }
+
     }
+
     return emotion;
   }
 
   @Override
-  public EmotionCheckIn Delete(int id) {
+  public EmotionCheckIn Delete(int id) throws SQLException {
     Connection connection = connector.getConnection();
 
     EmotionCheckIn emotionCheckInToDelete = GetSingle(id);
@@ -134,13 +150,9 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
       throw new RuntimeException("EmotionCheckIn not found");
     }
     String sql = "delete from \"EmotionsTrackingWebsite\".emotion_checkins where id= ?;";
-    try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, id);
       statement.executeUpdate();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
 
     return emotionCheckInToDelete;
   }

@@ -1,17 +1,19 @@
 package dk.via.JavaDAO.Models;
 
+import java.sql.Timestamp;
+
 public class User {
 
   private Integer id;
   private String username;
   private String password;
   private String email;
-  private String createdAt;
-  private String updatedAt;
+  private Timestamp createdAt;
+  private Timestamp updatedAt;
   private Integer streak;
 
   public User(Integer id, String username, String password, String email,
-      String createdAt, String updatedAt, Integer streak) {
+      Timestamp createdAt, Timestamp updatedAt, Integer streak) {
     this.id = id;
     this.username = username;
     this.password = password;
@@ -21,8 +23,8 @@ public class User {
     this.streak = streak;
   }
 
-  public User(String username, String password, String email, String createdAt,
-      String updatedAt, Integer streak) {
+  public User(String username, String password, String email, Timestamp createdAt,
+      Timestamp updatedAt, Integer streak) {
     this.username = username;
     this.password = password;
     this.email = email;
@@ -63,19 +65,19 @@ public class User {
     this.email = email;
   }
 
-  public String getCreatedAt() {
+  public Timestamp getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(String createdAt) {
+  public void setCreatedAt(Timestamp createdAt) {
     this.createdAt = createdAt;
   }
 
-  public String getUpdatedAt() {
+  public Timestamp getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(String updatedAt) {
+  public void setUpdatedAt(Timestamp updatedAt) {
     this.updatedAt = updatedAt;
   }
 

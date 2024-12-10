@@ -44,97 +44,97 @@ VALUES ('Energized', 5),
        ('Enthusiastic', 5),
        ('Blessed', 5);
 
-INSERT INTO "EmotionsTrackingWebsite".tags (key, user_id)
+INSERT INTO "EmotionsTrackingWebsite".tags (key, user_id, type)
 VALUES
 -- Check-in ID 1
-('Home', 1),
-('Relaxing', 1),
+('Home', 1, 'WHERE'),
+('Relaxing', 1, 'WHAT'),
 
 -- Check-in ID 2
-('With Friends', 1),
+('With Friends', 1, 'WITH'),
 
 -- Check-in ID 3
-('At Work', 1),
-('Busy', 1),
-('Focused', 1),
+('At Work', 1, 'WHERE'),
+('Busy', 1, 'WHAT'),
+('Focused', 1, 'WHAT'),
 
 -- Check-in ID 4
-('Listening to Music', 1),
+('Listening to Music', 1, 'WHAT'),
 
 -- Check-in ID 5
-('On a Walk', 1),
-('Nature', 1),
+('On a Walk', 1, 'WHERE'),
+('Nature', 1, 'WHERE'),
 
 -- Check-in ID 6
-('Reading', 2),
+('Reading', 2, 'WHAT'),
 
 -- Check-in ID 7
-('Gym', 2),
-('Exercising', 2),
+('Gym', 2, 'WHERE'),
+('Exercising', 2, 'WHAT'),
 
 -- Check-in ID 8
-('Planning', 2),
+('Planning', 2, 'WHAT'),
 
 -- Check-in ID 9
-('Cooking', 2),
-('Family Time', 2),
+('Cooking', 2, 'WHAT'),
+('Family Time', 2, 'WITH'),
 
 -- Check-in ID 10
-('Celebrating', 2),
+('Celebrating', 2, 'WHAT'),
 
 -- Check-in ID 11
-('Home', 3),
-('Quiet', 3),
+('Home', 3, 'WHERE'),
+('Quiet', 3, 'WHAT'),
 
 -- Check-in ID 12
-('Team Meeting', 3),
+('Team Meeting', 3, 'WHAT'),
 
 -- Check-in ID 13
-('Morning Coffee', 3),
-('Reflection', 3),
+('Morning Coffee', 3, 'WHAT'),
+('Reflection', 3, 'WHAT'),
 
 -- Check-in ID 14
-('On Vacation', 3),
-('Relaxing', 3),
+('On Vacation', 3, 'WHERE'),
+('Relaxing', 3, 'WHAT'),
 
 -- Check-in ID 15
-('Studying', 3),
+('Studying', 3, 'WHAT'),
 
 -- Check-in ID 16
-('Gaming', 4),
-('Online', 4),
+('Gaming', 4, 'WHAT'),
+('Online', 4, 'WHERE'),
 
 -- Check-in ID 17
-('Driving', 4),
+('Driving', 4, 'WHAT'),
 
 -- Check-in ID 18
-('Exploring', 4),
-('Adventure', 4),
+('Exploring', 4, 'WHAT'),
+('Adventure', 4, 'WHAT'),
 
 -- Check-in ID 19
-('With Friends', 4),
-('Fun', 4),
+('With Friends', 4, 'WITH'),
+('Fun', 4, 'WHAT'),
 
 -- Check-in ID 20
-('Rainy Day', 4),
+('Rainy Day', 4, 'WHERE'),
 
 -- Check-in ID 21
-('Beach', 5),
-('Sunshine', 5),
+('Beach', 5, 'WHERE'),
+('Sunshine', 5, 'WHERE'),
 
 -- Check-in ID 22
-('Concert', 5),
+('Concert', 5, 'WHERE'),
 
 -- Check-in ID 23
-('Family Dinner', 5),
-('Laughing', 5),
+('Family Dinner', 5, 'WITH'),
+('Laughing', 5, 'WHAT'),
 
 -- Check-in ID 24
-('Working Out', 5),
+('Working Out', 5, 'WHAT'),
 
 -- Check-in ID 25
-('Evening Walk', 5),
-('Alone Time', 5);
+('Evening Walk', 5, 'WHERE'),
+('Alone Time', 5, 'WHAT');
 
 INSERT INTO "EmotionsTrackingWebsite".tag_emotions (emotion_checkin_id, tag_id)
 VALUES
