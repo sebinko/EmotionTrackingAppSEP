@@ -40,6 +40,7 @@ public class Main {
         .addService(injector.getInstance(UsersServiceImpl.class))
         .addService(injector.getInstance(EmotionCheckInsServiceImpl.class))
         .addService(injector.getInstance(UserFriendsServiceImpl.class))
+        .addService(injector.getInstance(dk.via.JavaDAO.Protobuf.Users.UserTagsServiceImpl.class))
         .build();
 
     try {
