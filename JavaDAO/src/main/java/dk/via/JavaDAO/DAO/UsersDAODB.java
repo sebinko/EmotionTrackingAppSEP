@@ -74,7 +74,8 @@ public class UsersDAODB implements UsersDAO {
 
     statement.executeUpdate();
 
-    // TODO refetch user from db before returning
+    user = GetSingle(user.getId());
+
     return user;
   }
 

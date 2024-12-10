@@ -17,7 +17,7 @@ public class PSQLExceptionParser {
     // foreign key violation
     if (PSQLState.FOREIGN_KEY_VIOLATION.getState().equals(e.getSQLState())) {
       responseObserver.onError(
-          Status.NOT_FOUND.withCause(e).withDescription(e.getMessage()).asException());
+          Status.NOT_FOUND.withCause(e).withDescription("Foreign Entity not found.").asException());
     }
 
     // check violation

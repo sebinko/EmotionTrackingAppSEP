@@ -27,7 +27,7 @@ public class Main {
    * @param args command line arguments
    */
   public static void main(String[] args) {
-    Injector injector = Guice.createInjector(new AppModule());
+    Injector injector = Guice.createInjector(new dk.via.JavaDAO.AppModule());
 
     AppConfig appConfig = injector.getInstance(AppConfig.class);
     PasswordHasherUtil.setAppConfig(appConfig);
