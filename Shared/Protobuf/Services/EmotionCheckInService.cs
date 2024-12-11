@@ -47,13 +47,6 @@ public class EmotionCheckInService
     {
       UserId = userId
     });
-
-    var test = reply.EmotionCheckIns.First().Tags.Select(tag => new TagDTO
-    {
-      Key = tag.Key,
-      Type = (TagType)Enum.Parse(typeof(TagType), tag.Type.ToString(), true)
-    }).ToList();
-
   
     var repl = reply.EmotionCheckIns.Select(emotionCheckIn => new EmotionCheckInDTO
     {

@@ -24,7 +24,11 @@
     <TagAdd Tags="whereTags" ExistingTags="existingWhereTags" TagsChanged="TagsChanged"></TagAdd>
     <TagPicker Tags="whereTags" TagType="TagType.WHERE" TagsChanged="TagsChanged"></TagPicker>
     <TagDisplay Tags="whereTags"></TagDisplay>
-    <button class="btn btn-success" @onclick="Save">Save</button><br/><hr/>
+    <button class="btn btn-success" @onclick="Save">
+      Save
+    </button>
+    <br/>
+    <hr/>
     <button class="btn btn-danger" @onclick="NavigateToDeletePage">Delete</button>
     <button class="btn btn-primary" @onclick="NavigateToPickColorUpdatePage">Edit Emotion</button>
     <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
@@ -35,7 +39,7 @@
   [Parameter] public int Id { get; set; }
   private EmotionCheckInDTO? emotionCheckIn;
   public string? Description { get; set; }
-  
+
   private bool allowFormSubmit = true;
 
   List<TagDTO> whatTags = new List<TagDTO>();
@@ -50,34 +54,33 @@
   {
     emotionCheckIn = await EmotionCheckInService.Get(Id);
     Description = emotionCheckIn?.Description;
-    
+
     var existingTags = await UserTagsService.GetAll();
-    
+
     existingWhatTags = existingTags.Where(t => t.Type == TagType.WHAT).ToList();
-    existingWithTags = existingTags.Where(t => t.Type== TagType.WITH).ToList();
+    existingWithTags = existingTags.Where(t => t.Type == TagType.WITH).ToList();
     existingWhereTags = existingTags.Where(t => t.Type == TagType.WHERE).ToList();
-    
+
     whatTags = emotionCheckIn.Tags.Where(t => t.Type == TagType.WHAT).ToList();
     withTags = emotionCheckIn.Tags.Where(t => t.Type == TagType.WITH).ToList();
     whereTags = emotionCheckIn.Tags.Where(t => t.Type == TagType.WHERE).ToList();
   }
-  
+
   private async Task TagsChanged(List<TagDTO> tags)
   {
-    // call state has changed
     await InvokeAsync(StateHasChanged);
   }
-  
+
   private async Task Save()
   {
     emotionCheckIn.Description = Description;
-    
+
     var combinedTags = new List<TagDTO>();
-    
+
     combinedTags.AddRange(whatTags);
     combinedTags.AddRange(withTags);
     combinedTags.AddRange(whereTags);
-    
+
     await EmotionCheckInService.Update(Id, new EmotionCheckInUpdateDTO
     {
       Description = emotionCheckIn.Description,
@@ -85,10 +88,10 @@
       id = emotionCheckIn.Id.Value,
       Tags = combinedTags
     });
-    
+
     NavigationManager.NavigateTo("CheckIn");
   }
-  
+
   private void NavigateToPickColorUpdatePage()
   {
     NavigationManager.NavigateTo($"/CheckIn/PickColorUpdate/{Id}");
@@ -103,4 +106,5 @@
   {
     NavigationManager.NavigateTo("/CheckIn");
   }
+
 }

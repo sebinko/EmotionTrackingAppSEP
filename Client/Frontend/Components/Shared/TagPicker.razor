@@ -1,10 +1,14 @@
 @using API.DTO
 <div class="tag-picker">
-  <input type="text" class="form-control"
-         @bind-value="CurrentTag"
-         @bind-value:event="oninput"
-         @onkeydown="HandleKeyPress"
-         placeholder="Add a tag..." />
+  <div class="input-group">
+    <input type="text" class="form-control"
+           @bind-value="CurrentTag"
+           @bind-value:event="oninput"
+           placeholder="Add a tag..." />
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" type="button" @onclick="AddTag">+</button>
+    </div>
+  </div>
 </div>
 
 @code {
@@ -19,9 +23,9 @@
 
   private string CurrentTag;
 
-  private async Task HandleKeyPress(KeyboardEventArgs e)
+  private async Task AddTag()
   {
-    if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(CurrentTag))
+    if (!string.IsNullOrWhiteSpace(CurrentTag))
     {
       var newTag = new TagDTO { Key = CurrentTag.Trim(), Type = TagType };
       if (!Tags.Any(t => t.Key == newTag.Key)) // Prevent duplicates

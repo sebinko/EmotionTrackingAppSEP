@@ -10,6 +10,6 @@ public class UserTagsService (AuthedClient httpClient) : IUserTagsService
   {
     var response = await httpClient.GetAsync("UserTags");
 
-    return await new ApiParsingUtils<List<TagDTO>>().Process(response);
+    return await new ApiParsingUtils<List<TagDTO>>().Process(response) ?? new List<TagDTO>();
   }
 }

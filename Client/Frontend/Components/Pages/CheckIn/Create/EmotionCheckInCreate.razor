@@ -8,7 +8,7 @@
 @inject IUserTagsService UserTagsService
 @inject NavigationManager NavigationManager
 
-<form method="post" @onsubmit="Submit" @onkeydown="HandleKeyDown">
+<form method="post" @onsubmit="Submit" >
   <AntiforgeryToken/>
   <div class="form-group">
     <label for="description">Description</label>
@@ -29,8 +29,7 @@
     <TagDisplay Tags="whereTags"></TagDisplay>
   </div>
 
-  <div>
-    <button class="btn btn-outline-primary" type="submit">Submit</button>
+  <div><button class="btn btn-outline-primary" type="submit">Submit</button>
   </div>
 </form>
 
@@ -38,8 +37,6 @@
   [Parameter] public required string color { get; set; }
   [Parameter] public required string emotion { get; set; }
   [Parameter] public string description { get; set; }
-
-  private bool allowFormSubmit = true;
 
   List<TagDTO> whatTags = new List<TagDTO>();
   List<TagDTO> withTags = new List<TagDTO>();
@@ -52,9 +49,9 @@
   protected override async Task OnInitializedAsync()
   {
     var existingTags = await UserTagsService.GetAll();
-    
+
     existingWhatTags = existingTags.Where(t => t.Type == TagType.WHAT).ToList();
-    existingWithTags = existingTags.Where(t => t.Type== TagType.WITH).ToList();
+    existingWithTags = existingTags.Where(t => t.Type == TagType.WITH).ToList();
     existingWhereTags = existingTags.Where(t => t.Type == TagType.WHERE).ToList();
   }
 
@@ -65,30 +62,21 @@
 
   private async Task Submit()
   {
-    if (!allowFormSubmit)
-    {
-      return;
-    }
-    
     var combinedTags = new List<TagDTO>();
-    
+
     combinedTags.AddRange(whatTags);
     combinedTags.AddRange(withTags);
     combinedTags.AddRange(whereTags);
-    
+
     var data = new EmotionCheckInCreateDTO
     {
       Emotion = emotion,
       Description = description,
       Tags = combinedTags
     };
+
     await EmotionCheckInService.Create(data);
 
     NavigationManager.NavigateTo($"/CheckIn/");
-  }
-
-  protected void HandleKeyDown(KeyboardEventArgs args)
-  {
-    allowFormSubmit = !(args.Key == "Enter");
   }
 }

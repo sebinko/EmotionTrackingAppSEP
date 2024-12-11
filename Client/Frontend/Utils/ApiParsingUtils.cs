@@ -1,5 +1,5 @@
+using System.Net.Http;
 using System.Text.Json;
-using SharedUtil;
 
 namespace Frontend.Utils;
 
@@ -9,25 +9,26 @@ public class ApiParsingUtils<T>
   {
     if (!response.IsSuccessStatusCode)
     {
-      var exStr = await response.Content.ReadAsStringAsync();
-      var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
-        new JsonSerializerOptions
-        {
-          PropertyNameCaseInsensitive = true
-        });
-
-      if (apiException is not null)
-        throw new Exception($"{response.StatusCode}: {apiException.Error}");
-      throw new Exception($"{response.StatusCode}: {exStr}");
+      throw new Exception($"InternalServerError: {response.ReasonPhrase}");
     }
 
-    var responseData = await response.Content.ReadAsStringAsync();
+    var content = await response.Content.ReadAsStringAsync();
+    if (string.IsNullOrEmpty(content))
+    {
+      return default;
+    }
 
     var options = new JsonSerializerOptions
     {
       PropertyNameCaseInsensitive = true
     };
 
-    return JsonSerializer.Deserialize<T>(responseData, options);
+    var result = JsonSerializer.Deserialize<T>(content, options);
+    if (result == null)
+    {
+      throw new Exception("InternalServerError: Sequence contains no elements");
+    }
+
+    return result;
   }
 }
