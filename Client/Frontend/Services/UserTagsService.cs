@@ -10,18 +10,6 @@ public class UserTagsService (AuthedClient httpClient) : IUserTagsService
   {
     var response = await httpClient.GetAsync("UserTags");
 
-    var responseData = await response.Content.ReadAsStringAsync();
-    
-    if(!response.IsSuccessStatusCode)
-    {
-      throw new Exception(responseData);
-    }
-    
-    var options = new JsonSerializerOptions
-    {
-      PropertyNameCaseInsensitive = true
-    };
-    
-    return JsonSerializer.Deserialize<List<TagDTO>>(responseData, options);
+    return await new ApiParsingUtils<List<TagDTO>>().Process(response);
   }
 }
