@@ -1,0 +1,25 @@
+@using API.DTO
+
+<div class="tags mt-2">
+  @foreach (var tag in Tags)
+  {
+    <span class="badge bg-secondary me-1">
+      @tag.Key
+      <button type="button" class="btn-close btn-close-white ms-1"
+              @onclick="() => RemoveTag(tag)"></button>
+    </span>
+  }
+</div>
+
+@code {
+  [Parameter]
+  public List<TagDTO> Tags { get; set; } = new List<TagDTO>();
+
+  [Parameter]
+  public EventCallback<TagDTO> OnTagRemoved { get; set; }
+
+  private async Task RemoveTag(TagDTO tag)
+  {
+    await OnTagRemoved.InvokeAsync(tag);
+  }
+}
