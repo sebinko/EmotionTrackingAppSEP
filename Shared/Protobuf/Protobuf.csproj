@@ -21,11 +21,18 @@
         <Protobuf Include="../../ProtoBuf/proto/Entities.proto" GrpcServices="Entities"/>
         <Protobuf Include="../../ProtoBuf/proto/Users.proto" GrpcServices="Users"/>
         <Protobuf Include="../../ProtoBuf/proto/EmotionCheckIns.proto" GrpcServices="EmotionCheckIns"/>
+        <Protobuf Include="../../ProtoBuf/proto/Reactions.proto" GrpcServices="Reactions"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\DTO\DTO.csproj" />
         <ProjectReference Include="..\Entities\Entities.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="..\..\ProtoBuf\proto\Reactions.proto">
+        <Link>proto\Reactions.proto</Link>
+      </Compile>
     </ItemGroup>
 
 </Project>
