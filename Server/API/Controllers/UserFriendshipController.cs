@@ -6,6 +6,9 @@ using Protobuf.Services;
 
 namespace API.Controllers;
 
+[ApiController]
+[Route("[controller]")]
+
 public class UserFriendshipController (UserFriendsService userFriendsService) : ControllerBase
 {
   [HttpPost]

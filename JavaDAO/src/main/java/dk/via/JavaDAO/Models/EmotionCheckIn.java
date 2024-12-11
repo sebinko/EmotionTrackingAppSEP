@@ -1,5 +1,7 @@
 package dk.via.JavaDAO.Models;
 
+import java.util.List;
+
 public class EmotionCheckIn {
 
   private Integer id;
@@ -8,6 +10,7 @@ public class EmotionCheckIn {
   private String createdAt;
   private String updatedAt;
   private Integer userId;
+  private List<Tag> tags;
 
   public EmotionCheckIn() {
     id = null;

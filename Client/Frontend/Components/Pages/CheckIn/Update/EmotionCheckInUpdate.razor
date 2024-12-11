@@ -4,6 +4,7 @@
 @inject NavigationManager NavigationManager
 @inject IEmotionCheckInService EmotionCheckInService
 @inject IEmotionsService EmotionsService
+@inject IUserTagsService UserTagsService
 
 <h3 style="text-align: center;">Update Emotion Check-In</h3>
 
@@ -48,12 +49,14 @@
   {
     if (emotionCheckIn != null)
     {
+      var existingTags = await UserTagsService.GetAll();
+      
       emotionCheckIn.Emotion = Emotion;
       await EmotionCheckInService.Update(Id, new EmotionCheckInUpdateDTO
       {
         id = emotionCheckIn.Id.Value,
         Emotion = emotionCheckIn.Emotion,
-        Tags = new List<string>()
+        Tags = existingTags
       });
       NavigationManager.NavigateTo("/CheckIn");
     }

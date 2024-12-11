@@ -27,7 +27,7 @@ public class Main {
    * @param args command line arguments
    */
   public static void main(String[] args) {
-    Injector injector = Guice.createInjector(new AppModule());
+    Injector injector = Guice.createInjector(new dk.via.JavaDAO.AppModule());
 
     AppConfig appConfig = injector.getInstance(AppConfig.class);
     PasswordHasherUtil.setAppConfig(appConfig);
@@ -40,6 +40,7 @@ public class Main {
         .addService(injector.getInstance(UsersServiceImpl.class))
         .addService(injector.getInstance(EmotionCheckInsServiceImpl.class))
         .addService(injector.getInstance(UserFriendsServiceImpl.class))
+        .addService(injector.getInstance(dk.via.JavaDAO.Protobuf.Users.UserTagsServiceImpl.class))
         .build();
 
     try {

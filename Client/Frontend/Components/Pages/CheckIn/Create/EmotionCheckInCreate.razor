@@ -3,19 +3,33 @@
 @using Frontend.Services
 @using Frontend.Services.Interfaces
 @using Microsoft.AspNetCore.Authorization
+@using Frontend.Components.Shared
 @inject IEmotionCheckInService EmotionCheckInService
+@inject IUserTagsService UserTagsService
 @inject NavigationManager NavigationManager
 
-<form method="post" @onsubmit="Submit" @formname="starship-plain-form">
+<form method="post" @onsubmit="Submit" >
   <AntiforgeryToken/>
   <div class="form-group">
     <label for="description">Description</label>
-    <input type="text" class="form-control" id="description" placeholder="Enter Description" @bind="description">
+    <input type="text" class="form-control" id="description" placeholder="Enter Description"
+           @bind="description">
     <small id="emailHelp" class="form-text text-muted">Describe what were you doing.</small>
+    <h1>What</h1>
+    <TagAdd Tags="whatTags" ExistingTags="existingWhatTags" TagsChanged="TagsChanged"></TagAdd>
+    <TagPicker Tags="whatTags" TagType="TagType.WHAT" TagsChanged="TagsChanged"></TagPicker>
+    <TagDisplay Tags="whatTags"></TagDisplay>
+    <h1>With</h1>
+    <TagAdd Tags="withTags" ExistingTags="existingWithTags" TagsChanged="TagsChanged"></TagAdd>
+    <TagPicker Tags="withTags" TagType="TagType.WITH" TagsChanged="TagsChanged"></TagPicker>
+    <TagDisplay Tags="withTags"></TagDisplay>
+    <h1>Where</h1>
+    <TagAdd Tags="whereTags" ExistingTags="existingWhereTags" TagsChanged="TagsChanged"></TagAdd>
+    <TagPicker Tags="whereTags" TagType="TagType.WHERE" TagsChanged="TagsChanged"></TagPicker>
+    <TagDisplay Tags="whereTags"></TagDisplay>
   </div>
 
-  <div>
-    <button class="btn btn-outline-primary" type="submit">Submit</button>
+  <div><button class="btn btn-outline-primary" type="submit">Submit</button>
   </div>
 </form>
 
@@ -23,18 +37,46 @@
   [Parameter] public required string color { get; set; }
   [Parameter] public required string emotion { get; set; }
   [Parameter] public string description { get; set; }
-  
+
+  List<TagDTO> whatTags = new List<TagDTO>();
+  List<TagDTO> withTags = new List<TagDTO>();
+  List<TagDTO> whereTags = new List<TagDTO>();
+
+  List<TagDTO> existingWhatTags = new List<TagDTO>();
+  List<TagDTO> existingWithTags = new List<TagDTO>();
+  List<TagDTO> existingWhereTags = new List<TagDTO>();
+
+  protected override async Task OnInitializedAsync()
+  {
+    var existingTags = await UserTagsService.GetAll();
+
+    existingWhatTags = existingTags.Where(t => t.Type == TagType.WHAT).ToList();
+    existingWithTags = existingTags.Where(t => t.Type == TagType.WITH).ToList();
+    existingWhereTags = existingTags.Where(t => t.Type == TagType.WHERE).ToList();
+  }
+
+  private async Task TagsChanged(List<TagDTO> tags)
+  {
+    await InvokeAsync(StateHasChanged);
+  }
+
   private async Task Submit()
   {
+    var combinedTags = new List<TagDTO>();
+
+    combinedTags.AddRange(whatTags);
+    combinedTags.AddRange(withTags);
+    combinedTags.AddRange(whereTags);
+
     var data = new EmotionCheckInCreateDTO
     {
       Emotion = emotion,
       Description = description,
-      Tags = new List<string>()
+      Tags = combinedTags
     };
-    Console.WriteLine(description);
+
     await EmotionCheckInService.Create(data);
-    
-    NavigationManager.NavigateTo($"/CheckIn/");  
+
+    NavigationManager.NavigateTo($"/CheckIn/");
   }
 }

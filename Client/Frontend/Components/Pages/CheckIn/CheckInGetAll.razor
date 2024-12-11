@@ -30,7 +30,7 @@
           <td>@checkIn.Id</td>
           <td>@checkIn.Emotion</td>
           <td>@checkIn.Description</td>
-          <td></td>
+          <td>@string.Join(", ", checkIn.Tags.Select(tag => tag.Key))</td>
           <td>@checkIn.CreatedAt</td>
           <td>
             <button class="btn btn-secondary" @onclick="() => NavigateToEditEmotion(checkIn.Id.Value)">Edit</button>

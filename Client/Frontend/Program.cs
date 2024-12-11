@@ -19,6 +19,7 @@ builder.Services.AddHttpClient<IStatusService, StatusService>();
 builder.Services.AddScoped<IStorageService, SessionStorageService>();
 builder.Services.AddScoped<IEmotionsService, EmotionsService>();
 builder.Services.AddScoped<IEmotionCheckInService, EmotionCheckInService>();
+builder.Services.AddScoped<IUserTagsService, UserTagsService>();
 
 builder.Services.AddScoped<AuthenticationStateProvider, AuthService>();
 builder.Services.AddScoped<AuthedClient>();

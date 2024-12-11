@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Frontend.Services.Interfaces
+@using Frontend.Components.Shared
 @inject IStatusService statusService
 
 <PageTitle>Home</PageTitle>
@@ -9,6 +10,7 @@
 Welcome to your new app.
 
 <h1>Server Status</h1>
+
 
 <p>@isServerRunning</p>
 <p>@serverStatus</p>

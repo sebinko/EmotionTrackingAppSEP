@@ -1,0 +1,32 @@
+@using API.DTO
+
+<div class="existing-tags mt-2">
+  @foreach (var tag in ExistingTags)
+  {
+    <span class="badge bg-primary me-1">
+      @tag.Key
+      <button type="button" class="btn btn-sm btn-primary ms-1"
+              @onclick="() => AddTag(tag)">+</button>
+    </span>
+  }
+</div>
+
+@code {
+  [Parameter]
+  public List<TagDTO> ExistingTags { get; set; } = new List<TagDTO>();
+
+  [Parameter]
+  public List<TagDTO> Tags { get; set; } = new List<TagDTO>();
+
+  [Parameter]
+  public EventCallback<List<TagDTO>> TagsChanged { get; set; }
+
+  private async Task AddTag(TagDTO tag)
+  {
+    if (!Tags.Any(t => t.Key == tag.Key)) // Prevent duplicates
+    {
+      Tags.Add(tag);
+      await TagsChanged.InvokeAsync(Tags);
+    }
+  }
+}
