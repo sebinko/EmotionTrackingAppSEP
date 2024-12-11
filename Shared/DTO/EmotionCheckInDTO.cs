@@ -11,4 +11,5 @@ public class EmotionCheckInDTO
   public string CreatedAt { get; set; }
   public string UpdatedAt { get; set; }
   
+  public List<TagDTO> Tags { get; set; } = new();
 }

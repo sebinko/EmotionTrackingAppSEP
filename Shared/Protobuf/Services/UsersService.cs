@@ -10,8 +10,6 @@ public class UsersService
 {
   public async Task<User> Create(User user)
   {
-    try
-    {
       using var channel = GrpcChannel.ForAddress("http://localhost:8888");
       var client = new Users.UsersService.UsersServiceClient(channel);
 
@@ -32,17 +30,10 @@ public class UsersService
       user.CreatedAt = createdAt;
       user.UpdatedAt = updatedAt;
       return user;
-    }
-    catch (RpcException e)
-    {
-      throw new Exception($"JavaDAO: Error creating user: {e.Message}");
-    }
   }
 
   public async Task<User> GetByUsernameAndPassword(string username, string password)
   {
-    try
-    {
       using var channel = GrpcChannel.ForAddress("http://localhost:8888");
       var client = new Users.UsersService.UsersServiceClient(channel);
 
@@ -60,57 +51,48 @@ public class UsersService
       {
         Id = Convert.ToInt32(reply.Id),
         Username = reply.Username,
-        Password = reply.Password,
-        Email = reply.Email,
-        Streak =reply.Streak,
-        CreatedAt = createdAt,
-        UpdatedAt = updatedAt
-      };
-    }
-    catch (RpcException e)
-    {
-      throw new Exception($"JavaDAO: Error getting user by username and password: {e.Message}");
-    }
-  }
-
-  public async Task<User> ChangePassword(int userId, ChangePasswordDTO changePasswordDto)
-  {
-    try
-    {
-      using var channel = GrpcChannel.ForAddress("http://localhost:8888");
-      var client = new Users.UsersService.UsersServiceClient(channel);
-
-      var user = await client.GetByIdAsync(new UserId
-      {
-        Id = userId
-      });
-
-      if (user == null)
-      {
-        throw new Exception("User not found");
-      }
-
-      user.Password = changePasswordDto.NewPassword;
-
-      var reply = await client.UpdateAsync(user);
-
-      DateTime.TryParse(reply.CreatedAt, out var createdAt);
-      DateTime.TryParse(reply.UpdatedAt, out var updatedAt);
-
-      return new User
-      {
-        Id = Convert.ToInt32(reply.Id),
-        Username = reply.Username,
-        Password = null,
         Email = reply.Email,
         Streak = reply.Streak,
         CreatedAt = createdAt,
         UpdatedAt = updatedAt
       };
-    }
-    catch (RpcException e)
+  }
+
+  public async Task<User> ChangePassword(int userId, ChangePasswordDTO changePasswordDto)
+  {
+    using var channel = GrpcChannel.ForAddress("http://localhost:8888");
+    var client = new Users.UsersService.UsersServiceClient(channel);
+
+    var user = await client.GetByIdAsync(new UserId
     {
-      throw new Exception($"JavaDAO: Error changing password: {e.Message}");
+      Id = userId
+    });
+
+    if (user == null)
+    {
+      throw new Exception("User not found");
     }
+
+    var reply = await client.UpdateAsync(new UserUpdate
+    {
+      Id = user.Id,
+      Username = user.Username,
+      Password = changePasswordDto.NewPassword,
+      Email = user.Email
+    });
+
+    DateTime.TryParse(reply.CreatedAt, out var createdAt);
+    DateTime.TryParse(reply.UpdatedAt, out var updatedAt);
+
+    return new User
+    {
+      Id = Convert.ToInt32(reply.Id),
+      Username = reply.Username,
+      Password = null,
+      Email = reply.Email,
+      Streak = reply.Streak,
+      CreatedAt = createdAt,
+      UpdatedAt = updatedAt
+    };
   }
 }

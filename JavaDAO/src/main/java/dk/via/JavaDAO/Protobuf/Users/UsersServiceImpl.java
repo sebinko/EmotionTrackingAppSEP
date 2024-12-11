@@ -7,6 +7,7 @@ import dk.via.JavaDAO.Util.PSQLExceptionParser;
 import dk.via.JavaDAO.Util.PasswordHasherUtil;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       UserList.Builder builder = UserList.newBuilder();
       for (dk.via.JavaDAO.Models.User user : usersList) {
         builder.addUsers(User.newBuilder()
-            .setId(user.getId().toString())
+            .setId(user.getId())
             .setUsername(user.getUsername())
             .setEmail(user.getEmail())
             .setCreatedAt(user.getCreatedAt().toString())
@@ -40,7 +41,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       }
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
-    } catch (PSQLException e) {
+    } catch (SQLException e) {
       PSQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
@@ -63,7 +64,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       );
       newUser = usersDAO.Create(newUser);
       User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(newUser.getId().toString());
+      userBuilder.setId(newUser.getId());
       userBuilder.setUsername(newUser.getUsername());
       userBuilder.setEmail(newUser.getEmail());
       userBuilder.setCreatedAt(newUser.getCreatedAt().toString());
@@ -71,7 +72,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
 
       responseObserver.onNext(userBuilder.build());
       responseObserver.onCompleted();
-    } catch (PSQLException e) {
+    } catch (SQLException e) {
       PSQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
@@ -100,7 +101,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       updatedUser = usersDAO.GetSingle(request.getId());
 
       User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(updatedUser.getId().toString());
+      userBuilder.setId(updatedUser.getId());
       userBuilder.setUsername(updatedUser.getUsername());
       userBuilder.setEmail(updatedUser.getEmail());
       userBuilder.setCreatedAt(updatedUser.getCreatedAt().toString());
@@ -108,7 +109,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       userBuilder.setStreak(updatedUser.getStreak());
       responseObserver.onNext(userBuilder.build());
       responseObserver.onCompleted();
-    } catch (PSQLException e) {
+    } catch (SQLException e) {
       PSQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
@@ -120,12 +121,11 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   @Override
   public void delete(User request, StreamObserver<User> responseObserver) {
     try {
-      dk.via.JavaDAO.Models.User userToDelete = usersDAO.GetSingle(
-          Integer.parseInt(request.getId()));
+      dk.via.JavaDAO.Models.User userToDelete = usersDAO.GetSingle(request.getId());
       usersDAO.Delete(userToDelete);
       responseObserver.onNext(request);
       responseObserver.onCompleted();
-    } catch (PSQLException e) {
+    } catch (SQLException e) {
       PSQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
@@ -139,7 +139,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     try {
       dk.via.JavaDAO.Models.User userById = usersDAO.GetSingle(request.getId());
       User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(userById.getId().toString());
+      userBuilder.setId(userById.getId());
       userBuilder.setUsername(userById.getUsername());
       userBuilder.setEmail(userById.getEmail());
       userBuilder.setCreatedAt(userById.getCreatedAt().toString());
@@ -147,7 +147,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       userBuilder.setStreak(userById.getStreak());
       responseObserver.onNext(userBuilder.build());
       responseObserver.onCompleted();
-    } catch (PSQLException e) {
+    } catch (SQLException e) {
       PSQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
@@ -164,7 +164,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
           .filter(user1 -> user1.getUsername().equals(request.getUsername())).findFirst()
           .orElse(null);
       User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(user.getId().toString());
+      userBuilder.setId(user.getId());
       userBuilder.setUsername(user.getUsername());
       userBuilder.setEmail(user.getEmail());
       userBuilder.setCreatedAt(user.getCreatedAt().toString());
@@ -172,7 +172,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       userBuilder.setStreak(user.getStreak());
       responseObserver.onNext(userBuilder.build());
       responseObserver.onCompleted();
-    } catch (PSQLException e) {
+    } catch (SQLException e) {
       PSQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
@@ -185,18 +185,10 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   public void getByUsernameAndPassword(UsernameAndPassword request,
       StreamObserver<User> responseObserver) {
     try {
-      ArrayList<dk.via.JavaDAO.Models.User> users = usersDAO.GetAll();
-      dk.via.JavaDAO.Models.User user = users.stream()
-          .filter(user1 -> user1.getUsername().equals(request.getUsername()))
-          .filter(user1 -> PasswordHasherUtil.getInstance()
-              .verifyPassword(request.getPassword(), user1.getPassword()))
-          .findFirst().orElse(null);
-      if (user == null) {
-        responseObserver.onError(Status.NOT_FOUND.asException());
-        return;
-      }
+      dk.via.JavaDAO.Models.User user = usersDAO.GetSingle(request.getUsername(), request.getPassword());
+
       User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(user.getId().toString());
+      userBuilder.setId(user.getId());
       userBuilder.setUsername(user.getUsername());
       userBuilder.setEmail(user.getEmail());
       userBuilder.setCreatedAt(user.getCreatedAt().toString());
@@ -204,7 +196,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       userBuilder.setStreak(user.getStreak());
       responseObserver.onNext(userBuilder.build());
       responseObserver.onCompleted();
-    } catch (PSQLException e) {
+    } catch (SQLException e) {
       PSQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());

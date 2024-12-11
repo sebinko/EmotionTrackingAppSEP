@@ -8,8 +8,8 @@ import dk.via.JavaDAO.Protobuf.Users.UserTagsServiceGrpc.UserTagsServiceImplBase
 import dk.via.JavaDAO.Util.PSQLExceptionParser;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import java.sql.SQLException;
 import java.util.List;
-import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public class UserTagsServiceImpl extends UserTagsServiceImplBase {
       }
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
-    } catch (PSQLException e) {
+    } catch (SQLException e) {
       PSQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());

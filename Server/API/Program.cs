@@ -22,6 +22,7 @@ builder.Services.AddScoped<StatusService>();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<EmotionCheckInService>();
 builder.Services.AddScoped<EmotionsService>();
+builder.Services.AddScoped<UserTagsService>();
 builder.Services.AddSingleton<AuthUtilities>();
 
 builder.Services.AddAuthentication(cfg =>

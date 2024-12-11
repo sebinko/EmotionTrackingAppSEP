@@ -9,6 +9,7 @@ public interface UsersDAO {
   ArrayList<User> GetAll() throws SQLException;
 
   User GetSingle(int id) throws SQLException;
+  User GetSingle(String username, String password) throws SQLException;
 
   User Update(User user) throws SQLException;
 

@@ -1,10 +1,11 @@
 using System.Text;
 using System.Text.Json;
 using API.DTO;
+using Frontend.Services.Interfaces;
 using Frontend.Utils;
 using SharedUtil;
 
-namespace Frontend.Services.Interfaces;
+namespace Frontend.Services;
 
 public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInService
 {
@@ -34,6 +35,7 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
     {
       PropertyNameCaseInsensitive = true
     };
+    
 
     return JsonSerializer.Deserialize<List<EmotionCheckInDTO>>(responseData, options);
   }
@@ -45,7 +47,6 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
       if (!response.IsSuccessStatusCode)
       {
           var exStr = await response.Content.ReadAsStringAsync();
-          Console.WriteLine(exStr);
           var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
               new JsonSerializerOptions
               {
@@ -58,7 +59,7 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
       }
   
       var responseData = await response.Content.ReadAsStringAsync();
-
+      
       var options = new JsonSerializerOptions
       {
           PropertyNameCaseInsensitive = true
@@ -78,15 +79,14 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
     if (!response.IsSuccessStatusCode)
     {
       var exStr = await response.Content.ReadAsStringAsync();
-      /*var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
+      var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
         new JsonSerializerOptions
         {
           PropertyNameCaseInsensitive = true
         });
-        */
 
-      /*if (apiException is not null)
-        throw new Exception($"{response.StatusCode}: {apiException.Error}");*/
+      if (apiException is not null)
+        throw new Exception($"{response.StatusCode}: {apiException.Error}");
       throw new Exception($"{response.StatusCode}: {exStr}");
     }
 
@@ -110,8 +110,7 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
     if (!response.IsSuccessStatusCode)
     {
       var exStr = await response.Content.ReadAsStringAsync();
-      Console.WriteLine(exStr);
-      /*var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
+      var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
         new JsonSerializerOptions
         {
           PropertyNameCaseInsensitive = true
@@ -119,7 +118,7 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
 
       if (apiException is not null)
         throw new Exception($"{response.StatusCode}: {apiException.Error}");
-      throw new Exception($"{response.StatusCode}: {exStr}");*/
+      throw new Exception($"{response.StatusCode}: {exStr}");
     }
 
     var responseData = await response.Content.ReadAsStringAsync();
@@ -136,7 +135,6 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
   public async Task<EmotionCheckInDTO> Delete(int id)
   {
     var response = await httpClient.DeleteAsync($"EmotionCheckIns/{id}");
-    Console.WriteLine(response.StatusCode);
 
     if (response.IsSuccessStatusCode)
     {

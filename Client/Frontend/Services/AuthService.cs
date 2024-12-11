@@ -155,7 +155,6 @@ public class AuthService : AuthenticationStateProvider
     if (!response.IsSuccessStatusCode)
     {
       var exStr = await response.Content.ReadAsStringAsync();
-      Console.WriteLine(response.StatusCode);
       var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
         new JsonSerializerOptions
         {
