@@ -28,6 +28,58 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
   }
 
   @Override
+  public void getById(EmotionCheckInIdMessage request,
+      StreamObserver<EmotionCheckInMessage> responseObserver) {
+    try {
+      dk.via.JavaDAO.Models.EmotionCheckIn emotionCheckIn = emotionCheckInsDAO.GetSingle(
+          request.getId());
+
+      if (emotionCheckIn == null) {
+        responseObserver.onError(Status.fromCode(Status.Code.NOT_FOUND)
+            .withDescription("Emotion check-in not found")
+            .asRuntimeException());
+        return;
+      }
+
+      if (emotionCheckIn.getUserId() != request.getUserId()) {
+        responseObserver.onError(Status.fromCode(Status.Code.PERMISSION_DENIED)
+            .withDescription("User does not have permission to view this emotion check-in")
+            .asRuntimeException());
+        return;
+      }
+
+      EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
+      emotionCheckInBuilder.setEmotion(emotionCheckIn.getEmotion());
+      emotionCheckInBuilder.setId(emotionCheckIn.getId());
+      emotionCheckInBuilder.setCreatedAt(emotionCheckIn.getCreatedAt());
+      emotionCheckInBuilder.setUpdatedAt(emotionCheckIn.getUpdatedAt());
+      emotionCheckInBuilder.setUserId(emotionCheckIn.getUserId());
+
+      List<dk.via.JavaDAO.Models.Tag> tagsList = tagsDAO.GetAllForCheckIn(emotionCheckIn);
+
+      for (dk.via.JavaDAO.Models.Tag tag : tagsList) {
+        emotionCheckInBuilder.addTags(dk.via.JavaDAO.Protobuf.EmotionCheckIns.Tag.newBuilder()
+            .setKey(tag.getKey())
+            .setType(
+                dk.via.JavaDAO.Protobuf.EmotionCheckIns.TagType.valueOf(tag.getType().toString()))
+            .build());
+      }
+
+      if (emotionCheckIn.getDescription() != null) {
+        emotionCheckInBuilder.setDescription(emotionCheckIn.getDescription());
+      }
+
+      responseObserver.onNext(emotionCheckInBuilder.build());
+      responseObserver.onCompleted();
+    } catch (PSQLException e) {
+      PSQLExceptionParser.Parse(e, responseObserver);
+    } catch (Exception e) {
+      responseObserver.onError(
+          Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
+    }
+  }
+
+  @Override
   public void getAll(GetAllEmotionCheckInsMessage request,
       StreamObserver<ListEmotionCheckInMessage> responseObserver) {
     try {

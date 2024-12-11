@@ -24,7 +24,10 @@ message EmotionCheckInMessage {
   repeated Tag tags = 7;
 }
 
-message EmotionCheckInIdMessage { int32 id = 1; }
+message EmotionCheckInIdMessage {
+  int32 id = 1;
+  int32 userId = 2;
+}
 
 message EmotionCheckInTagMessage {
   EmotionCheckInMessage emotionCheckIn = 1;
@@ -57,11 +60,7 @@ message EmotionCheckInUpdateMessage {
   repeated Tag tags = 5;
 }
 
-enum TagType {
-  WHAT = 0;
-  WITH = 1;
-  WHERE = 2;
-}
+enum TagType { WHAT = 0; WITH = 1; WHERE = 2; }
 
 message Tag {
   string key = 1;

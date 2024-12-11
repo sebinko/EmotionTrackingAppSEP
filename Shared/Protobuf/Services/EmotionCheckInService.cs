@@ -11,6 +11,33 @@ namespace Protobuf.Services;
 
 public class EmotionCheckInService
 {
+  public async Task<EmotionCheckInDTO> GetById(int id, int userId)
+  {
+    using var channel = GrpcChannel.ForAddress("http://localhost:8888");
+    var client = new EmotionCheckIns.EmotionCheckInsService.EmotionCheckInsServiceClient(channel);
+
+    var reply = await client.GetByIdAsync(new EmotionCheckIns.EmotionCheckInIdMessage()
+    {
+      Id = id,
+      UserId = userId
+    });
+
+    return new EmotionCheckInDTO
+    {
+      UserId = Convert.ToInt32(reply.UserId),
+      Emotion = reply.Emotion,
+      Description = reply.Description,
+      CreatedAt = DateTime.Parse(reply.CreatedAt).ToString(),
+      UpdatedAt = DateTime.Parse(reply.UpdatedAt).ToString(),
+      Id = Convert.ToInt32(reply.Id),
+      Tags = reply.Tags.Select(tag => new TagDTO
+      {
+        Key = tag.Key,
+        Type = (TagType)Enum.Parse(typeof(TagType), tag.Type.ToString(), true)
+      }).ToList()
+    };
+  }
+  
   public async Task<List<EmotionCheckInDTO>> GetAll(int userId)
   {
     using var channel = GrpcChannel.ForAddress("http://localhost:8888");
