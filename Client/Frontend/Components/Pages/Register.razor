@@ -59,7 +59,7 @@
       if (authResponse is not null)
       {
         alert.ShowSuccess($"LoggedIn: {authResponse.User.Username}; token: {authResponse.Token}");
-        NavigationManager.NavigateTo("/CheckIn");
+        NavigationManager.NavigateTo("/CheckIn", true);
       }
     }
     catch (Exception e)

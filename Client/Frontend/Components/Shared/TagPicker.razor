@@ -1,0 +1,39 @@
+@using API.DTO
+<div class="tag-picker">
+  <div class="input-group">
+    <input type="text" class="form-control"
+           @bind-value="CurrentTag"
+           @bind-value:event="oninput"
+           placeholder="Add a tag..." />
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" type="button" @onclick="AddTag">+</button>
+    </div>
+  </div>
+</div>
+
+@code {
+  [Parameter]
+  public List<TagDTO> Tags { get; set; } = new List<TagDTO>();
+
+  [Parameter]
+  public EventCallback<List<TagDTO>> TagsChanged { get; set; }
+
+  [Parameter]
+  public TagType TagType { get; set; }
+
+  private string CurrentTag;
+
+  private async Task AddTag()
+  {
+    if (!string.IsNullOrWhiteSpace(CurrentTag))
+    {
+      var newTag = new TagDTO { Key = CurrentTag.Trim(), Type = TagType };
+      if (!Tags.Any(t => t.Key == newTag.Key)) // Prevent duplicates
+      {
+        Tags.Add(newTag);
+        await TagsChanged.InvokeAsync(Tags);
+      }
+      CurrentTag = string.Empty;
+    }
+  }
+}
