@@ -5,7 +5,7 @@ import dk.via.JavaDAO.DAO.TagsDAO;
 import dk.via.JavaDAO.DAO.UsersDAO;
 import dk.via.JavaDAO.Models.User;
 import dk.via.JavaDAO.Protobuf.Users.UserTagsServiceGrpc.UserTagsServiceImplBase;
-import dk.via.JavaDAO.Util.PSQLExceptionParser;
+import dk.via.JavaDAO.Util.SQLExceptionParser;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import java.sql.SQLException;
@@ -42,7 +42,7 @@ public class UserTagsServiceImpl extends UserTagsServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     } catch (SQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
       responseObserver.onError(

@@ -3,11 +3,20 @@ package dk.via.JavaDAO.Util;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import java.sql.SQLException;
+import org.postgresql.util.PSQLException;
 import org.postgresql.util.PSQLState;
 
-public class PSQLExceptionParser {
+public class SQLExceptionParser {
 
   public static <T> void Parse(SQLException e, StreamObserver<T> responseObserver) {
+    extracted(e, responseObserver);
+  }
+
+  public static <T> void Parse(PSQLException e, StreamObserver<T> responseObserver) {
+    extracted(e, responseObserver);
+  }
+
+  private static <T> void extracted(SQLException e, StreamObserver<T> responseObserver) {
     // unique violation
     if (PSQLState.UNIQUE_VIOLATION.getState().equals(e.getSQLState())) {
       responseObserver.onError(
@@ -42,5 +51,4 @@ public class PSQLExceptionParser {
           Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
     }
   }
-
 }

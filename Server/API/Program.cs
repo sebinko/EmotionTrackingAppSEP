@@ -23,6 +23,7 @@ builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<EmotionCheckInService>();
 builder.Services.AddScoped<EmotionsService>();
 builder.Services.AddScoped<UserTagsService>();
+builder.Services.AddScoped<UserFriendsService>();
 builder.Services.AddSingleton<AuthUtilities>();
 builder.Services.AddScoped<ReactionService>();
 
