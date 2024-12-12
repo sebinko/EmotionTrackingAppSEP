@@ -55,6 +55,20 @@ public class UserFriendsDAODB implements UserFriendsDAO {
     }
   }
 
+  @Override
+  public void RemoveFriendship(Integer user1Id, Integer user2Id) throws SQLException {
+    Connection connection = connector.getConnection();
+
+    String sql = "DELETE FROM \"EmotionsTrackingWebsite\".user_friends WHERE ((user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?));";
+    try (PreparedStatement statement = connection.prepareStatement(sql)){
+      statement.setInt(1, user1Id);
+      statement.setInt(2, user2Id);
+      statement.setInt(3, user2Id);
+      statement.setInt(4, user1Id);
+      statement.executeUpdate();
+    }
+  }
+
   private static void createFriendshipRequest(Integer user1Id, Integer user2Id,
       Connection connection)
       throws SQLException {

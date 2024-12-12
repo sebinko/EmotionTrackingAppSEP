@@ -24,7 +24,7 @@ message FriendshipMessage{
 
 service UserFriendsService{
   rpc CreateFriendship(FriendshipMessage) returns (FriendshipMessage){}
-
+  rpc RemoveFriendship(FriendshipMessage) returns (FriendshipMessage){}
 }
 message UserId{
   int32 id = 1;
