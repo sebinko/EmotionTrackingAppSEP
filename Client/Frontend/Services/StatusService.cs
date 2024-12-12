@@ -15,7 +15,7 @@ public class StatusService : IStatusService
   {
     try
     {
-      var response = await _httpClient.GetAsync("http://localhost:5195/Status");
+      var response = await _httpClient.GetAsync("Status");
 
       if (response.IsSuccessStatusCode)
       {
