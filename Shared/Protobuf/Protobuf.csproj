@@ -29,10 +29,4 @@
         <ProjectReference Include="..\Entities\Entities.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Include="..\..\ProtoBuf\proto\Reactions.proto">
-        <Link>proto\Reactions.proto</Link>
-      </Compile>
-    </ItemGroup>
-
 </Project>

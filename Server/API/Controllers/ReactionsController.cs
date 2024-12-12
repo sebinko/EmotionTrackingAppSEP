@@ -22,8 +22,6 @@ public class ReactionsController(ReactionService reactionService) : ControllerBa
       return Unauthorized();
     }
 
-    reactionDto.UserId = int.Parse(userId);
-
-    return Ok(await reactionService.Create(reactionDto));
+    return Ok(await reactionService.Create(reactionDto, int.Parse(userId)));
   }
 }

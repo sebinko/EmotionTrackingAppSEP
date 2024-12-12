@@ -1,12 +1,14 @@
 package dk.via.JavaDAO.Models;
 
+import java.sql.Timestamp;
+
 public class Reaction {
 
   private Integer userId;
   private Integer emotionCheckinId;
   private String emoji;
-  private String createdAt;
-  private String updatedAt;
+  private Timestamp createdAt;
+  private Timestamp updatedAt;
 
   public Reaction() {
     userId = null;
@@ -16,7 +18,7 @@ public class Reaction {
     updatedAt = null;
   }
 
-  public Reaction(Integer userId, Integer emotionCheckinId, String emoji, String createdAt, String updatedAt) {
+  public Reaction(Integer userId, Integer emotionCheckinId, String emoji, Timestamp createdAt, Timestamp updatedAt) {
     this.userId = userId;
     this.emotionCheckinId = emotionCheckinId;
     this.emoji = emoji;
@@ -48,19 +50,19 @@ public class Reaction {
     this.emoji = emoji;
   }
 
-  public String getCreatedAt() {
+  public Timestamp getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(String createdAt) {
+  public void setCreatedAt(Timestamp createdAt) {
     this.createdAt = createdAt;
   }
 
-  public String getUpdatedAt() {
+  public Timestamp getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(String updatedAt) {
+  public void setUpdatedAt(Timestamp updatedAt) {
     this.updatedAt = updatedAt;
   }
 
