@@ -3,6 +3,8 @@ package dk.via.JavaDAO;
 import com.google.inject.AbstractModule;
 import dk.via.JavaDAO.DAO.EmotionCheckInsDAO;
 import dk.via.JavaDAO.DAO.EmotionCheckInsDAODB;
+import dk.via.JavaDAO.DAO.ReactionsDAO;
+import dk.via.JavaDAO.DAO.ReactionsDAODB;
 import dk.via.JavaDAO.DAO.TagsDAO;
 import dk.via.JavaDAO.DAO.TagsDAODB;
 import dk.via.JavaDAO.DAO.UserFriendsDAO;
@@ -25,5 +27,6 @@ public class AppModule extends AbstractModule {
     bind(TagsDAO.class).to(TagsDAODB.class);
     bind(EmotionCheckInsDAO.class).to(EmotionCheckInsDAODB.class);
     bind(UserFriendsDAO.class).to(UserFriendsDAODB.class);
+    bind(ReactionsDAO.class).to(ReactionsDAODB.class);
   }
 }

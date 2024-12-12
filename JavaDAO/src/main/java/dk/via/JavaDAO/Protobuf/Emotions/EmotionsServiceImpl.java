@@ -46,10 +46,7 @@ public class EmotionsServiceImpl extends EmotionsServiceImplBase {
 
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
-
     }
-
-
   }
 
   private void handleSingleEmotion(EmotionsRequest request,
