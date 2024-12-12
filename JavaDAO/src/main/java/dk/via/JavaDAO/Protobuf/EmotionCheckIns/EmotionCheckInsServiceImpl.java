@@ -5,7 +5,7 @@ import dk.via.JavaDAO.DAO.TagsDAO;
 import dk.via.JavaDAO.Models.EmotionCheckIn;
 import dk.via.JavaDAO.Models.TagType;
 import dk.via.JavaDAO.Protobuf.EmotionCheckIns.EmotionCheckInsServiceGrpc.EmotionCheckInsServiceImplBase;
-import dk.via.JavaDAO.Util.PSQLExceptionParser;
+import dk.via.JavaDAO.Util.SQLExceptionParser;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import jakarta.inject.Inject;
@@ -72,7 +72,7 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
       responseObserver.onNext(emotionCheckInBuilder.build());
       responseObserver.onCompleted();
     } catch (PSQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       responseObserver.onError(
           Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
@@ -116,7 +116,7 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
       responseObserver.onNext(listEmotionCheckInBuilder.build());
       responseObserver.onCompleted();
     } catch (SQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       responseObserver.onError(
           Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
@@ -165,7 +165,7 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
       responseObserver.onNext(emotionCheckInBuilder.build());
       responseObserver.onCompleted();
     } catch (PSQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       responseObserver.onError(
           Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
@@ -229,7 +229,7 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
       responseObserver.onNext(emotionCheckInBuilder.build());
       responseObserver.onCompleted();
     } catch (PSQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       responseObserver.onError(
           Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
@@ -264,7 +264,7 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
       );
       responseObserver.onCompleted();
     } catch (PSQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       responseObserver.onError(
           Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());

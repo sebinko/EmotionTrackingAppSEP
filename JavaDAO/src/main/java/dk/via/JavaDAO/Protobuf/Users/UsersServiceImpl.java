@@ -3,13 +3,12 @@ package dk.via.JavaDAO.Protobuf.Users;
 import com.google.inject.Inject;
 import dk.via.JavaDAO.DAO.UsersDAO;
 import dk.via.JavaDAO.Protobuf.Users.UsersServiceGrpc.UsersServiceImplBase;
-import dk.via.JavaDAO.Util.PSQLExceptionParser;
+import dk.via.JavaDAO.Util.SQLExceptionParser;
 import dk.via.JavaDAO.Util.PasswordHasherUtil;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     } catch (SQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
       responseObserver.onError(
@@ -73,7 +72,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       responseObserver.onNext(userBuilder.build());
       responseObserver.onCompleted();
     } catch (SQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
       responseObserver.onError(
@@ -110,7 +109,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       responseObserver.onNext(userBuilder.build());
       responseObserver.onCompleted();
     } catch (SQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
       responseObserver.onError(
@@ -126,7 +125,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       responseObserver.onNext(request);
       responseObserver.onCompleted();
     } catch (SQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
       responseObserver.onError(
@@ -148,7 +147,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       responseObserver.onNext(userBuilder.build());
       responseObserver.onCompleted();
     } catch (SQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
       responseObserver.onError(
@@ -173,7 +172,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       responseObserver.onNext(userBuilder.build());
       responseObserver.onCompleted();
     } catch (SQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
       responseObserver.onError(
@@ -197,7 +196,7 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       responseObserver.onNext(userBuilder.build());
       responseObserver.onCompleted();
     } catch (SQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       logger.error(e.getMessage());
       responseObserver.onError(

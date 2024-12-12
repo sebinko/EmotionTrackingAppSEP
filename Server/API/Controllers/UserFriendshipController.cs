@@ -28,6 +28,7 @@ public class UserFriendshipController (UserFriendsService userFriendsService) : 
   }
   
   [HttpDelete]
+  [Authorize]
   public async Task<IActionResult> RemoveFriendship(RemoveFriendshipDTO removeFriendshipDto)
   {
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

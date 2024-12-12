@@ -3,7 +3,7 @@ package dk.via.JavaDAO.Protobuf.Users;
 import  com.google.inject.Inject;
 import dk.via.JavaDAO.DAO.UserFriendsDAO;
 import dk.via.JavaDAO.Protobuf.Users.UserFriendsServiceGrpc.UserFriendsServiceImplBase;
-import dk.via.JavaDAO.Util.PSQLExceptionParser;
+import dk.via.JavaDAO.Util.SQLExceptionParser;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import org.postgresql.util.PSQLException;
@@ -35,7 +35,7 @@ public class UserFriendsServiceImpl extends UserFriendsServiceImplBase {
 
       responseObserver.onCompleted();
     } catch (PSQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       responseObserver.onError(
           Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
@@ -56,7 +56,7 @@ public class UserFriendsServiceImpl extends UserFriendsServiceImplBase {
 
       responseObserver.onCompleted();
     } catch (SQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       responseObserver.onError(
           Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
