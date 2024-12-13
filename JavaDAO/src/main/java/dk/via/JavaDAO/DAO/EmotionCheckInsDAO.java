@@ -2,18 +2,19 @@ package dk.via.JavaDAO.DAO;
 
 import dk.via.JavaDAO.Models.EmotionCheckIn;
 import dk.via.JavaDAO.Models.Tag;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface EmotionCheckInsDAO {
 
-  EmotionCheckIn GetSingle(int id);
+  EmotionCheckIn GetSingle(int id) throws SQLException;
 
-  EmotionCheckIn Create(EmotionCheckIn emotionCheckIn, ArrayList<String> tags);
+  EmotionCheckIn Create(EmotionCheckIn emotionCheckIn, List<Tag> tags) throws SQLException;
 
-  EmotionCheckIn Delete(int id);
+  EmotionCheckIn Delete(int id) throws SQLException;
 
-  EmotionCheckIn Update(EmotionCheckIn emotion, ArrayList<Tag> existingTags,
-      ArrayList<String> newTags);
+  EmotionCheckIn Update(EmotionCheckIn emotion, List<Tag> tags) throws SQLException;
 
-  ArrayList<EmotionCheckIn> GetAll(int userId);
+  ArrayList<EmotionCheckIn> GetAll(int userId) throws SQLException;
 }

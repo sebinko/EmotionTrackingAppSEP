@@ -1,6 +1,7 @@
 using System.Text.Json;
 using API.DTO;
 using Frontend.Services.Interfaces;
+using Frontend.Utils;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace Frontend.Services;
@@ -11,11 +12,8 @@ public class EmotionsService(HttpClient httpClient) : IEmotionsService
   {
     var response = await httpClient.GetAsync(_buildEmotionUrl(emotionQuery, emotionColor));
     response.EnsureSuccessStatusCode();
-    var data = await response.Content.ReadAsStringAsync();
-    return JsonSerializer.Deserialize<List<EmotionDTO>>(data, new JsonSerializerOptions
-    {
-      PropertyNameCaseInsensitive = true
-    });
+
+    return await new ApiParsingUtils<List<EmotionDTO>>().Process(response);
   }
 
   private static string _buildEmotionUrl(string? emotionQuery = null, string? emotionColor = null)

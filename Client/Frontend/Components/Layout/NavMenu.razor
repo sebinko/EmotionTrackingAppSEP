@@ -47,11 +47,17 @@
     <Authorized>
       <div class="nav-item px-3 mt-auto" style="background-color: rgba(248, 249, 250, 0.2); padding: 1rem;">
         <span class="nav-link disabled">
-          <i class="bi bi-person-circle"></i> @context.User?.Identity?.Name
+          <i class="bi bi-person-circle"></i> 
+          <span style="margin-right: 35px;">@context.User?.Identity?.Name</span>
+          <span>@($"{context.User?.Claims.FirstOrDefault(v => v.Type == "Streak")?.Value} 🔥")</span>
         </span>
         <button class="btn btn-outline-light btn-sm w-100 mt-2" @onclick="NavigateToChangePassword">Change Password</button>
         <button class="btn btn-outline-light btn-sm w-100 mt-2" @onclick="Logout">Logout</button>
       </div>
+
+
+
+
     </Authorized>
   </AuthorizeView>
 </div>

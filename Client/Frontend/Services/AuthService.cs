@@ -5,6 +5,7 @@ using System.Text.Json;
 using API.DTO;
 using Entities;
 using Frontend.Services.Interfaces;
+using Frontend.Utils;
 using Microsoft.AspNetCore.Components.Authorization;
 using SharedUtil;
 
@@ -36,35 +37,15 @@ public class AuthService : AuthenticationStateProvider
 
     var response = await _httpClient.PostAsync("Auth/register", content);
 
-    if (!response.IsSuccessStatusCode)
-    {
-      var exStr = await response.Content.ReadAsStringAsync();
-      var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
-        new JsonSerializerOptions
-        {
-          PropertyNameCaseInsensitive = true
-        });
-
-      if (apiException is not null)
-        throw new Exception($"{response.StatusCode}: {apiException.Error}");
-      throw new Exception($"{response.StatusCode}: {exStr}");
-    }
-
-    var responseData = await response.Content.ReadAsStringAsync();
-
-    var options = new JsonSerializerOptions
-    {
-      PropertyNameCaseInsensitive = true
-    };
-
-    var auth = JsonSerializer.Deserialize<UserWithTokenDTO>(responseData, options);
+    var auth = await (new ApiParsingUtils<UserWithTokenDTO>()).Process(response);
 
     List<Claim> claims = new()
     {
       new Claim(ClaimTypes.Name, auth?.User?.Username),
       new Claim(ClaimTypes.Email, auth?.User?.Email),
       new Claim(ClaimTypes.NameIdentifier, auth?.User?.Id.ToString()),
-      new Claim("Token", auth?.Token.ToString())
+      new Claim("Token", auth?.Token.ToString()),
+      new Claim("Streak", auth.User.Streak?.ToString())
     };
 
     ClaimsIdentity identity = new ClaimsIdentity(claims, "apiauth");
@@ -91,35 +72,15 @@ public class AuthService : AuthenticationStateProvider
 
     var response = await _httpClient.PostAsync("Auth/login", content);
 
-    if (!response.IsSuccessStatusCode)
-    {
-      var exStr = await response.Content.ReadAsStringAsync();
-      var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
-        new JsonSerializerOptions
-        {
-          PropertyNameCaseInsensitive = true
-        });
-
-      if (apiException is not null)
-        throw new Exception($"{response.StatusCode}: {apiException.Error}");
-      throw new Exception($"{response.StatusCode}: {exStr}");
-    }
-
-    var responseData = await response.Content.ReadAsStringAsync();
-
-    var options = new JsonSerializerOptions
-    {
-      PropertyNameCaseInsensitive = true
-    };
-
-    var auth = JsonSerializer.Deserialize<UserWithTokenDTO>(responseData, options);
+    var auth = await (new ApiParsingUtils<UserWithTokenDTO>()).Process(response);
 
     List<Claim> claims = new()
     {
       new Claim(ClaimTypes.Name, auth?.User?.Username),
       new Claim(ClaimTypes.Email, auth?.User?.Email),
       new Claim(ClaimTypes.NameIdentifier, auth?.User?.Id.ToString()),
-      new Claim("Token", auth?.Token.ToString())
+      new Claim("Token", auth?.Token.ToString()),
+      new Claim("Streak", auth.User.Streak?.ToString())
     };
 
     ClaimsIdentity identity = new ClaimsIdentity(claims, "apiauth");
@@ -144,37 +105,12 @@ public class AuthService : AuthenticationStateProvider
     var json = JsonSerializer.Serialize(data);
     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-    // add jwt token to the request
     _httpClient.DefaultRequestHeaders.Authorization =
       new AuthenticationHeaderValue("Bearer", userWithTokenDto.Token);
 
     var response = await _httpClient.PatchAsync("Auth/change-password", content);
 
-    if (!response.IsSuccessStatusCode)
-    {
-      var exStr = await response.Content.ReadAsStringAsync();
-      Console.WriteLine(response.StatusCode);
-      var apiException = JsonSerializer.Deserialize<ApiExceptionResponse>(exStr,
-        new JsonSerializerOptions
-        {
-          PropertyNameCaseInsensitive = true
-        });
-
-      if (apiException is not null)
-        throw new Exception($"{response.StatusCode}: {apiException.Error}");
-      throw new Exception($"{response.StatusCode}: {exStr}");
-    }
-
-    var responseData = await response.Content.ReadAsStringAsync();
-
-    var options = new JsonSerializerOptions
-    {
-      PropertyNameCaseInsensitive = true
-    };
-
-    var user = JsonSerializer.Deserialize<UserReturnDTO>(responseData, options);
-
-    return user;
+    return await (new ApiParsingUtils<UserReturnDTO>()).Process(response);
   }
 
   public async Task<UserWithTokenDTO> GetAuth()

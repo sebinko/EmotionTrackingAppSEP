@@ -6,6 +6,9 @@ using Protobuf.Services;
 
 namespace API.Controllers;
 
+[ApiController]
+[Route("[controller]")]
+
 public class UserFriendshipController (UserFriendsService userFriendsService) : ControllerBase
 {
   [HttpPost]
@@ -20,6 +23,22 @@ public class UserFriendshipController (UserFriendsService userFriendsService) : 
     }
 
     await userFriendsService.CreateFriendship(int.Parse(userId), createFriendshipDTO.user2Id);
+      
+    return Ok();
+  }
+  
+  [HttpDelete]
+  [Authorize]
+  public async Task<IActionResult> RemoveFriendship(RemoveFriendshipDTO removeFriendshipDto)
+  {
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    if (userId == null)
+    {
+      return Unauthorized();
+    }
+
+    await userFriendsService.RemoveFriendship(int.Parse(userId), removeFriendshipDto.user2Id);
       
     return Ok();
   }

@@ -15,7 +15,7 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
   public async Task<IActionResult> GetAll()
   {
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    
+
     if (userId == null)
     {
       return Unauthorized();
@@ -23,7 +23,7 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
 
     return Ok(await emotionCheckInService.GetAll(int.Parse(userId)));
   }
-  
+
   [HttpGet("{id}")]
   [Authorize]
   public async Task<IActionResult> Get(int id)
@@ -35,17 +35,16 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
       return Unauthorized();
     }
 
-    return Ok(
-      (await emotionCheckInService.GetAll(int.Parse(userId))).FirstOrDefault(e => e.Id == id));
+    return Ok(await emotionCheckInService.GetById(id, int.Parse(userId)));
   }
-  
-  
+
+
   [HttpPost]
   [Authorize]
   public async Task<IActionResult> Create([FromBody] EmotionCheckInCreateDTO emotionCheckInDto)
   {
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    
+
     if (userId == null)
     {
       return Unauthorized();
@@ -59,18 +58,17 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
     [FromBody] EmotionCheckInUpdateDTO emotionCheckInDto)
   {
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    
+
     if (userId == null)
     {
       return Unauthorized();
     }
-    
+
     return Ok(await emotionCheckInService.Update(emotionCheckInDto, int.Parse(userId)));
   }
-  
+
   [HttpDelete("{id}")]
   [Authorize]
-  
   public async Task<IActionResult> Delete(int id)
   {
     // TODO CHECK IF IT BELONGS TO THE USER

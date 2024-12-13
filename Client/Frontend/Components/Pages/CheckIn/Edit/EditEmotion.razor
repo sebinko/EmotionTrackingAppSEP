@@ -2,12 +2,33 @@
 @using API.DTO
 @using Frontend.Services
 @using Frontend.Services.Interfaces
+@using Frontend.Components.Shared
 @inject NavigationManager NavigationManager
-@inject IEmotionsService EmotionsService
+@inject IEmotionCheckInService EmotionCheckInService
+@inject IUserTagsService UserTagsService
 
 <AuthorizeView>
   <Authorized>
     <h3>Edit Emotion</h3>
+    <p1>Description</p1>
+    <input type="text" class="form-control" id="description" @bind="Description"><br/>
+    <h1>What</h1>
+    <TagAdd Tags="whatTags" ExistingTags="existingWhatTags" TagsChanged="TagsChanged"></TagAdd>
+    <TagPicker Tags="whatTags" TagType="TagType.WHAT" TagsChanged="TagsChanged"></TagPicker>
+    <TagDisplay Tags="whatTags"></TagDisplay>
+    <h1>With</h1>
+    <TagAdd Tags="withTags" ExistingTags="existingWithTags" TagsChanged="TagsChanged"></TagAdd>
+    <TagPicker Tags="withTags" TagType="TagType.WITH" TagsChanged="TagsChanged"></TagPicker>
+    <TagDisplay Tags="withTags"></TagDisplay>
+    <h1>Where</h1>
+    <TagAdd Tags="whereTags" ExistingTags="existingWhereTags" TagsChanged="TagsChanged"></TagAdd>
+    <TagPicker Tags="whereTags" TagType="TagType.WHERE" TagsChanged="TagsChanged"></TagPicker>
+    <TagDisplay Tags="whereTags"></TagDisplay>
+    <button class="btn btn-success" @onclick="Save">
+      Save
+    </button>
+    <br/>
+    <hr/>
     <button class="btn btn-danger" @onclick="NavigateToDeletePage">Delete</button>
     <button class="btn btn-primary" @onclick="NavigateToPickColorUpdatePage">Edit Emotion</button>
     <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
@@ -16,12 +37,65 @@
 
 @code {
   [Parameter] public int Id { get; set; }
-  
+  private EmotionCheckInDTO? emotionCheckIn;
+  public string? Description { get; set; }
+
+  private bool allowFormSubmit = true;
+
+  List<TagDTO> whatTags = new List<TagDTO>();
+  List<TagDTO> withTags = new List<TagDTO>();
+  List<TagDTO> whereTags = new List<TagDTO>();
+
+  List<TagDTO> existingWhatTags = new List<TagDTO>();
+  List<TagDTO> existingWithTags = new List<TagDTO>();
+  List<TagDTO> existingWhereTags = new List<TagDTO>();
+
+  protected override async Task OnInitializedAsync()
+  {
+    emotionCheckIn = await EmotionCheckInService.Get(Id);
+    Description = emotionCheckIn?.Description;
+
+    var existingTags = await UserTagsService.GetAll();
+
+    existingWhatTags = existingTags.Where(t => t.Type == TagType.WHAT).ToList();
+    existingWithTags = existingTags.Where(t => t.Type == TagType.WITH).ToList();
+    existingWhereTags = existingTags.Where(t => t.Type == TagType.WHERE).ToList();
+
+    whatTags = emotionCheckIn.Tags.Where(t => t.Type == TagType.WHAT).ToList();
+    withTags = emotionCheckIn.Tags.Where(t => t.Type == TagType.WITH).ToList();
+    whereTags = emotionCheckIn.Tags.Where(t => t.Type == TagType.WHERE).ToList();
+  }
+
+  private async Task TagsChanged(List<TagDTO> tags)
+  {
+    await InvokeAsync(StateHasChanged);
+  }
+
+  private async Task Save()
+  {
+    emotionCheckIn.Description = Description;
+
+    var combinedTags = new List<TagDTO>();
+
+    combinedTags.AddRange(whatTags);
+    combinedTags.AddRange(withTags);
+    combinedTags.AddRange(whereTags);
+
+    await EmotionCheckInService.Update(Id, new EmotionCheckInUpdateDTO
+    {
+      Description = emotionCheckIn.Description,
+      Emotion = emotionCheckIn.Emotion,
+      id = emotionCheckIn.Id.Value,
+      Tags = combinedTags
+    });
+
+    NavigationManager.NavigateTo("CheckIn");
+  }
+
   private void NavigateToPickColorUpdatePage()
   {
     NavigationManager.NavigateTo($"/CheckIn/PickColorUpdate/{Id}");
   }
-  
 
   private void NavigateToDeletePage()
   {
@@ -32,4 +106,5 @@
   {
     NavigationManager.NavigateTo("/CheckIn");
   }
+
 }

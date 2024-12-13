@@ -21,6 +21,7 @@
         <Protobuf Include="../../ProtoBuf/proto/Entities.proto" GrpcServices="Entities"/>
         <Protobuf Include="../../ProtoBuf/proto/Users.proto" GrpcServices="Users"/>
         <Protobuf Include="../../ProtoBuf/proto/EmotionCheckIns.proto" GrpcServices="EmotionCheckIns"/>
+        <Protobuf Include="../../ProtoBuf/proto/Reactions.proto" GrpcServices="Reactions"/>
     </ItemGroup>
 
     <ItemGroup>

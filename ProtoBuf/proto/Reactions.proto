@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "dk.via.JavaDAO.Protobuf.Reactions";
+option csharp_namespace = "Protobuf.Reactions";
+
+package Reactions;
+
+service ReactionService {
+  rpc Create(ReactionCreateMessage) returns (ReactionMessage);
+}
+
+message ReactionMessage {
+  string emoji = 1;
+  int32 userId = 2;
+  int32 emotionCheckInId = 3;
+  string createdAt = 4;
+  string updatedAt = 5;
+}
+
+message ReactionCreateMessage {
+  string emoji = 1;
+  int32 userId = 2;
+  int32 emotionCheckInId = 3;
+}
