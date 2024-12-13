@@ -27,4 +27,16 @@ public class ReactionService
       UpdatedAt = DateTime.Parse(reply.UpdatedAt).ToString()
     };
   }
+
+  public async Task Delete(ReactionDeleteDTO reactionDeleteDTO, int userId)
+  {
+    using var channel = GrpcChannel.ForAddress("http://localhost:8888");
+    var client = new Reactions.ReactionService.ReactionServiceClient(channel);
+
+    await client.DeleteAsync(new Reactions.ReactionDeleteMessage()
+    {
+      EmotionCheckInId = reactionDeleteDTO.EmotionCheckInId,
+      UserId = userId
+    });
+  }
 }
