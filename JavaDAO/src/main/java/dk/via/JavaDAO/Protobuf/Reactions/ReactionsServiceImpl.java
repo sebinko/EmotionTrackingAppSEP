@@ -1,9 +1,8 @@
 package dk.via.JavaDAO.Protobuf.Reactions;
 
 import dk.via.JavaDAO.DAO.ReactionsDAO;
-import dk.via.JavaDAO.Models.Reaction;
 import dk.via.JavaDAO.Protobuf.Reactions.ReactionServiceGrpc.ReactionServiceImplBase;
-import dk.via.JavaDAO.Util.PSQLExceptionParser;
+import dk.via.JavaDAO.Util.SQLExceptionParser;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import jakarta.inject.Inject;
@@ -39,7 +38,7 @@ public class ReactionsServiceImpl extends ReactionServiceImplBase {
     responseObserver.onNext(reactionBuilder.build());
     responseObserver.onCompleted();
     } catch (PSQLException e) {
-      PSQLExceptionParser.Parse(e, responseObserver);
+      SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       responseObserver.onError(
           Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
