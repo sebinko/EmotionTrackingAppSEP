@@ -63,15 +63,10 @@ public class UsersDAODB implements UsersDAO {
     PreparedStatement statement = connection.prepareStatement(sql);
     statement.setString(1, username);
     ResultSet resultSet = statement.executeQuery();
-    
-    logger.info("INPUY:" + password);
 
     if (!resultSet.next()) {
       throw new SQLException("Invalid username / password", PSQLState.INVALID_PASSWORD.getState());
     }
-
-    logger.info("RESULTSET:" + resultSet.getString("password"));
-    logger.info("INPUY:" + password);
 
     if (!password.equals(resultSet.getString("password"))) {
       throw new SQLException("Invalid username / password", PSQLState.INVALID_PASSWORD.getState());
