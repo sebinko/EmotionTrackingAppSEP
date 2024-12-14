@@ -8,6 +8,7 @@ package Reactions;
 
 service ReactionService {
   rpc Create(ReactionCreateMessage) returns (ReactionMessage);
+  rpc Delete(ReactionDeleteMessage) returns (ReactionMessage);
 }
 
 message ReactionMessage {
@@ -22,4 +23,9 @@ message ReactionCreateMessage {
   string emoji = 1;
   int32 userId = 2;
   int32 emotionCheckInId = 3;
+}
+
+message ReactionDeleteMessage {
+  int32 userId = 1;
+  int32 emotionCheckInId = 2;
 }
