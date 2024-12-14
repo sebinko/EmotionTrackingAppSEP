@@ -19,6 +19,17 @@ public class UserFriendsService
     });
   }
   
+  public async Task GetAllFriendships(int user1Id)
+  {
+    using var channel = GrpcChannel.ForAddress("http://localhost:8888");
+    var client = new Users.UserFriendsService.UserFriendsServiceClient(channel);
+
+    var reply = await client.GetAllFriendshipsAsync(new FriendshipMessage
+    {
+      User1Id = user1Id,
+    });
+  }
+  
   public async Task RemoveFriendship(int user1Id, int user2Id)
   {
     using var channel = GrpcChannel.ForAddress("http://localhost:8888");

@@ -55,6 +55,29 @@ public class UserFriendsDAODB implements UserFriendsDAO {
       throw new SQLException("User friendship already exists");
     }
   }
+
+  @Override
+  public void GetAllFriendships(Integer user1Id) throws SQLException {
+    Connection connection = connector.getConnection();
+
+    ResultSet resultSet = fetchFriendShip(user1Id, connection);
+
+    boolean doesRequestExist = false;
+    while (resultSet.next()) {
+      doesRequestExist = true;
+    }
+
+    if(!doesRequestExist) {
+      throw new SQLException("User friendship does not exist");
+    }
+
+    String sql = "SELECT * FROM \"EmotionsTrackingWebsite\".user_friends WHERE user_id = ? OR friend_id = ?;";
+    try (PreparedStatement statement = connection.prepareStatement(sql)){
+      statement.setInt(1, user1Id);
+      statement.executeUpdate();
+    }
+  }
+
   @Override
   public void RemoveFriendship(Integer user1Id, Integer user2Id) throws SQLException {
     Connection connection = connector.getConnection();

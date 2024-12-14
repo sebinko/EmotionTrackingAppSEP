@@ -1,8 +1,10 @@
-﻿using System.Security.Claims;
+﻿using System.Collections;
+using System.Security.Claims;
 using API.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Protobuf.Services;
+using Protobuf.Users;
+using UserFriendsService = Protobuf.Services.UserFriendsService;
 
 namespace API.Controllers;
 
@@ -23,6 +25,22 @@ public class UserFriendshipController (UserFriendsService userFriendsService) : 
     }
 
     await userFriendsService.CreateFriendship(int.Parse(userId), createFriendshipDTO.user2Id);
+      
+    return Ok();
+  }
+  
+  [HttpGet]
+  [Authorize]
+  public async Task<IActionResult<List<FriendshipDTO>> GetAllFriendships()
+  {
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    if (userId == null)
+    {
+      return Unauthorized();
+    }
+
+    await userFriendsService.GetAllFriendships(int.Parse(userId));
       
     return Ok();
   }

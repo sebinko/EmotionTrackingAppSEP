@@ -1,0 +1,48 @@
+﻿@page "/Friends"
+@using Entities
+
+<h3>Friend List</h3>
+
+<AuthorizeView>
+  <Authorized>
+    <h3>GetAll</h3>
+
+    <button class="btn btn-primary" @onclick="">Create CheckIn</button>
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Id</th>
+        <th>Username</th>
+        <th>Streak</th>
+        <th>Edit</th>
+      </tr>
+      </thead>
+      <tbody>
+      @foreach (var friend in friends)
+      {
+      <tr>
+        <td>@friend.Id</td>
+        <td>@friend.Username</td>
+        <td>@friend.Streak</td>
+        <td>
+          <button class="btn btn-secondary" @onclick="">Edit</button>
+        </td>
+      </tr>
+      }
+      </tbody>
+    </table>
+  </Authorized>
+</AuthorizeView>
+
+
+@code {
+  private ICollection<User> friends;
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    
+    StateHasChanged();
+  }
+  
+}

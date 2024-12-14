@@ -42,6 +42,24 @@ public class UserFriendsServiceImpl extends UserFriendsServiceImplBase {
     }
   }
 
+  public void getAllFriendships(FriendshipMessage request,
+      StreamObserver<FriendshipMessage> responseObserver) {
+    try {
+      userFriendsDAO.GetAllFriendships(request.getUser1Id());
+
+      responseObserver.onNext(FriendshipMessage
+          .newBuilder()
+          .setUser1Id(request.getUser1Id())
+          .build());
+
+      responseObserver.onCompleted();
+    } catch (SQLException e) {
+      SQLExceptionParser.Parse(e, responseObserver);
+    } catch (Exception e) {
+      responseObserver.onError(
+          Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
+    }
+  }
 
   public void removeFriendship(FriendshipMessage request,
     StreamObserver<FriendshipMessage> responseObserver) {
