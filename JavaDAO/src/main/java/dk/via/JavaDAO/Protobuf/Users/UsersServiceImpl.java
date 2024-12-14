@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import dk.via.JavaDAO.DAO.UsersDAO;
 import dk.via.JavaDAO.Protobuf.Users.UsersServiceGrpc.UsersServiceImplBase;
 import dk.via.JavaDAO.Util.SQLExceptionParser;
-import dk.via.JavaDAO.Util.PasswordHasherUtil;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import java.sql.SQLException;
@@ -52,16 +51,14 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   @Override
   public void create(UserCreate request, StreamObserver<User> responseObserver) {
     try {
-      String password = PasswordHasherUtil.getInstance().hashPassword(request.getPassword());
       dk.via.JavaDAO.Models.User newUser = new dk.via.JavaDAO.Models.User(
           request.getUsername(),
-          password,
-          request.getEmail(),
-          null,
-          null,
-          null
+          request.getPassword(),
+          request.getEmail()
       );
+
       newUser = usersDAO.Create(newUser);
+
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(newUser.getId());
       userBuilder.setUsername(newUser.getUsername());
@@ -80,20 +77,17 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     }
   }
 
+  /**
+   * Method to update the users password, as that is the only thing a user can change
+   * @param request
+   * @param responseObserver
+   */
   @Override
   public void update(UserUpdate request, StreamObserver<User> responseObserver) {
     try {
       dk.via.JavaDAO.Models.User updatedUser = usersDAO.GetSingle(request.getId());
-      if (!request.getUsername().isEmpty()) {
-        updatedUser.setUsername(request.getUsername());
-      }
-      if (!request.getEmail().isEmpty()) {
-        updatedUser.setEmail(request.getEmail());
-      }
-      if (!request.getPassword().isEmpty()) {
-        updatedUser.setPassword(
-            PasswordHasherUtil.getInstance().hashPassword(request.getPassword()));
-      }
+
+      updatedUser.setPassword(request.getPassword());
 
       usersDAO.Update(updatedUser);
 
@@ -184,7 +178,8 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   public void getByUsernameAndPassword(UsernameAndPassword request,
       StreamObserver<User> responseObserver) {
     try {
-      dk.via.JavaDAO.Models.User user = usersDAO.GetSingle(request.getUsername(), request.getPassword());
+      dk.via.JavaDAO.Models.User user = usersDAO.GetSingle(request.getUsername(),
+          request.getPassword());
 
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(user.getId());

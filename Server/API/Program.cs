@@ -1,6 +1,7 @@
 using System.Text;
 using API.Auth;
 using API.Middlewares;
+using API.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Protobuf.Services;
@@ -14,7 +15,6 @@ var configuration = new ConfigurationBuilder()
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<GlobalExceptionMiddleware>();
@@ -26,6 +26,10 @@ builder.Services.AddScoped<UserTagsService>();
 builder.Services.AddScoped<UserFriendsService>();
 builder.Services.AddSingleton<AuthUtilities>();
 builder.Services.AddScoped<ReactionService>();
+
+var secretKey = configuration["ApplicationSettings:SecretKey"];
+
+builder.Services.AddSingleton(new PasswordHasherUtil(secretKey!));
 
 builder.Services.AddAuthentication(cfg =>
 {

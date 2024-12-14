@@ -18,8 +18,4 @@
         <ProjectReference Include="..\..\Shared\SharedUtil\SharedUtil.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="DTO\" />
-    </ItemGroup>
-
 </Project>

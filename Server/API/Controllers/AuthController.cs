@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using API.Auth;
 using API.DTO;
+using API.Utilities;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +11,13 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthController(AuthUtilities authUtilities, UsersService usersService) : ControllerBase
+public class AuthController(AuthUtilities authUtilities, UsersService usersService, PasswordHasherUtil passwordHasherUtil) : ControllerBase
 {
   [HttpPost("login")]
   public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDTO)
   {
     var user =
-      await usersService.GetByUsernameAndPassword(userLoginDTO.Username, userLoginDTO.Password);
+      await usersService.GetByUsernameAndPassword(userLoginDTO.Username, passwordHasherUtil.HashPassword(userLoginDTO.Password));
 
     if (user == null) return Unauthorized();
 
@@ -43,7 +44,7 @@ public class AuthController(AuthUtilities authUtilities, UsersService usersServi
     var user = new User
     {
       Username = userRegisterDto.Username,
-      Password = userRegisterDto.Password,
+      Password = passwordHasherUtil.HashPassword(userRegisterDto.Password),
       Email = userRegisterDto.Email
     };
 
@@ -74,6 +75,8 @@ public class AuthController(AuthUtilities authUtilities, UsersService usersServi
     {
       return Unauthorized();
     }
+    
+    changePasswordDTO.NewPassword = passwordHasherUtil.HashPassword(changePasswordDTO.NewPassword);
 
     var user = await usersService.ChangePassword(int.Parse(userId), changePasswordDTO);
 

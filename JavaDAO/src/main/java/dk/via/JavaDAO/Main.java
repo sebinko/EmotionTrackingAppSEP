@@ -9,7 +9,6 @@ import dk.via.JavaDAO.Protobuf.Users.UserFriendsServiceImpl;
 import dk.via.JavaDAO.Protobuf.Users.UsersServiceImpl;
 import dk.via.JavaDAO.Status.StatusServiceImpl;
 import dk.via.JavaDAO.Util.AppConfig;
-import dk.via.JavaDAO.Util.PasswordHasherUtil;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.slf4j.Logger;
@@ -29,9 +28,6 @@ public class Main {
    */
   public static void main(String[] args) {
     Injector injector = Guice.createInjector(new AppModule());
-
-    AppConfig appConfig = injector.getInstance(AppConfig.class);
-    PasswordHasherUtil.setAppConfig(appConfig);
 
     logger.info("Starting server on port 8888");
 

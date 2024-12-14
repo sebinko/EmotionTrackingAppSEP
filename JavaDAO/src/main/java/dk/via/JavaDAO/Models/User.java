@@ -3,7 +3,6 @@ package dk.via.JavaDAO.Models;
 import java.sql.Timestamp;
 
 public class User {
-
   private Integer id;
   private String username;
   private String password;
@@ -31,6 +30,12 @@ public class User {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.streak = streak;
+  }
+
+  public User(String username, String password, String email) {
+    this.username = username;
+    this.password = password;
+    this.email = email;
   }
 
   public Integer getId() {

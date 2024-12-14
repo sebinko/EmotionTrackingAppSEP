@@ -8,8 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import dk.via.JavaDAO.Util.PasswordHasherUtil;
-import org.postgresql.util.PSQLException;
 import org.postgresql.util.PSQLState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,12 +63,17 @@ public class UsersDAODB implements UsersDAO {
     PreparedStatement statement = connection.prepareStatement(sql);
     statement.setString(1, username);
     ResultSet resultSet = statement.executeQuery();
+    
+    logger.info("INPUY:" + password);
 
     if (!resultSet.next()) {
       throw new SQLException("Invalid username / password", PSQLState.INVALID_PASSWORD.getState());
     }
 
-    if (!PasswordHasherUtil.getInstance().verifyPassword(password, resultSet.getString("password"))) {
+    logger.info("RESULTSET:" + resultSet.getString("password"));
+    logger.info("INPUY:" + password);
+
+    if (!password.equals(resultSet.getString("password"))) {
       throw new SQLException("Invalid username / password", PSQLState.INVALID_PASSWORD.getState());
     }
 
