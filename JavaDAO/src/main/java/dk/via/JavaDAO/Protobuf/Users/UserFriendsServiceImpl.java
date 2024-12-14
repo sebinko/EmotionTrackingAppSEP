@@ -1,15 +1,15 @@
 package dk.via.JavaDAO.Protobuf.Users;
 
-import  com.google.inject.Inject;
+import com.google.inject.Inject;
 import dk.via.JavaDAO.DAO.UserFriendsDAO;
 import dk.via.JavaDAO.Protobuf.Users.UserFriendsServiceGrpc.UserFriendsServiceImplBase;
 import dk.via.JavaDAO.Util.SQLExceptionParser;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import java.sql.SQLException;
 import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.sql.SQLException;
 
 public class UserFriendsServiceImpl extends UserFriendsServiceImplBase {
 
@@ -42,9 +42,9 @@ public class UserFriendsServiceImpl extends UserFriendsServiceImplBase {
     }
   }
 
-
+  @Override
   public void removeFriendship(FriendshipMessage request,
-    StreamObserver<FriendshipMessage> responseObserver) {
+      StreamObserver<FriendshipMessage> responseObserver) {
     try {
       userFriendsDAO.RemoveFriendship(request.getUser1Id(), request.getUser2Id());
 

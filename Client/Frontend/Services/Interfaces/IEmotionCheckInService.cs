@@ -1,12 +1,12 @@
-using API.DTO;
+using DTO;
 
 namespace Frontend.Services.Interfaces;
 
 public interface IEmotionCheckInService
 {
-  Task<List<EmotionCheckInDTO>?> GetAll();
-  Task<EmotionCheckInDTO?> Get(int id);
-  Task<EmotionCheckInDTO?> Create(EmotionCheckInCreateDTO emotionCheckIn);
-  Task<EmotionCheckInDTO?> Update(int id, EmotionCheckInUpdateDTO emotionCheckIn);
-  Task<EmotionCheckInDTO?> Delete(int id);
+  Task<List<EmotionCheckInDto>?> GetAll();
+  Task<EmotionCheckInDto?> Get(int id);
+  Task<EmotionCheckInDto?> Create(EmotionCheckInCreateDto emotionCheckIn);
+  Task<EmotionCheckInDto?> Update(int id, EmotionCheckInUpdateDto emotionCheckIn);
+  Task<EmotionCheckInDto?> Delete(int id);
 }

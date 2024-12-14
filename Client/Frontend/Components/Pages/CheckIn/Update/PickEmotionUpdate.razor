@@ -1,5 +1,5 @@
 ﻿@page "/CheckIn/PickEmotionUpdate/{Id:int}/{color}"
-@using API.DTO
+@using DTO
 @using Frontend.Services
 @using Frontend.Services.Interfaces
 @using Microsoft.AspNetCore.Authorization
@@ -39,14 +39,14 @@ else
 @code {
   [Parameter] public required int Id { get; set; }
   [Parameter] public required string Color { get; set; }
-  private List<EmotionDTO> emotionList = new();
+  private List<EmotionDto> emotionList = new();
 
   protected override async Task OnInitializedAsync()
   {
     emotionList = await EmotionsService.GetAll(null, Color);
   }
 
-  private void NavigatePickEmotionToUpdate(EmotionDTO selectedEmotion)
+  private void NavigatePickEmotionToUpdate(EmotionDto selectedEmotion)
   {
     NavigationManager.NavigateTo($"/CheckIn/EmotionCheckInUpdate/{Id}/{selectedEmotion.Emotion}");
   }

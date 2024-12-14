@@ -1,5 +1,5 @@
 @page "/CheckIn/Create/{color}"
-@using API.DTO
+@using DTO
 @using Frontend.Services
 @using Frontend.Services.Interfaces
 @using Microsoft.AspNetCore.Authorization
@@ -37,7 +37,7 @@ else
 @code {
   [Parameter] public required string color { get; set; }
 
-  List<EmotionDTO>? emotions;
+  List<EmotionDto>? emotions;
 
   // on init
   protected override async Task OnInitializedAsync()

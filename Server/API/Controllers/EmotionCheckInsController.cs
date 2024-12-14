@@ -1,26 +1,23 @@
 ﻿using System.Security.Claims;
-using API.DTO;
+using API.Exceptions;
+using DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Protobuf.Services;
+using Protobuf.Services.Interfaces;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class EmotionCheckInsController(EmotionCheckInService emotionCheckInService) : ControllerBase
+public class EmotionCheckInsController(IEmotionCheckInService emotionCheckInService) : ControllerBase
 {
   [HttpGet]
   [Authorize]
   public async Task<IActionResult> GetAll()
   {
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-    if (userId == null)
-    {
-      return Unauthorized();
-    }
-
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+    
     return Ok(await emotionCheckInService.GetAll(int.Parse(userId)));
   }
 
@@ -28,12 +25,7 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
   [Authorize]
   public async Task<IActionResult> Get(int id)
   {
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-    if (userId == null)
-    {
-      return Unauthorized();
-    }
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     return Ok(await emotionCheckInService.GetById(id, int.Parse(userId)));
   }
@@ -41,27 +33,29 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
 
   [HttpPost]
   [Authorize]
-  public async Task<IActionResult> Create([FromBody] EmotionCheckInCreateDTO emotionCheckInDto)
+  public async Task<IActionResult> Create([FromBody] EmotionCheckInCreateDto emotionCheckInDto)
   {
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-    if (userId == null)
-    {
-      return Unauthorized();
-    }
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     return Ok(await emotionCheckInService.Create(emotionCheckInDto, int.Parse(userId)));
   }
 
   [HttpPatch]
   public async Task<IActionResult> Update(
-    [FromBody] EmotionCheckInUpdateDTO emotionCheckInDto)
+    [FromBody] EmotionCheckInUpdateDto emotionCheckInDto)
   {
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-    if (userId == null)
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+    
+    var emotionCheckIn = await emotionCheckInService.GetById(emotionCheckInDto.Id, int.Parse(userId));
+    
+    if (emotionCheckIn == null)
     {
-      return Unauthorized();
+      throw new NotFoundException("EmotionCheckIn not found");
+    }
+    
+    if (emotionCheckIn.UserId != int.Parse(userId))
+    {
+      throw new UnauthorizedException("EmotionCheckIn does not belong to the user");
     }
 
     return Ok(await emotionCheckInService.Update(emotionCheckInDto, int.Parse(userId)));
@@ -71,7 +65,20 @@ public class EmotionCheckInsController(EmotionCheckInService emotionCheckInServi
   [Authorize]
   public async Task<IActionResult> Delete(int id)
   {
-    // TODO CHECK IF IT BELONGS TO THE USER
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+    
+    var emotionCheckIn = await emotionCheckInService.GetById(id, int.Parse(userId));
+    
+    if (emotionCheckIn == null)
+    {
+      throw new NotFoundException("EmotionCheckIn not found");
+    }
+    
+    if (emotionCheckIn.UserId != int.Parse(userId))
+    {
+      throw new UnauthorizedException("EmotionCheckIn does not belong to the user");
+    }
+    
     return Ok(await emotionCheckInService.Delete(id));
   }
 }

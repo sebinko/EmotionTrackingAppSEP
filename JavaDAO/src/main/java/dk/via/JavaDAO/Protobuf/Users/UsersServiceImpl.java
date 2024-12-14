@@ -77,11 +77,6 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     }
   }
 
-  /**
-   * Method to update the users password, as that is the only thing a user can change
-   * @param request
-   * @param responseObserver
-   */
   @Override
   public void update(UserUpdate request, StreamObserver<User> responseObserver) {
     try {

@@ -1,4 +1,4 @@
-@using API.DTO
+@using DTO
 
 <div class="tags mt-2">
   @foreach (var tag in Tags)
@@ -13,12 +13,12 @@
 
 @code {
   [Parameter]
-  public List<TagDTO> Tags { get; set; } = new List<TagDTO>();
+  public List<TagDto> Tags { get; set; } = new List<TagDto>();
 
   [Parameter]
-  public EventCallback<TagDTO> OnTagRemoved { get; set; }
+  public EventCallback<TagDto> OnTagRemoved { get; set; }
 
-  private async Task RemoveTag(TagDTO tag)
+  private async Task RemoveTag(TagDto tag)
   {
     await OnTagRemoved.InvokeAsync(tag);
   }

@@ -2,8 +2,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using API.DTO;
-using Entities;
+using DTO;
 using Frontend.Services.Interfaces;
 using Frontend.Utils;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -23,7 +22,7 @@ public class AuthService : AuthenticationStateProvider
     _httpClient = httpClient;
   }
 
-  public async Task<UserWithTokenDTO?> Register(User user)
+  public async Task<UserWithTokenDto?> Register(UserRegisterDto user)
   {
     var data = new
     {
@@ -37,7 +36,7 @@ public class AuthService : AuthenticationStateProvider
 
     var response = await _httpClient.PostAsync("Auth/register", content);
 
-    var auth = await (new ApiParsingUtils<UserWithTokenDTO>()).Process(response);
+    var auth = await (new ApiParsingUtils<UserWithTokenDto>()).Process(response);
 
     List<Claim> claims = new()
     {
@@ -60,7 +59,7 @@ public class AuthService : AuthenticationStateProvider
     return auth?.User is null ? null : auth;
   }
 
-  public async Task<UserWithTokenDTO?> Login(string username, string password)
+  public async Task<UserWithTokenDto?> Login(string username, string password)
   {
     var data = new
     {
@@ -72,7 +71,7 @@ public class AuthService : AuthenticationStateProvider
 
     var response = await _httpClient.PostAsync("Auth/login", content);
 
-    var auth = await (new ApiParsingUtils<UserWithTokenDTO>()).Process(response);
+    var auth = await (new ApiParsingUtils<UserWithTokenDto>()).Process(response);
 
     List<Claim> claims = new()
     {
@@ -94,10 +93,10 @@ public class AuthService : AuthenticationStateProvider
     return auth?.User is null ? null : auth;
   }
 
-  public async Task<UserReturnDTO> ChangePassword(UserWithTokenDTO userWithTokenDto,
+  public async Task<UserReturnDto> ChangePassword(UserWithTokenDto userWithTokenDto,
     string newPassword)
   {
-    var data = new ChangePasswordDTO
+    var data = new ChangePasswordDto
     {
       NewPassword = newPassword
     };
@@ -110,12 +109,12 @@ public class AuthService : AuthenticationStateProvider
 
     var response = await _httpClient.PatchAsync("Auth/change-password", content);
 
-    return await (new ApiParsingUtils<UserReturnDTO>()).Process(response);
+    return await (new ApiParsingUtils<UserReturnDto>()).Process(response);
   }
 
-  public async Task<UserWithTokenDTO> GetAuth()
+  public async Task<UserWithTokenDto> GetAuth()
   {
-    return await _storageService.GetItem<UserWithTokenDTO>("auth");
+    return await _storageService.GetItem<UserWithTokenDto>("auth");
   }
 
   public async Task Logout()
@@ -125,7 +124,7 @@ public class AuthService : AuthenticationStateProvider
 
   public override async Task<AuthenticationState> GetAuthenticationStateAsync()
   {
-    var auth = await _storageService.GetItem<UserWithTokenDTO>("auth");
+    var auth = await _storageService.GetItem<UserWithTokenDto>("auth");
 
     if (auth is null)
     {

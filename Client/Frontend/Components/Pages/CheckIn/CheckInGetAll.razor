@@ -1,5 +1,5 @@
 @page "/CheckIn"
-@using API.DTO
+@using DTO
 @using Frontend.Services.Interfaces
 @using Microsoft.AspNetCore.Components.Authorization
 @inject IEmotionCheckInService EmotionCheckInService
@@ -43,7 +43,7 @@
 </AuthorizeView>
 
 @code {
-  private List<EmotionCheckInDTO> _checkIns = new List<EmotionCheckInDTO>();
+  private List<EmotionCheckInDto> _checkIns = new List<EmotionCheckInDto>();
 
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {

@@ -1,5 +1,5 @@
 @page "/CheckIn/Edit/{id:int}"
-@using API.DTO
+@using DTO
 @using Frontend.Services
 @using Frontend.Services.Interfaces
 @using Frontend.Components.Shared
@@ -37,18 +37,18 @@
 
 @code {
   [Parameter] public int Id { get; set; }
-  private EmotionCheckInDTO? emotionCheckIn;
+  private EmotionCheckInDto? emotionCheckIn;
   public string? Description { get; set; }
 
   private bool allowFormSubmit = true;
 
-  List<TagDTO> whatTags = new List<TagDTO>();
-  List<TagDTO> withTags = new List<TagDTO>();
-  List<TagDTO> whereTags = new List<TagDTO>();
+  List<TagDto> whatTags = new List<TagDto>();
+  List<TagDto> withTags = new List<TagDto>();
+  List<TagDto> whereTags = new List<TagDto>();
 
-  List<TagDTO> existingWhatTags = new List<TagDTO>();
-  List<TagDTO> existingWithTags = new List<TagDTO>();
-  List<TagDTO> existingWhereTags = new List<TagDTO>();
+  List<TagDto> existingWhatTags = new List<TagDto>();
+  List<TagDto> existingWithTags = new List<TagDto>();
+  List<TagDto> existingWhereTags = new List<TagDto>();
 
   protected override async Task OnInitializedAsync()
   {
@@ -66,7 +66,7 @@
     whereTags = emotionCheckIn.Tags.Where(t => t.Type == TagType.WHERE).ToList();
   }
 
-  private async Task TagsChanged(List<TagDTO> tags)
+  private async Task TagsChanged(List<TagDto> tags)
   {
     await InvokeAsync(StateHasChanged);
   }
@@ -75,17 +75,17 @@
   {
     emotionCheckIn.Description = Description;
 
-    var combinedTags = new List<TagDTO>();
+    var combinedTags = new List<TagDto>();
 
     combinedTags.AddRange(whatTags);
     combinedTags.AddRange(withTags);
     combinedTags.AddRange(whereTags);
 
-    await EmotionCheckInService.Update(Id, new EmotionCheckInUpdateDTO
+    await EmotionCheckInService.Update(Id, new EmotionCheckInUpdateDto
     {
       Description = emotionCheckIn.Description,
       Emotion = emotionCheckIn.Emotion,
-      id = emotionCheckIn.Id.Value,
+      Id = emotionCheckIn.Id.Value,
       Tags = combinedTags
     });
 

@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.28.2"/>
+        <PackageReference Include="Grpc.Net.Client" Version="2.66.0"/>
+        <PackageReference Include="Grpc.Tools" Version="2.66.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="../../ProtoBuf/proto/status.proto" GrpcServices="Status"/>
+        <Protobuf Include="../../ProtoBuf/proto/Emotions.proto" GrpcServices="Emotions"/>
+        <Protobuf Include="../../ProtoBuf/proto/Entities.proto" GrpcServices="Entities"/>
+        <Protobuf Include="../../ProtoBuf/proto/Users.proto" GrpcServices="Users"/>
+        <Protobuf Include="../../ProtoBuf/proto/EmotionCheckIns.proto" GrpcServices="EmotionCheckIns"/>
+        <Protobuf Include="../../ProtoBuf/proto/Reactions.proto" GrpcServices="Reactions"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Shared\Dto\Dto.csproj" />
+    </ItemGroup>
+
+</Project>

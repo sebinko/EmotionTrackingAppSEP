@@ -1,31 +1,21 @@
 ﻿@page "/"
-@using Frontend.Services.Interfaces
-@using Frontend.Components.Shared
-@inject IStatusService statusService
-
-<PageTitle>Home</PageTitle>
-
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<h1>Server Status</h1>
-
-
-<p>@isServerRunning</p>
-<p>@serverStatus</p>
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider authStateProvider
 
 @code {
-  private bool isServerRunning;
-  private string serverStatus;
-  private string statusCode;
-
   protected override async Task OnInitializedAsync()
   {
-    var (isOkay, statusMsg, _statusCode) = await statusService.GetStatusAsync();
-    isServerRunning = isOkay;
-    serverStatus = statusMsg;
-    statusCode = _statusCode;
-  }
+    var authState = await authStateProvider.GetAuthenticationStateAsync();
+    var user = authState.User;
 
+    if (user.Identity != null && user.Identity.IsAuthenticated)
+    {
+      Navigation.NavigateTo("/checkin");
+    }
+    else
+    {
+      Navigation.NavigateTo("/login");
+    }
+  }
 }

@@ -78,13 +78,13 @@ public class TagsDAODB implements TagsDAO {
   }
 
   @Override
-  public List<Tag> GetAllForUser(User user) throws SQLException {
+  public List<Tag> GetAllForUser(int userId) throws SQLException {
     Connection connection = connector.getConnection();
     String sql = "select * from \"EmotionsTrackingWebsite\".tags where user_id = ?;";
     List<Tag> tags = new ArrayList<>();
 
     PreparedStatement statement = connection.prepareStatement(sql);
-    statement.setInt(1, user.getId());
+    statement.setInt(1, userId);
     ResultSet resultSet = statement.executeQuery();
     while (resultSet.next()) {
       tags.add(parseTag(resultSet));

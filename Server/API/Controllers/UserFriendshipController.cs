@@ -1,26 +1,22 @@
 ﻿using System.Security.Claims;
-using API.DTO;
+using DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Protobuf.Services;
+using Protobuf.Services.Interfaces;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 
-public class UserFriendshipController (UserFriendsService userFriendsService) : ControllerBase
+public class UserFriendshipController (IUserFriendsService userFriendsService) : ControllerBase
 {
   [HttpPost]
   [Authorize]
-  public async Task<IActionResult> CreateFriendship(CreateFriendshipDTO createFriendshipDTO)
+  public async Task<IActionResult> CreateFriendship(CreateFriendshipDto createFriendshipDTO)
   {
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-    if (userId == null)
-    {
-      return Unauthorized();
-    }
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     await userFriendsService.CreateFriendship(int.Parse(userId), createFriendshipDTO.user2Id);
       
@@ -29,14 +25,9 @@ public class UserFriendshipController (UserFriendsService userFriendsService) : 
   
   [HttpDelete]
   [Authorize]
-  public async Task<IActionResult> RemoveFriendship(RemoveFriendshipDTO removeFriendshipDto)
+  public async Task<IActionResult> RemoveFriendship(RemoveFriendshipDto removeFriendshipDto)
   {
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-    if (userId == null)
-    {
-      return Unauthorized();
-    }
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     await userFriendsService.RemoveFriendship(int.Parse(userId), removeFriendshipDto.user2Id);
       

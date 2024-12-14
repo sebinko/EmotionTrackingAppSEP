@@ -5,6 +5,7 @@ using API.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Protobuf.Services;
+using Protobuf.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder()
@@ -18,14 +19,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<GlobalExceptionMiddleware>();
-builder.Services.AddScoped<StatusService>();
-builder.Services.AddScoped<UsersService>();
-builder.Services.AddScoped<EmotionCheckInService>();
-builder.Services.AddScoped<EmotionsService>();
-builder.Services.AddScoped<UserTagsService>();
-builder.Services.AddScoped<UserFriendsService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<IEmotionCheckInService, EmotionCheckInService>();
+builder.Services.AddScoped<IEmotionsService, EmotionsService>();
+builder.Services.AddScoped<IUserTagsService, UserTagsService>();
+builder.Services.AddScoped<IUserFriendsService, UserFriendsService>();
+builder.Services.AddScoped<IReactionService, ReactionService>();
 builder.Services.AddSingleton<AuthUtilities>();
-builder.Services.AddScoped<ReactionService>();
 
 var secretKey = configuration["ApplicationSettings:SecretKey"];
 
