@@ -1,8 +1,8 @@
-using API.DTO;
+using DTO;
 
 namespace Frontend.Services.Interfaces;
 
 public interface IEmotionsService
 {
-  Task<List<EmotionDTO>?> GetAll(string? emotionQuery, string? emotionColor);
+  Task<List<EmotionDto>?> GetAll(string? emotionQuery, string? emotionColor);
 }

@@ -1,5 +1,5 @@
 ﻿@page "/CheckIn/EmotionCheckInUpdate/{id:int}/{Emotion}"
-@using API.DTO
+@using DTO
 @using Frontend.Services.Interfaces
 @inject NavigationManager NavigationManager
 @inject IEmotionCheckInService EmotionCheckInService
@@ -31,7 +31,7 @@
   public required string ButtonClass { get; set; }
   [Parameter] public required int Id { get; set; }
   [Parameter] public required string Emotion { get; set; }
-  private EmotionCheckInDTO? emotionCheckIn;
+  private EmotionCheckInDto? emotionCheckIn;
 
   protected override async Task OnInitializedAsync()
   {
@@ -49,14 +49,13 @@
   {
     if (emotionCheckIn != null)
     {
-      var existingTags = await UserTagsService.GetAll();
-      
       emotionCheckIn.Emotion = Emotion;
-      await EmotionCheckInService.Update(Id, new EmotionCheckInUpdateDTO
+      await EmotionCheckInService.Update(Id, new EmotionCheckInUpdateDto
       {
-        id = emotionCheckIn.Id.Value,
+        Id = emotionCheckIn.Id.Value,
         Emotion = emotionCheckIn.Emotion,
-        Tags = existingTags
+        Description = emotionCheckIn.Description,
+        Tags = emotionCheckIn.Tags
       });
       NavigationManager.NavigateTo("/CheckIn");
     }

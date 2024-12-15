@@ -13,7 +13,7 @@ public interface TagsDAO {
   Tag GetSingle(String key, TagType type, Integer userId) throws SQLException;
 
   List<Tag> GetAllForCheckIn(EmotionCheckIn emotionCheckIn) throws SQLException;
-  List<Tag> GetAllForUser(User user) throws SQLException;
+  List<Tag> GetAllForUser(int userId) throws SQLException;
 
   void AssignTag(Tag tag, EmotionCheckIn checkIn) throws SQLException;
 

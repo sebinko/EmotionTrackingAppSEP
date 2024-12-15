@@ -1,4 +1,4 @@
-@using API.DTO
+@using DTO
 <div class="tag-picker">
   <div class="input-group">
     <input type="text" class="form-control"
@@ -13,10 +13,10 @@
 
 @code {
   [Parameter]
-  public List<TagDTO> Tags { get; set; } = new List<TagDTO>();
+  public List<TagDto> Tags { get; set; } = new List<TagDto>();
 
   [Parameter]
-  public EventCallback<List<TagDTO>> TagsChanged { get; set; }
+  public EventCallback<List<TagDto>> TagsChanged { get; set; }
 
   [Parameter]
   public TagType TagType { get; set; }
@@ -27,7 +27,7 @@
   {
     if (!string.IsNullOrWhiteSpace(CurrentTag))
     {
-      var newTag = new TagDTO { Key = CurrentTag.Trim(), Type = TagType };
+      var newTag = new TagDto { Key = CurrentTag.Trim(), Type = TagType };
       if (!Tags.Any(t => t.Key == newTag.Key)) // Prevent duplicates
       {
         Tags.Add(newTag);

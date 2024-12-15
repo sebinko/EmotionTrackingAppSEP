@@ -1,6 +1,6 @@
 @page "/Register"
 @using System.ComponentModel.DataAnnotations
-@using Entities
+@using DTO
 @using Frontend.Components.Shared
 @using Frontend.Services
 @using Frontend.Services.Interfaces
@@ -48,7 +48,7 @@
   {
     try
     {
-      var newUser = new User
+      var newUser = new UserRegisterDto() 
       {
         Username = Input.Username,
         Password = Input.Password,

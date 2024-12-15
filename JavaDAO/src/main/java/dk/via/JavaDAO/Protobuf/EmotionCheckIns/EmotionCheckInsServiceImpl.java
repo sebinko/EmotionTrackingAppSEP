@@ -22,7 +22,6 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
   @Inject
   public EmotionCheckInsServiceImpl(EmotionCheckInsDAO emotionCheckInsDAO, TagsDAO tagsDao) {
     super();
-
     this.emotionCheckInsDAO = emotionCheckInsDAO;
     this.tagsDAO = tagsDao;
   }
@@ -33,21 +32,6 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
     try {
       dk.via.JavaDAO.Models.EmotionCheckIn emotionCheckIn = emotionCheckInsDAO.GetSingle(
           request.getId());
-
-      if (emotionCheckIn == null) {
-        responseObserver.onError(Status.fromCode(Status.Code.NOT_FOUND)
-            .withDescription("Emotion check-in not found")
-            .asRuntimeException());
-        return;
-      }
-
-      if (emotionCheckIn.getUserId() != request.getUserId()) {
-        responseObserver.onError(Status.fromCode(Status.Code.PERMISSION_DENIED)
-            .withDescription("User does not have permission to view this emotion check-in")
-            .asRuntimeException());
-        return;
-      }
-
       EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
       emotionCheckInBuilder.setEmotion(emotionCheckIn.getEmotion());
       emotionCheckInBuilder.setId(emotionCheckIn.getId());
@@ -111,7 +95,6 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
         }
 
         listEmotionCheckInBuilder.addEmotionCheckIns(emotionCheckInBuilder.build());
-
       }
       responseObserver.onNext(listEmotionCheckInBuilder.build());
       responseObserver.onCompleted();
@@ -129,7 +112,7 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
     try {
       dk.via.JavaDAO.Models.EmotionCheckIn newEmotionCheckIn = new dk.via.JavaDAO.Models.EmotionCheckIn();
       newEmotionCheckIn.setEmotion(request.getEmotion());
-      newEmotionCheckIn.setUserId((request.getUserId()));
+      newEmotionCheckIn.setUserId(request.getUserId());
       newEmotionCheckIn.setDescription(request.getDescription());
 
       List<dk.via.JavaDAO.Models.Tag> tagsList = new ArrayList<>();
@@ -178,20 +161,6 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
     try {
       dk.via.JavaDAO.Models.EmotionCheckIn existingEmotionCheckIn = emotionCheckInsDAO.GetSingle(
           request.getId());
-      if (existingEmotionCheckIn == null) {
-        responseObserver.onError(Status.fromCode(Status.Code.NOT_FOUND)
-            .withDescription("Emotion check-in not found")
-            .asRuntimeException());
-        return;
-      }
-
-      if (existingEmotionCheckIn.getUserId() != request.getUserId()) {
-        responseObserver.onError(Status.fromCode(Status.Code.PERMISSION_DENIED)
-            .withDescription("User does not have permission to update this emotion check-in")
-            .asRuntimeException());
-        return;
-      }
-
       existingEmotionCheckIn.setEmotion(request.getEmotion());
       existingEmotionCheckIn.setDescription(request.getDescription());
 
@@ -205,7 +174,7 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
         tagsList.add(newTag);
       }
 
-      emotionCheckInsDAO.Update(existingEmotionCheckIn, tagsList);
+      existingEmotionCheckIn = emotionCheckInsDAO.Update(existingEmotionCheckIn, tagsList);
 
       EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
       emotionCheckInBuilder.setEmotion(request.getEmotion());
@@ -240,17 +209,8 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
   public void delete(EmotionCheckInIdMessage request,
       StreamObserver<EmotionCheckInMessage> responseObserver) {
     try {
-
       dk.via.JavaDAO.Models.EmotionCheckIn emotionCheckInToDelete = emotionCheckInsDAO.GetSingle(
           request.getId());
-
-      if (emotionCheckInToDelete == null) {
-        responseObserver.onError(Status.fromCode(Status.Code.NOT_FOUND)
-            .withDescription("Emotion check-in not found")
-            .asRuntimeException());
-        return;
-      }
-
       emotionCheckInsDAO.Delete(request.getId());
 
       responseObserver.onNext(EmotionCheckInMessage

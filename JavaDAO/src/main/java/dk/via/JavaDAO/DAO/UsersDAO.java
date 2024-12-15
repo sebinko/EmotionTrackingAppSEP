@@ -15,6 +15,4 @@ public interface UsersDAO {
 
   User Create(User user) throws SQLException;
 
-  User Delete(User user) throws SQLException;
-
 }

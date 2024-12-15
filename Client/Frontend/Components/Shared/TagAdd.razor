@@ -1,4 +1,4 @@
-@using API.DTO
+@using DTO
 
 <div class="existing-tags mt-2">
   @foreach (var tag in ExistingTags)
@@ -13,15 +13,15 @@
 
 @code {
   [Parameter]
-  public List<TagDTO> ExistingTags { get; set; } = new List<TagDTO>();
+  public List<TagDto> ExistingTags { get; set; } = new List<TagDto>();
 
   [Parameter]
-  public List<TagDTO> Tags { get; set; } = new List<TagDTO>();
+  public List<TagDto> Tags { get; set; } = new List<TagDto>();
 
   [Parameter]
-  public EventCallback<List<TagDTO>> TagsChanged { get; set; }
+  public EventCallback<List<TagDto>> TagsChanged { get; set; }
 
-  private async Task AddTag(TagDTO tag)
+  private async Task AddTag(TagDto tag)
   {
     if (!Tags.Any(t => t.Key == tag.Key)) // Prevent duplicates
     {

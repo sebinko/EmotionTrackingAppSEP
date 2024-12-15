@@ -1,8 +1,8 @@
-using API.DTO;
+using DTO;
 
 namespace Frontend.Services.Interfaces;
 
 public interface IUserTagsService
 {
-  public Task<List<TagDTO>> GetAll();
+  public Task<List<TagDto>> GetAll();
 }

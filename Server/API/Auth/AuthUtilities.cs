@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Entities;
+using DTO;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Auth;
@@ -18,7 +18,7 @@ public class AuthUtilities
       .Build();
   }
 
-  public string GenerateJWTToken(User user)
+  public string GenerateJwtToken(UserReturnDto user)
   {
     var claims = new List<Claim>
     {

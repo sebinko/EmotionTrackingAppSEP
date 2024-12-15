@@ -1,37 +1,25 @@
 using System.Security.Claims;
-using API.DTO;
+using DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Protobuf.Services;
+using Protobuf.Services.Interfaces;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserTagsController (UserTagsService userTagsService) : ControllerBase
+public class UserTagsController(IUserTagsService userTagsService) : ControllerBase
 
 {
   [HttpGet]
   [Authorize]
   public IActionResult GetAllTags()
   {
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-    if (userId == null)
-    {
-      return Unauthorized();
-    }
-
-    var userReturnDto = new UserReturnDTO
-    {
-      Id = int.Parse(userId),
-      Username = "",
-      Email = ""
-    };
-
-    var tags = userTagsService.GetAllTags(userReturnDto);
+    var tags = userTagsService.GetAllTags(int.Parse(userId));
 
     return Ok(tags);
   }
-  
 }

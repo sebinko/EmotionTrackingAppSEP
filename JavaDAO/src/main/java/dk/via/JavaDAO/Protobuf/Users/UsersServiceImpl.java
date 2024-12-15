@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import dk.via.JavaDAO.DAO.UsersDAO;
 import dk.via.JavaDAO.Protobuf.Users.UsersServiceGrpc.UsersServiceImplBase;
 import dk.via.JavaDAO.Util.SQLExceptionParser;
-import dk.via.JavaDAO.Util.PasswordHasherUtil;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import java.sql.SQLException;
@@ -52,16 +51,14 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   @Override
   public void create(UserCreate request, StreamObserver<User> responseObserver) {
     try {
-      String password = PasswordHasherUtil.getInstance().hashPassword(request.getPassword());
       dk.via.JavaDAO.Models.User newUser = new dk.via.JavaDAO.Models.User(
           request.getUsername(),
-          password,
-          request.getEmail(),
-          null,
-          null,
-          null
+          request.getPassword(),
+          request.getEmail()
       );
+
       newUser = usersDAO.Create(newUser);
+
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(newUser.getId());
       userBuilder.setUsername(newUser.getUsername());
@@ -84,16 +81,13 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   public void update(UserUpdate request, StreamObserver<User> responseObserver) {
     try {
       dk.via.JavaDAO.Models.User updatedUser = usersDAO.GetSingle(request.getId());
-      if (!request.getUsername().isEmpty()) {
-        updatedUser.setUsername(request.getUsername());
+      if (updatedUser == null) {
+        responseObserver.onNext(null);
+        responseObserver.onCompleted();
+        return;
       }
-      if (!request.getEmail().isEmpty()) {
-        updatedUser.setEmail(request.getEmail());
-      }
-      if (!request.getPassword().isEmpty()) {
-        updatedUser.setPassword(
-            PasswordHasherUtil.getInstance().hashPassword(request.getPassword()));
-      }
+
+      updatedUser.setPassword(request.getPassword());
 
       usersDAO.Update(updatedUser);
 
@@ -118,25 +112,14 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   }
 
   @Override
-  public void delete(User request, StreamObserver<User> responseObserver) {
-    try {
-      dk.via.JavaDAO.Models.User userToDelete = usersDAO.GetSingle(request.getId());
-      usersDAO.Delete(userToDelete);
-      responseObserver.onNext(request);
-      responseObserver.onCompleted();
-    } catch (SQLException e) {
-      SQLExceptionParser.Parse(e, responseObserver);
-    } catch (Exception e) {
-      logger.error(e.getMessage());
-      responseObserver.onError(
-          Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
-    }
-  }
-
-  @Override
   public void getById(UserId request, StreamObserver<User> responseObserver) {
     try {
       dk.via.JavaDAO.Models.User userById = usersDAO.GetSingle(request.getId());
+      if (userById == null) {
+        responseObserver.onNext(null);
+        responseObserver.onCompleted();
+        return;
+      }
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(userById.getId());
       userBuilder.setUsername(userById.getUsername());
@@ -162,6 +145,11 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       dk.via.JavaDAO.Models.User user = users.stream()
           .filter(user1 -> user1.getUsername().equals(request.getUsername())).findFirst()
           .orElse(null);
+      if (user == null) {
+        responseObserver.onNext(null);
+        responseObserver.onCompleted();
+        return;
+      }
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(user.getId());
       userBuilder.setUsername(user.getUsername());
@@ -184,8 +172,13 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   public void getByUsernameAndPassword(UsernameAndPassword request,
       StreamObserver<User> responseObserver) {
     try {
-      dk.via.JavaDAO.Models.User user = usersDAO.GetSingle(request.getUsername(), request.getPassword());
-
+      dk.via.JavaDAO.Models.User user = usersDAO.GetSingle(request.getUsername(),
+          request.getPassword());
+      if (user == null) {
+        responseObserver.onNext(null);
+        responseObserver.onCompleted();
+        return;
+      }
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(user.getId());
       userBuilder.setUsername(user.getUsername());

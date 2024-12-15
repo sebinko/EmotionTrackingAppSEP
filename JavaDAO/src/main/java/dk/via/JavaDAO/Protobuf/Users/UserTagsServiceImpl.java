@@ -2,8 +2,6 @@ package dk.via.JavaDAO.Protobuf.Users;
 
 import com.google.inject.Inject;
 import dk.via.JavaDAO.DAO.TagsDAO;
-import dk.via.JavaDAO.DAO.UsersDAO;
-import dk.via.JavaDAO.Models.User;
 import dk.via.JavaDAO.Protobuf.Users.UserTagsServiceGrpc.UserTagsServiceImplBase;
 import dk.via.JavaDAO.Util.SQLExceptionParser;
 import io.grpc.Status;
@@ -16,21 +14,18 @@ import org.slf4j.LoggerFactory;
 public class UserTagsServiceImpl extends UserTagsServiceImplBase {
 
   private final TagsDAO tagsDAO;
-  private final UsersDAO usersDAO;
   private final Logger logger = LoggerFactory.getLogger(UsersServiceImpl.class.getName());
 
   @Inject
-  public UserTagsServiceImpl(TagsDAO tagsDAO, UsersDAO usersDAO) {
+  public UserTagsServiceImpl(TagsDAO tagsDAO) {
     super();
     this.tagsDAO = tagsDAO;
-    this.usersDAO = usersDAO;
   }
 
   @Override
   public void getAllTags(UserId request, StreamObserver<TagsList> responseObserver) {
     try {
-      User user = usersDAO.GetSingle(request.getId());
-      List<dk.via.JavaDAO.Models.Tag> tagsList = tagsDAO.GetAllForUser(user);
+      List<dk.via.JavaDAO.Models.Tag> tagsList = tagsDAO.GetAllForUser(request.getId());
 
       TagsList.Builder builder = TagsList.newBuilder();
       for (dk.via.JavaDAO.Models.Tag tag : tagsList) {
