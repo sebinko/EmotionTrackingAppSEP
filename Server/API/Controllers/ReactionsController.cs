@@ -22,7 +22,7 @@ public class ReactionsController(IReactionService reactionService) : ControllerB
   }
   [HttpDelete]
   [Authorize]
-  public async Task<ActionResult> Delete([FromBody] ReactionDeleteDTO reactionDto)
+  public async Task<ActionResult> Delete([FromBody] ReactionDeleteDto reactionDto)
   {
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         

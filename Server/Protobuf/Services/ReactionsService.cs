@@ -30,7 +30,7 @@ public class ReactionService : IReactionService
     };
   }
 
-  public async Task Delete(ReactionDeleteDTO reactionDeleteDTO, int userId)
+  public async Task Delete(ReactionDeleteDto reactionDeleteDTO, int userId)
   {
     using var channel = GrpcChannel.ForAddress("http://localhost:8888");
     var client = new Reactions.ReactionService.ReactionServiceClient(channel);
