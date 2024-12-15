@@ -49,14 +49,13 @@
   {
     if (emotionCheckIn != null)
     {
-      var existingTags = await UserTagsService.GetAll();
-      
       emotionCheckIn.Emotion = Emotion;
       await EmotionCheckInService.Update(Id, new EmotionCheckInUpdateDto
       {
         Id = emotionCheckIn.Id.Value,
         Emotion = emotionCheckIn.Emotion,
-        Tags = existingTags
+        Description = emotionCheckIn.Description,
+        Tags = emotionCheckIn.Tags
       });
       NavigationManager.NavigateTo("/CheckIn");
     }
