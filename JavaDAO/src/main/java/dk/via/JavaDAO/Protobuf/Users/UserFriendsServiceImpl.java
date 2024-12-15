@@ -3,11 +3,14 @@ package dk.via.JavaDAO.Protobuf.Users;
 import com.google.inject.Inject;
 import dk.via.JavaDAO.DAO.UserFriendsDAO;
 import dk.via.JavaDAO.Models.Friendship;
+import dk.via.JavaDAO.Models.User;
 import dk.via.JavaDAO.Protobuf.Users.UserFriendsServiceGrpc.UserFriendsServiceImplBase;
 import dk.via.JavaDAO.Util.SQLExceptionParser;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +71,8 @@ public class UserFriendsServiceImpl extends UserFriendsServiceImplBase {
   public void getFriendship(FriendshipSimpleMessage request,
       StreamObserver<FriendshipMessage> responseObserver) {
     try {
-      Friendship friendship = userFriendsDAO.GetFriendShip(request.getUser1Id(), request.getUser2Id());
+      Friendship friendship = userFriendsDAO.GetFriendShip(request.getUser1Id(),
+          request.getUser2Id());
 
       if (friendship == null) {
         responseObserver.onNext(FriendshipMessage
@@ -99,7 +103,8 @@ public class UserFriendsServiceImpl extends UserFriendsServiceImplBase {
   public void updateFriendShip(FriendshipMessage request,
       StreamObserver<FriendshipMessage> responseObserver) {
     try {
-      Friendship friendship = new Friendship(request.getUser1Id(), request.getUser2Id(), request.getIsAccepted());
+      Friendship friendship = new Friendship(request.getUser1Id(), request.getUser2Id(),
+          request.getIsAccepted());
       userFriendsDAO.UpdateFriendship(friendship);
 
       responseObserver.onNext(FriendshipMessage
@@ -109,6 +114,37 @@ public class UserFriendsServiceImpl extends UserFriendsServiceImplBase {
           .setIsAccepted(request.getIsAccepted())
           .build());
 
+      responseObserver.onCompleted();
+    } catch (SQLException e) {
+      SQLExceptionParser.Parse(e, responseObserver);
+    } catch (Exception e) {
+      responseObserver.onError(
+          Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
+    }
+  }
+
+  @Override
+  public void getAllFriends(UserId request, StreamObserver<FriendsWithCheckIns> responseObserver) {
+    try {
+      HashMap<User, String> friendsWithCheckIn = userFriendsDAO.GetFriendsWithCheckIn(request.getId());
+
+      FriendsWithCheckIns.Builder friendsWithCheckInsBuilder = FriendsWithCheckIns.newBuilder();
+
+      for (User user : friendsWithCheckIn.keySet()) {
+        friendsWithCheckInsBuilder.addFriends(FriendWithCheckIn.newBuilder()
+            .setFriend(dk.via.JavaDAO.Protobuf.Users.User.newBuilder()
+                .setId(user.getId())
+                .setUsername(user.getUsername())
+                .setEmail(user.getEmail())
+                .setCreatedAt(user.getCreatedAt().toString())
+                .setUpdatedAt(user.getUpdatedAt().toString())
+                .setStreak(user.getStreak())
+                .build())
+            .setEmotion(friendsWithCheckIn.get(user))
+            .build());
+      }
+
+      responseObserver.onNext(friendsWithCheckInsBuilder.build());
       responseObserver.onCompleted();
     } catch (SQLException e) {
       SQLExceptionParser.Parse(e, responseObserver);

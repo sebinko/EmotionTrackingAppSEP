@@ -2,90 +2,30 @@ package dk.via.JavaDAO.DAO;
 
 import com.google.inject.Inject;
 import dk.via.JavaDAO.Models.Friendship;
+import dk.via.JavaDAO.Models.User;
 import dk.via.JavaDAO.Util.Interfaces.DBConnector;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class UserFriendsDAODB implements UserFriendsDAO {
 
   private final DBConnector connector;
+  private final UsersDAO userDAO;
 
   @Inject
-  public UserFriendsDAODB(DBConnector connector) {
+  public UserFriendsDAODB(DBConnector connector, UsersDAO userDAO) {
     this.connector = connector;
+    this.userDAO = userDAO;
   }
 
   @Override
   public void CreateFriendship(Integer user1Id, Integer user2Id) throws SQLException {
     Connection connection = connector.getConnection();
-
-    ResultSet resultSet = fetchFriendShip(user1Id, user2Id, connection);
-
-    boolean doesRequestExist = false;
-    boolean isAccepted = false;
-    int requestUserId = 0;
-
-    while (resultSet.next()) {
-      doesRequestExist = true;
-      isAccepted = resultSet.getBoolean("is_accepted");
-      requestUserId = resultSet.getInt("user_id");
-    }
-
-    if (!doesRequestExist) {
-      createFriendshipRequest(user1Id, user2Id, connection);
-      return;
-    }
-
-    if (doesRequestExist && !isAccepted && (user1Id == requestUserId)) {
-      throw new SQLException("You have already sent a friend request to this user");
-    }
-
-    if (!isAccepted) {
-      String sqlQuery = "UPDATE \"EmotionsTrackingWebsite\".user_friends SET is_accepted = true WHERE ((user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?));";
-      PreparedStatement statement2 = connection.prepareStatement(sqlQuery);
-      statement2.setInt(1, user1Id);
-      statement2.setInt(2, user2Id);
-      statement2.setInt(3, user2Id);
-      statement2.setInt(4, user1Id);
-      statement2.executeUpdate();
-    }
-
-    if (isAccepted) {
-      throw new SQLException("User friendship already exists");
-    }
-  }
-
-  @Override
-  public void RemoveFriendship(Integer user1Id, Integer user2Id) throws SQLException {
-    Connection connection = connector.getConnection();
-
-    ResultSet resultSet = fetchFriendShip(user1Id, user2Id, connection);
-
-    boolean doesRequestExist = false;
-    while (resultSet.next()) {
-      doesRequestExist = true;
-    }
-
-    if (!doesRequestExist) {
-      throw new SQLException("User friendship does not exist");
-    }
-
-    String sql = "DELETE FROM \"EmotionsTrackingWebsite\".user_friends WHERE ((user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?));";
-    try (PreparedStatement statement = connection.prepareStatement(sql)) {
-      statement.setInt(1, user1Id);
-      statement.setInt(2, user2Id);
-      statement.setInt(3, user2Id);
-      statement.setInt(4, user1Id);
-      statement.executeUpdate();
-    }
-  }
-
-  private static void createFriendshipRequest(Integer user1Id, Integer user2Id,
-      Connection connection)
-      throws SQLException {
-
     String sql = "insert into \"EmotionsTrackingWebsite\".user_friends (user_id, friend_id)  values (?,?) returning *;";
 
     PreparedStatement statement = connection.prepareStatement(sql);
@@ -95,17 +35,59 @@ public class UserFriendsDAODB implements UserFriendsDAO {
     statement.execute();
   }
 
+  @Override
+  public HashMap<User, String> GetFriendsWithCheckIn(Integer userId) throws SQLException {
+    Connection connection = connector.getConnection();
 
-  private static ResultSet fetchFriendShip(Integer user1Id, Integer user2Id, Connection connection)
-      throws SQLException {
-    String sql = "SELECT * FROM \"EmotionsTrackingWebsite\".user_friends WHERE ((user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?));";
+    String sql = "SELECT * FROM \"EmotionsTrackingWebsite\".users_with_streaks WHERE id IN (SELECT friend_id FROM \"EmotionsTrackingWebsite\".user_friends WHERE user_id = ? AND is_accepted = true);";
+
     PreparedStatement statement = connection.prepareStatement(sql);
-    statement.setInt(1, user1Id);
-    statement.setInt(2, user2Id);
-    statement.setInt(3, user2Id);
-    statement.setInt(4, user1Id);
+    statement.setInt(1, userId);
+
     ResultSet resultSet = statement.executeQuery();
-    return resultSet;
+
+    List<User> users = new ArrayList<>();
+
+    while (resultSet.next()) {
+      users.add(new User(resultSet.getInt("id"), resultSet.getString("username"),
+          resultSet.getString("email"), resultSet.getTimestamp("created_at"),
+          resultSet.getTimestamp("updated_at"), resultSet.getInt("current_streak")));
+    }
+
+    // now fetch latest checkin for each friend
+    HashMap<User, String> friendsWithCheckIn = new HashMap<>();
+
+    for (User user : users) {
+      String sql2 = "SELECT * FROM \"EmotionsTrackingWebsite\".emotion_checkins WHERE user_id = ? ORDER BY created_at DESC LIMIT 1;";
+      PreparedStatement statement2 = connection.prepareStatement(sql2);
+
+      statement2.setInt(1, user.getId());
+
+      ResultSet resultSet2 = statement2.executeQuery();
+
+      if (resultSet2.next()) {
+        friendsWithCheckIn.put(user, resultSet2.getString("emotion"));
+      } else {
+        friendsWithCheckIn.put(user, null);
+      }
+
+    }
+
+    return friendsWithCheckIn;
+  }
+
+  @Override
+  public void RemoveFriendship(Integer user1Id, Integer user2Id) throws SQLException {
+    Connection connection = connector.getConnection();
+
+    String sql = "DELETE FROM \"EmotionsTrackingWebsite\".user_friends WHERE ((user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?));";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setInt(1, user1Id);
+      statement.setInt(2, user2Id);
+      statement.setInt(3, user2Id);
+      statement.setInt(4, user1Id);
+      statement.executeUpdate();
+    }
   }
 
   @Override

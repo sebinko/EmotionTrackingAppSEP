@@ -1,0 +1,87 @@
+@page "/Friends"
+@using DTO
+@using Frontend.Services.Interfaces
+@using Frontend.Components.Shared
+@inject IUserFriendsService UserFriendsService
+@inject IJSRuntime JSRuntime
+
+<h3>All Friends</h3>
+
+<div class="container">
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <form @onsubmit="ShowYesNoPopup">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" class="form-control" id="username" @bind="newFriendUsername"
+                     required/>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Add Friend</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    @foreach (var friend in userFriends)
+    {
+      <div class="col-12 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">@friend.User.Username</h5>
+            <h4 class="card-title">@friend.LatestCheckIn</h4>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<YesNoPopup Title="Confirm" Message="Are you sure you want to add this friend?" OnYes="AddFriend"/>
+<OkPopup Title="Success" Message="@okMessage"/>
+
+@code {
+  private List<UserWithLatestCheckIn> userFriends = new List<UserWithLatestCheckIn>();
+  private string newFriendUsername;
+  private string okMessage;
+
+  protected override async Task OnInitializedAsync()
+  {
+    userFriends = await UserFriendsService.GetFriends();
+    okMessage = "Friend added successfully!";
+  }
+
+  private async Task ShowYesNoPopup()
+  {
+    await JSRuntime.InvokeVoidAsync("modalHelper.showModal", "yesNoModal");
+  }
+
+  private async Task AddFriend()
+  {
+    try
+    {
+      await UserFriendsService.CreateFriendship(newFriendUsername);
+    }
+    catch (Exception e)
+    {
+      okMessage = e.Message;
+      await JSRuntime.InvokeVoidAsync("modalHelper.hideModal", "yesNoModal");
+      await JSRuntime.InvokeVoidAsync("modalHelper.showModal", "okModal");
+      await InvokeAsync(StateHasChanged);
+      return;
+    }
+
+    userFriends = await UserFriendsService.GetFriends();
+    okMessage = "Friend added successfully!";
+    await JSRuntime.InvokeVoidAsync("modalHelper.hideModal", "yesNoModal");
+    await JSRuntime.InvokeVoidAsync("modalHelper.showModal", "okModal");
+    await InvokeAsync(StateHasChanged);
+    
+    
+    newFriendUsername = "";
+  }
+
+}

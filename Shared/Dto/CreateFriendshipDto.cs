@@ -4,5 +4,5 @@ namespace DTO;
 
 public class CreateFriendshipDto
 {
-  [Required] public required int user2Id { get; set; }
+  [Required] public required string user2UserName { get; set; }
 }
