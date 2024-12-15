@@ -44,5 +44,27 @@ public class ReactionsServiceImpl extends ReactionServiceImplBase {
       responseObserver.onError(
           Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
     }
+
+  }
+
+  @Override
+  public void delete(ReactionDeleteMessage request,
+      StreamObserver<ReactionMessage> responseObserver) {
+    try{
+
+
+      reactionsDAO.Delete(request.getUserId(), request.getEmotionCheckInId());
+
+      ReactionMessage.Builder reactionBuilder = ReactionMessage.newBuilder();
+     
+
+      responseObserver.onNext(reactionBuilder.build());
+      responseObserver.onCompleted();
+    } catch (PSQLException e) {
+      SQLExceptionParser.Parse(e, responseObserver);
+    } catch (Exception e) {
+      responseObserver.onError(
+          Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
+    }
   }
 }

@@ -44,4 +44,16 @@ public class ReactionsDAODB implements ReactionsDAO {
 
     return reaction;
   }
+
+  @Override
+  public void Delete(Integer userId, Integer emotionCheckinId)
+      throws SQLException {
+    Connection connection = connector.getConnection();
+    String sql = "delete from \"EmotionsTrackingWebsite\".reactions where user_id = ? and emotion_checkin_id = ?;";
+    PreparedStatement statement = connection.prepareStatement(sql);
+    statement.setInt(1, userId);
+    statement.setInt(2, emotionCheckinId);
+    statement.executeUpdate();
+
+  }
 }

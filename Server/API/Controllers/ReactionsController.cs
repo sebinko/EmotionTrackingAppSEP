@@ -20,4 +20,18 @@ public class ReactionsController(IReactionService reactionService) : ControllerB
 
     return Ok(await reactionService.Create(reactionDto, int.Parse(userId)));
   }
+  [HttpDelete]
+  [Authorize]
+  public async Task<ActionResult> Delete([FromBody] ReactionDeleteDTO reactionDto)
+  {
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+    if (userId == null)
+    {
+      return Unauthorized();
+    }
+
+    await reactionService.Delete(reactionDto, int.Parse(userId));
+    return Ok();
+  }
 }
