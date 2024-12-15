@@ -81,6 +81,11 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   public void update(UserUpdate request, StreamObserver<User> responseObserver) {
     try {
       dk.via.JavaDAO.Models.User updatedUser = usersDAO.GetSingle(request.getId());
+      if (updatedUser == null) {
+        responseObserver.onNext(null);
+        responseObserver.onCompleted();
+        return;
+      }
 
       updatedUser.setPassword(request.getPassword());
 
@@ -107,25 +112,14 @@ public class UsersServiceImpl extends UsersServiceImplBase {
   }
 
   @Override
-  public void delete(User request, StreamObserver<User> responseObserver) {
-    try {
-      dk.via.JavaDAO.Models.User userToDelete = usersDAO.GetSingle(request.getId());
-      usersDAO.Delete(userToDelete);
-      responseObserver.onNext(request);
-      responseObserver.onCompleted();
-    } catch (SQLException e) {
-      SQLExceptionParser.Parse(e, responseObserver);
-    } catch (Exception e) {
-      logger.error(e.getMessage());
-      responseObserver.onError(
-          Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
-    }
-  }
-
-  @Override
   public void getById(UserId request, StreamObserver<User> responseObserver) {
     try {
       dk.via.JavaDAO.Models.User userById = usersDAO.GetSingle(request.getId());
+      if (userById == null) {
+        responseObserver.onNext(null);
+        responseObserver.onCompleted();
+        return;
+      }
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(userById.getId());
       userBuilder.setUsername(userById.getUsername());
@@ -151,6 +145,11 @@ public class UsersServiceImpl extends UsersServiceImplBase {
       dk.via.JavaDAO.Models.User user = users.stream()
           .filter(user1 -> user1.getUsername().equals(request.getUsername())).findFirst()
           .orElse(null);
+      if (user == null) {
+        responseObserver.onNext(null);
+        responseObserver.onCompleted();
+        return;
+      }
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(user.getId());
       userBuilder.setUsername(user.getUsername());
@@ -175,7 +174,11 @@ public class UsersServiceImpl extends UsersServiceImplBase {
     try {
       dk.via.JavaDAO.Models.User user = usersDAO.GetSingle(request.getUsername(),
           request.getPassword());
-
+      if (user == null) {
+        responseObserver.onNext(null);
+        responseObserver.onCompleted();
+        return;
+      }
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(user.getId());
       userBuilder.setUsername(user.getUsername());

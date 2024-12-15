@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import org.postgresql.util.PSQLState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,52 +39,38 @@ public class UsersDAODB implements UsersDAO {
   public User GetSingle(int id) throws SQLException {
     Connection connection = connector.getConnection();
     String sql = "select * from \"EmotionsTrackingWebsite\".users_with_streaks where id = ?;";
-    User user;
 
     PreparedStatement statement = connection.prepareStatement(sql);
     statement.setInt(1, id);
     ResultSet resultSet = statement.executeQuery();
 
     if (!resultSet.next()) {
-      throw new SQLException("User not found", PSQLState.NO_DATA.getState());
+      return null;
     }
 
-    user = parseUserFromDB(resultSet);
-    return user;
+    return parseUserFromDB(resultSet);
   }
 
   @Override
   public User GetSingle(String username, String password) throws SQLException {
     Connection connection = connector.getConnection();
-    String sql = "select * from \"EmotionsTrackingWebsite\".users_with_streaks where username = ?;";
-    User user;
+    String sql = "select * from \"EmotionsTrackingWebsite\".users_with_streaks where username = ? and password = ?;";
 
     PreparedStatement statement = connection.prepareStatement(sql);
     statement.setString(1, username);
+    statement.setString(2, password);
     ResultSet resultSet = statement.executeQuery();
 
-    if (!resultSet.next()) {
-      throw new SQLException("Invalid username / password", PSQLState.INVALID_PASSWORD.getState());
+    if (resultSet.next()) {
+      return parseUserFromDB(resultSet);
     }
 
-    if (!password.equals(resultSet.getString("password"))) {
-      throw new SQLException("Invalid username / password", PSQLState.INVALID_PASSWORD.getState());
-    }
-
-    user = parseUserFromDB(resultSet);
-
-    return user;
+    return null;
   }
 
   @Override
   public User Update(User user) throws SQLException {
     Connection connection = connector.getConnection();
-
-    User userToUpdate = GetSingle(user.getId());
-
-    if (userToUpdate == null) {
-      throw new RuntimeException("User not found");
-    }
 
     String sql = "update \"EmotionsTrackingWebsite\".users set username=?, password= ?, email= ?, updated_at= now() where id=?;";
     PreparedStatement statement = connection.prepareStatement(sql);
@@ -96,9 +81,7 @@ public class UsersDAODB implements UsersDAO {
 
     statement.executeUpdate();
 
-    user = GetSingle(user.getId());
-
-    return user;
+    return GetSingle(user.getId());
   }
 
   @Override
@@ -120,24 +103,6 @@ public class UsersDAODB implements UsersDAO {
       user.setCreatedAt(resultSet.getTimestamp("created_at"));
       user.setUpdatedAt(resultSet.getTimestamp("updated_at"));
     }
-
-    return user;
-  }
-
-  @Override
-  public User Delete(User user) throws SQLException {
-    Connection connection = connector.getConnection();
-
-    User userToUpdate = GetSingle(user.getId());
-    if (userToUpdate == null) {
-      throw new RuntimeException("User not found");
-    }
-
-    String sql = "delete from \"EmotionsTrackingWebsite\".users where id= ?;";
-
-    PreparedStatement statement = connection.prepareStatement(sql);
-    statement.setInt(1, user.getId());
-    statement.executeUpdate();
 
     return user;
   }

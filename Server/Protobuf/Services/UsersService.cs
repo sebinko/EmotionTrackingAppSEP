@@ -40,13 +40,18 @@ public class UsersService : IUsersService
     };
   }
 
-  public async Task<UserReturnDto> GetByUsernameAndPassword(string username, string password)
+  public async Task<UserReturnDto?> GetByUsernameAndPassword(string username, string password)
   {
     var reply = await _client.GetByUsernameAndPasswordAsync(new UsernameAndPassword
     {
       Username = username,
       Password = password
     });
+    
+    if (reply.Id == 0)
+    {
+      return null;
+    }
 
     DateTime.TryParse(reply.CreatedAt, out var createdAt);
     DateTime.TryParse(reply.UpdatedAt, out var updatedAt);
@@ -93,12 +98,17 @@ public class UsersService : IUsersService
     };
   }
 
-  public async Task<UserReturnDto> GetById(int id)
+  public async Task<UserReturnDto?> GetById(int id)
   {
     var reply = await _client.GetByIdAsync(new UserId { Id = id });
 
     DateTime.TryParse(reply.CreatedAt, out var createdAt);
     DateTime.TryParse(reply.UpdatedAt, out var updatedAt);
+    
+    if (reply.Id == 0)
+    {
+      return null;
+    }
 
     return new UserReturnDto
     {

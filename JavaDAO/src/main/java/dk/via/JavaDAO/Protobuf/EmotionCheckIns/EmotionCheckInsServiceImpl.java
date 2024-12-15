@@ -174,7 +174,7 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
         tagsList.add(newTag);
       }
 
-      emotionCheckInsDAO.Update(existingEmotionCheckIn, tagsList);
+      existingEmotionCheckIn = emotionCheckInsDAO.Update(existingEmotionCheckIn, tagsList);
 
       EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
       emotionCheckInBuilder.setEmotion(request.getEmotion());

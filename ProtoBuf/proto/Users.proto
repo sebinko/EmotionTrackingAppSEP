@@ -14,17 +14,24 @@ service UsersService{
   rpc GetAll(Empty) returns (UserList){}
   rpc Create(UserCreate) returns (User){}
   rpc Update(UserUpdate) returns (User){}
-  rpc Delete(User) returns (User){}
 }
 
 message FriendshipMessage{
   int32 user1Id = 1;
   int32 user2Id = 2;
+  bool isAccepted = 3;
+}
+
+message FriendshipSimpleMessage{
+  int32 user1Id = 1;
+  int32 user2Id = 2;
 }
 
 service UserFriendsService{
-  rpc CreateFriendship(FriendshipMessage) returns (FriendshipMessage){}
-  rpc RemoveFriendship(FriendshipMessage) returns (FriendshipMessage){}
+  rpc CreateFriendship(FriendshipSimpleMessage) returns (FriendshipMessage){}
+  rpc GetFriendship(FriendshipSimpleMessage) returns (FriendshipMessage){}
+  rpc UpdateFriendShip(FriendshipMessage) returns (FriendshipMessage){}
+  rpc RemoveFriendship(FriendshipSimpleMessage) returns (FriendshipMessage){}
 }
 message UserId{
   int32 id = 1;

@@ -12,7 +12,7 @@ public interface EmotionCheckInsDAO {
 
   EmotionCheckIn Create(EmotionCheckIn emotionCheckIn, List<Tag> tags) throws SQLException;
 
-  EmotionCheckIn Delete(int id) throws SQLException;
+  void Delete(int id) throws SQLException;
 
   EmotionCheckIn Update(EmotionCheckIn emotion, List<Tag> tags) throws SQLException;
 

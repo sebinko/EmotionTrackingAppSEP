@@ -103,7 +103,6 @@ public class TagsDAODB implements TagsDAO {
     statement.setString(1, tag.getKey());
     statement.setInt(2, checkIn.getUserId());
     statement.setObject(3, tag.getType().toString(), java.sql.Types.OTHER);
-    System.out.println(statement);
 
     ResultSet resultSet = statement.executeQuery();
 
@@ -115,10 +114,6 @@ public class TagsDAODB implements TagsDAO {
 
     if (newTag == null) {
       newTag = GetSingle(tag.getKey(), tag.getType(), checkIn.getUserId());
-    }
-
-    if (newTag == null) {
-      throw new SQLException("Failed to create tag");
     }
 
     String sql2 = "INSERT INTO \"EmotionsTrackingWebsite\".tag_emotions (emotion_checkin_id, tag_id) VALUES (?, ?) ON CONFLICT (emotion_checkin_id, tag_id) DO NOTHING;";

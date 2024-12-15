@@ -100,7 +100,6 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
 
     if (tags != null) {
       for (Tag tag : tags) {
-        System.out.println("Assigning tag: " + tag.getKey() + ";" + tag.getType());
         tagsDAO.AssignTag(tag, emotionCheckIn);
       }
     }
@@ -111,10 +110,6 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
   @Override
   public EmotionCheckIn Update(EmotionCheckIn emotion, List<Tag> tags) throws SQLException {
     Connection connection = connector.getConnection();
-    EmotionCheckIn emotionCheckInToUpdate = GetSingle(emotion.getId());
-    if (emotionCheckInToUpdate == null) {
-      throw new SQLException("EmotionCheckIn not found", PSQLState.NO_DATA.getState());
-    }
 
     String sql = "update \"EmotionsTrackingWebsite\".emotion_checkins set emotion= ?, description= ?, updated_at= now() where id=?";
     PreparedStatement statement = connection.prepareStatement(sql);
@@ -138,22 +133,16 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
 
     }
 
-    return emotion;
+    return GetSingle(emotion.getId());
   }
 
   @Override
-  public EmotionCheckIn Delete(int id) throws SQLException {
+  public void Delete(int id) throws SQLException {
     Connection connection = connector.getConnection();
 
-    EmotionCheckIn emotionCheckInToDelete = GetSingle(id);
-    if (emotionCheckInToDelete == null) {
-      throw new RuntimeException("EmotionCheckIn not found");
-    }
     String sql = "delete from \"EmotionsTrackingWebsite\".emotion_checkins where id= ?;";
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, id);
       statement.executeUpdate();
-
-    return emotionCheckInToDelete;
   }
 }
