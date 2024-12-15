@@ -47,7 +47,30 @@ public class UsersService : IUsersService
       Username = username,
       Password = password
     });
-    
+
+    if (reply.Id == 0)
+    {
+      return null;
+    }
+
+    DateTime.TryParse(reply.CreatedAt, out var createdAt);
+    DateTime.TryParse(reply.UpdatedAt, out var updatedAt);
+
+    return new UserReturnDto
+    {
+      Id = Convert.ToInt32(reply.Id),
+      Username = reply.Username,
+      Email = reply.Email,
+      Streak = reply.Streak,
+      CreatedAt = createdAt,
+      UpdatedAt = updatedAt
+    };
+  }
+
+  public async Task<UserReturnDto?> GetByUsername(string username)
+  {
+    var reply = await _client.GetByUsernameAsync(new Username { Username_ = username });
+
     if (reply.Id == 0)
     {
       return null;
@@ -104,7 +127,7 @@ public class UsersService : IUsersService
 
     DateTime.TryParse(reply.CreatedAt, out var createdAt);
     DateTime.TryParse(reply.UpdatedAt, out var updatedAt);
-    
+
     if (reply.Id == 0)
     {
       return null;

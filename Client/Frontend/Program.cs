@@ -20,8 +20,8 @@ builder.Services.AddScoped<IStorageService, SessionStorageService>();
 builder.Services.AddScoped<IEmotionsService, EmotionsService>();
 builder.Services.AddScoped<IEmotionCheckInService, EmotionCheckInService>();
 builder.Services.AddScoped<IUserTagsService, UserTagsService>();
-builder.Services.AddScoped<IUserTagsService, UserTagsService>();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthService>();
+builder.Services.AddScoped<IUserFriendsService, UserFriendsService>();
 builder.Services.AddScoped<AuthedClient>();
 
 string startUrl = builder.Configuration[WebHostDefaults.ServerUrlsKey];

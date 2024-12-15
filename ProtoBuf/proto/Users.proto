@@ -28,11 +28,23 @@ message FriendshipSimpleMessage{
 }
 
 service UserFriendsService{
+  rpc GetAllFriends(UserId) returns (FriendsWithCheckIns){}
   rpc CreateFriendship(FriendshipSimpleMessage) returns (FriendshipMessage){}
   rpc GetFriendship(FriendshipSimpleMessage) returns (FriendshipMessage){}
   rpc UpdateFriendShip(FriendshipMessage) returns (FriendshipMessage){}
   rpc RemoveFriendship(FriendshipSimpleMessage) returns (FriendshipMessage){}
 }
+
+
+message FriendWithCheckIn {
+  User friend = 1;
+  string emotion = 2;
+}
+
+message FriendsWithCheckIns {
+  repeated FriendWithCheckIn friends = 1;
+}
+
 message UserId{
   int32 id = 1;
 }

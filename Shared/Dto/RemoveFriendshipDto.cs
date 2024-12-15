@@ -1,6 +1,8 @@
-﻿namespace DTO;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DTO;
 
 public class RemoveFriendshipDto
 {
-  public required int user2Id{get;set;}
+  [Required] public required string user2UserName { get; set; }
 }

@@ -22,6 +22,18 @@ public class User {
     this.streak = streak;
   }
 
+  public User(Integer id, String username, String email,
+      Timestamp createdAt, Timestamp updatedAt, Integer streak) {
+    this.id = id;
+    this.username = username;
+    this.email = email;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.streak = streak;
+  }
+
+
+
   public User(String username, String password, String email, Timestamp createdAt,
       Timestamp updatedAt, Integer streak) {
     this.username = username;
