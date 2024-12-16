@@ -13,10 +13,10 @@ namespace Frontend.Services;
 public class AuthService : AuthenticationStateProvider
 {
   private readonly IStorageService _storageService;
-  private readonly HttpClient _httpClient;
+  private readonly NonAuthedClient _httpClient;
   private ClaimsPrincipal currentClaimsPrincipal;
 
-  public AuthService(IStorageService storageService, HttpClient httpClient)
+  public AuthService(IStorageService storageService, NonAuthedClient httpClient)
   {
     _storageService = storageService;
     _httpClient = httpClient;
@@ -103,11 +103,13 @@ public class AuthService : AuthenticationStateProvider
 
     var json = JsonSerializer.Serialize(data);
     var content = new StringContent(json, Encoding.UTF8, "application/json");
+    
+    var headers = new Dictionary<string, string>
+    {
+      { "Authorization", $"Bearer {userWithTokenDto.Token}" }
+    };
 
-    _httpClient.DefaultRequestHeaders.Authorization =
-      new AuthenticationHeaderValue("Bearer", userWithTokenDto.Token);
-
-    var response = await _httpClient.PatchAsync("Auth/change-password", content);
+    var response = await _httpClient.PatchAsync("Auth/change-password", content, headers);
 
     return await (new ApiParsingUtils<UserReturnDto>()).Process(response);
   }

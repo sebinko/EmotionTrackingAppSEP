@@ -20,6 +20,15 @@ public class EmotionCheckInsController(IEmotionCheckInService emotionCheckInServ
     
     return Ok(await emotionCheckInService.GetAll(int.Parse(userId)));
   }
+  
+  [HttpPost("by-tags")]
+  [Authorize]
+  public async Task<IActionResult> GetByTags([FromBody] GetEmotionCheckInByTagsDto getEmotionCheckInByTagsDto)
+  {
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+    
+    return Ok(await emotionCheckInService.GetByTags(getEmotionCheckInByTagsDto.Tags, int.Parse(userId)));
+  }
 
   [HttpGet("{id}")]
   [Authorize]

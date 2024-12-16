@@ -16,6 +16,16 @@ public class EmotionCheckInService(AuthedClient httpClient) : IEmotionCheckInSer
     return await new ApiParsingUtils<List<EmotionCheckInDto>>().Process(response);
   }
 
+  public async Task<List<EmotionCheckInDto>?> GetByTags(GetEmotionCheckInByTagsDto getEmotionCheckInByTags)
+  {
+    var json = JsonSerializer.Serialize(getEmotionCheckInByTags);
+    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+    var response = await httpClient.PostAsync("EmotionCheckIns/by-tags", content);
+
+    return await new ApiParsingUtils<List<EmotionCheckInDto>>().Process(response);
+  }
+
   public async Task<EmotionCheckInDto?> Get(int id)
   {
     var response = await httpClient.GetAsync($"EmotionCheckIns/{id}");

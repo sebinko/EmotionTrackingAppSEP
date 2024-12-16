@@ -1,0 +1,77 @@
+@page "/Analytics"
+@using DTO
+@using Frontend.Services.Interfaces
+@using ApexCharts
+@inject IEmotionCheckInService EmotionCheckInService
+<h3>Analytics</h3>
+
+<TagSelector OnTagsSelected="HandleTagsSelected"/>
+
+@if (EmotionCheckIns.Any())
+{
+  <div class="container">
+    <ApexChart TItem="ChartData" Title="Emotion Counts" Width="400" Height="400" @ref="chart" Options="options">
+      <ApexPointSeries TItem="ChartData"
+                       Items="ChartDataList"
+                       Name="Count"
+                       SeriesType="SeriesType.Pie"
+                       XValue="@(e => e.Emotion)"
+                       YAggregate="@(e => e.Sum(e => e.Count))"
+                       OrderByDescending="@(e => e.Y)"
+                       ShowDataLabels />
+    </ApexChart>
+  </div>
+}
+else
+{
+  <p>No check-ins found</p>
+}
+
+@code {
+  private List<TagDto> SelectedTags { get; set; } = new();
+  private List<EmotionCheckInDto> EmotionCheckIns { get; set; } = new();
+  private Dictionary<string, int> EmotionCounts { get; set; } = new();
+  private List<ChartData> ChartDataList { get; set; } = new();
+  private ApexChartOptions<ChartData> options { get; set; } = new();
+  private ApexChart<ChartData> chart;
+
+  protected override void OnInitialized()
+  {
+    options.DataLabels = new DataLabels
+    {
+      Enabled = true,
+      Formatter = @"function(value, { seriesIndex, w }) {
+            console.log(seriesIndex);
+            console.log(w);
+            return w.config.labels[seriesIndex];}"
+    };
+    options.Legend = new Legend
+    {
+      Show = false
+    };
+  }
+
+  private async Task HandleTagsSelected(List<TagDto> tags)
+  {
+    SelectedTags = tags;
+    EmotionCheckIns = await EmotionCheckInService.GetByTags(new GetEmotionCheckInByTagsDto { Tags = tags });
+
+    // Count the occurrences of each emotion
+    EmotionCounts = EmotionCheckIns
+      .GroupBy(e => e.Emotion)
+      .ToDictionary(g => g.Key, g => g.Count());
+
+    // Transform the dictionary into a list of ChartData objects
+    ChartDataList = EmotionCounts.Select(ec => new ChartData { Emotion = ec.Key, Count = ec.Value }).ToList();
+
+    // Update the series data and trigger UI update
+    await InvokeAsync(StateHasChanged);
+    await chart.UpdateSeriesAsync();
+  }
+
+  public class ChartData
+  {
+    public string Emotion { get; set; }
+    public int Count { get; set; }
+  }
+}

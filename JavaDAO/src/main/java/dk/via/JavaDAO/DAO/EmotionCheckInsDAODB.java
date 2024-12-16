@@ -9,8 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.postgresql.util.PSQLState;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,5 +145,47 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, id);
       statement.executeUpdate();
+  }
+
+  @Override
+  public List<EmotionCheckIn> GetByTag(int userId, HashMap<String, String> tags) throws SQLException {
+    Connection connection = connector.getConnection();
+    StringBuilder sql = new StringBuilder("SELECT DISTINCT ec.* FROM \"EmotionsTrackingWebsite\".emotion_checkins ec " +
+        "JOIN \"EmotionsTrackingWebsite\".tag_emotions te ON ec.id = te.emotion_checkin_id " +
+        "JOIN \"EmotionsTrackingWebsite\".tags t ON te.tag_id = t.id " +
+        "WHERE ec.user_id = ?");
+
+    if (!tags.isEmpty()) {
+      for (int i = 0; i < tags.size(); i++) {
+        sql.append(" AND EXISTS (SELECT 1 FROM \"EmotionsTrackingWebsite\".tag_emotions te" + i + " " +
+            "JOIN \"EmotionsTrackingWebsite\".tags t" + i + " ON te" + i + ".tag_id = t" + i + ".id " +
+            "WHERE te" + i + ".emotion_checkin_id = ec.id AND t" + i + ".key = ? AND t" + i + ".type = ?::\"EmotionsTrackingWebsite\".tag_type)");
+      }
+    }
+
+    List<EmotionCheckIn> emotionCheckIns = new ArrayList<>();
+    PreparedStatement statement = connection.prepareStatement(sql.toString());
+    statement.setInt(1, userId);
+
+    int index = 2;
+    for (Map.Entry<String, String> entry : tags.entrySet()) {
+      statement.setString(index++, entry.getKey());
+      statement.setString(index++, entry.getValue());
+    }
+
+    ResultSet resultSet = statement.executeQuery();
+    while (resultSet.next()) {
+      EmotionCheckIn emotionCheckIn = new EmotionCheckIn(
+          resultSet.getInt("id"),
+          resultSet.getString("emotion"),
+          resultSet.getString("description"),
+          resultSet.getString("created_at"),
+          resultSet.getString("updated_at"),
+          resultSet.getInt("user_id")
+      );
+      emotionCheckIns.add(emotionCheckIn);
+    }
+
+    return emotionCheckIns;
   }
 }

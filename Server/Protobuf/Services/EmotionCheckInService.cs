@@ -40,6 +40,25 @@ public class EmotionCheckInService : IEmotionCheckInService
     return MapToEmotionCheckInDto(reply);
   }
 
+  public async Task<List<EmotionCheckInDto>> GetByTags(List<TagDto> tags, int userId)
+  {
+    var tagFilter = new TagFilter();
+    
+    foreach (var tag in tags)
+    {
+      tagFilter.Filters.Add(new TagFilterSingle()
+      {
+        Key = tag.Key,
+        Type = tag.Type.ToString(),
+        UserId = userId,
+      });
+    }
+
+    var reply = await _emotionCheckInsServiceClient.GetAllByTagAsync(tagFilter);
+    
+    return reply.EmotionCheckIns.Select(MapToEmotionCheckInDto).ToList();
+  }
+
   public async Task<List<EmotionCheckInDto>> GetAll(int userId)
   {
     var reply = await _emotionCheckInsServiceClient.GetAllAsync(new GetAllEmotionCheckInsMessage
