@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Frontend.Services;
 
-public class EmotionsService(HttpClient httpClient) : IEmotionsService
+public class EmotionsService(NonAuthedClient httpClient) : IEmotionsService
 {
   public async Task<List<EmotionDto>?> GetAll(string? emotionQuery, string? emotionColor)
   {
