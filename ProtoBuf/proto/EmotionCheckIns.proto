@@ -8,6 +8,7 @@ package EmotionCheckIns;
 
 service EmotionCheckInsService {
   rpc GetAll(GetAllEmotionCheckInsMessage) returns(ListEmotionCheckInMessage) {}
+  rpc GetAllByTag(TagFilter) returns(ListEmotionCheckInMessage) {}
   rpc GetById(EmotionCheckInIdMessage) returns(EmotionCheckInMessage) {}
   rpc Create(EmotionCheckInCreateMessage) returns(EmotionCheckInMessage) {}
   rpc Update(EmotionCheckInUpdateMessage) returns(EmotionCheckInMessage) {}
@@ -22,6 +23,16 @@ message EmotionCheckInMessage {
   string updatedAt = 5;
   int32 userId = 6;
   repeated Tag tags = 7;
+}
+
+message TagFilter {
+  repeated TagFilterSingle filters = 1;
+}
+
+message TagFilterSingle {
+  string key = 1;
+  string type = 2;
+  int32 userId = 3;
 }
 
 message EmotionCheckInIdMessage {

@@ -1,0 +1,75 @@
+@using DTO
+@inject Frontend.Services.Interfaces.IUserTagsService UserTagsService
+
+<div class="row">
+  <div class="col">
+    <h4>What</h4>
+    <div>
+      <input type="radio" id="none-what" name="what" checked @onchange="() => SelectTag(null, TagType.WHAT)" />
+      <label for="none-what">None</label>
+    </div>
+    @foreach (var tag in WhatTags)
+    {
+      <div>
+        <input type="radio" id="@tag.Key" name="what" @onchange="() => SelectTag(tag, TagType.WHAT)" />
+        <label for="@tag.Key">@tag.Key</label>
+      </div>
+    }
+  </div>
+  <div class="col">
+    <h4>With</h4>
+    <div>
+      <input type="radio" id="none-with" name="with" checked @onchange="() => SelectTag(null, TagType.WITH)" />
+      <label for="none-with">None</label>
+    </div>
+    @foreach (var tag in WithTags)
+    {
+      <div>
+        <input type="radio" id="@tag.Key" name="with" @onchange="() => SelectTag(tag, TagType.WITH)" />
+        <label for="@tag.Key">@tag.Key</label>
+      </div>
+    }
+  </div>
+  <div class="col">
+    <h4>Where</h4>
+    <div>
+      <input type="radio" id="none-where" name="where" checked @onchange="() => SelectTag(null, TagType.WHERE)" />
+      <label for="none-where">None</label>
+    </div>
+    @foreach (var tag in WhereTags)
+    {
+      <div>
+        <input type="radio" id="@tag.Key" name="where" @onchange="() => SelectTag(tag, TagType.WHERE)" />
+        <label for="@tag.Key">@tag.Key</label>
+      </div>
+    }
+  </div>
+</div>
+
+@code {
+  private List<TagDto> WhatTags { get; set; } = new();
+  private List<TagDto> WithTags { get; set; } = new();
+  private List<TagDto> WhereTags { get; set; } = new();
+
+  [Parameter] public EventCallback<List<TagDto>> OnTagsSelected { get; set; }
+
+  private List<TagDto> SelectedTags { get; set; } = new();
+
+  protected override async Task OnInitializedAsync()
+  {
+    var tags = await UserTagsService.GetAll();
+    WhatTags = tags.Where(t => t.Type == TagType.WHAT).ToList();
+    WithTags = tags.Where(t => t.Type == TagType.WITH).ToList();
+    WhereTags = tags.Where(t => t.Type == TagType.WHERE).ToList();
+  }
+
+  private void SelectTag(TagDto tag, TagType type)
+  {
+    SelectedTags.RemoveAll(t => t.Type == type);
+    if (tag != null)
+    {
+      SelectedTags.Add(tag);
+    }
+    OnTagsSelected.InvokeAsync(SelectedTags);
+  }
+}

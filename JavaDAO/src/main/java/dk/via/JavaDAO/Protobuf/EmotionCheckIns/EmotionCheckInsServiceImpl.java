@@ -11,6 +11,7 @@ import io.grpc.stub.StreamObserver;
 import jakarta.inject.Inject;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.postgresql.util.PSQLException;
 
@@ -224,6 +225,54 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
       );
       responseObserver.onCompleted();
     } catch (PSQLException e) {
+      SQLExceptionParser.Parse(e, responseObserver);
+    } catch (Exception e) {
+      responseObserver.onError(
+          Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
+    }
+  }
+
+  @Override
+  public void getAllByTag(TagFilter request,
+      StreamObserver<ListEmotionCheckInMessage> responseObserver) {
+    try {
+      ListEmotionCheckInMessage.Builder listEmotionCheckInBuilder = ListEmotionCheckInMessage.newBuilder();
+      HashMap<String, String> tags = new HashMap<>();
+
+      for (TagFilterSingle filter : request.getFiltersList()) {
+        tags.put(filter.getKey(), filter.getType());
+      }
+
+      List<EmotionCheckIn> checkIns = emotionCheckInsDAO.GetByTag(request.getFilters(0).getUserId(), tags);
+
+      for (EmotionCheckIn emotionCheckIn : checkIns) {
+        EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
+        emotionCheckInBuilder.setEmotion(emotionCheckIn.getEmotion());
+
+        if (emotionCheckIn.getDescription() != null) {
+          emotionCheckInBuilder.setDescription(emotionCheckIn.getDescription());
+        }
+
+        emotionCheckInBuilder.setId(emotionCheckIn.getId());
+        emotionCheckInBuilder.setCreatedAt(emotionCheckIn.getCreatedAt());
+        emotionCheckInBuilder.setUpdatedAt(emotionCheckIn.getUpdatedAt());
+        emotionCheckInBuilder.setUserId(emotionCheckIn.getUserId());
+
+        List<dk.via.JavaDAO.Models.Tag> tagsList = tagsDAO.GetAllForCheckIn(emotionCheckIn);
+
+        for (dk.via.JavaDAO.Models.Tag tag : tagsList) {
+          emotionCheckInBuilder.addTags(dk.via.JavaDAO.Protobuf.EmotionCheckIns.Tag.newBuilder()
+              .setKey(tag.getKey())
+              .setType(
+                  dk.via.JavaDAO.Protobuf.EmotionCheckIns.TagType.valueOf(tag.getType().toString()))
+              .build());
+        }
+
+        listEmotionCheckInBuilder.addEmotionCheckIns(emotionCheckInBuilder.build());
+      }
+      responseObserver.onNext(listEmotionCheckInBuilder.build());
+      responseObserver.onCompleted();
+    } catch (SQLException e) {
       SQLExceptionParser.Parse(e, responseObserver);
     } catch (Exception e) {
       responseObserver.onError(

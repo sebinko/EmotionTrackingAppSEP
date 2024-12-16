@@ -4,6 +4,7 @@ import dk.via.JavaDAO.Models.EmotionCheckIn;
 import dk.via.JavaDAO.Models.Tag;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public interface EmotionCheckInsDAO {
@@ -17,4 +18,5 @@ public interface EmotionCheckInsDAO {
   EmotionCheckIn Update(EmotionCheckIn emotion, List<Tag> tags) throws SQLException;
 
   ArrayList<EmotionCheckIn> GetAll(int userId) throws SQLException;
+  List<EmotionCheckIn> GetByTag(int userId, HashMap<String, String> tags) throws SQLException;
 }
