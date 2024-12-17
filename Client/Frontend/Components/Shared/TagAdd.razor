@@ -13,9 +13,7 @@
 
 @code {
   [Parameter] public List<TagDto> ExistingTags { get; set; } = new List<TagDto>();
-
   [Parameter] public List<TagDto> Tags { get; set; } = new List<TagDto>();
-
   [Parameter] public EventCallback<List<TagDto>> TagsChanged { get; set; }
 
   private async Task AddTag(TagDto tag)
@@ -23,8 +21,8 @@
     if (!Tags.Any(t => t.Key == tag.Key)) // Prevent duplicates
     {
       Tags.Add(tag);
+      ExistingTags.Remove(tag);
       await TagsChanged.InvokeAsync(Tags);
     }
   }
-
 }

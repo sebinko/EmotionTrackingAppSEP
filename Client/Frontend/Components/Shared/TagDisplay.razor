@@ -12,16 +12,12 @@
 </div>
 
 @code {
-  [Parameter]
-  public List<TagDto> Tags { get; set; } = new List<TagDto>();
-
-  [Parameter]
-  public EventCallback<TagDto> OnTagRemoved { get; set; }
+  [Parameter] public List<TagDto> Tags { get; set; } = new List<TagDto>();
+  [Parameter] public EventCallback<TagDto> OnTagRemoved { get; set; }
 
   private async Task RemoveTag(TagDto tag)
   {
-    await OnTagRemoved.InvokeAsync(tag);
-    
     Tags.Remove(tag);
+    await OnTagRemoved.InvokeAsync(tag);
   }
 }
