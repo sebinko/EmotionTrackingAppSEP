@@ -1,25 +1,22 @@
 @using DTO
 
-<div class="existing-tags mt-2">
+<div class="existing-tags mt-2 mb-2">
   @foreach (var tag in ExistingTags)
   {
     <span class="badge bg-primary me-1">
       @tag.Key
-      <button type="button" class="btn btn-sm btn-primary ms-1"
+      <button type="button" class="btn btn-sm btn-primary p-0 m-0 pe-2 ps-2"
               @onclick="() => AddTag(tag)">+</button>
     </span>
   }
 </div>
 
 @code {
-  [Parameter]
-  public List<TagDto> ExistingTags { get; set; } = new List<TagDto>();
+  [Parameter] public List<TagDto> ExistingTags { get; set; } = new List<TagDto>();
 
-  [Parameter]
-  public List<TagDto> Tags { get; set; } = new List<TagDto>();
+  [Parameter] public List<TagDto> Tags { get; set; } = new List<TagDto>();
 
-  [Parameter]
-  public EventCallback<List<TagDto>> TagsChanged { get; set; }
+  [Parameter] public EventCallback<List<TagDto>> TagsChanged { get; set; }
 
   private async Task AddTag(TagDto tag)
   {
@@ -29,4 +26,5 @@
       await TagsChanged.InvokeAsync(Tags);
     }
   }
+
 }
