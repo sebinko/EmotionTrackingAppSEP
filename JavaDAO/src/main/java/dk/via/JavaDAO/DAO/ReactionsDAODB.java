@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,5 +57,33 @@ public class ReactionsDAODB implements ReactionsDAO {
     statement.setInt(2, emotionCheckinId);
     statement.executeUpdate();
 
+  }
+
+  @Override
+  public List<Reaction> GetReactionsForEmotionCheckIn(Integer emotionCheckInId)
+      throws SQLException {
+    Connection connection = connector.getConnection();
+
+    String sql = "select * from \"EmotionsTrackingWebsite\".reactions where emotion_checkin_id = ?;";
+
+    PreparedStatement statement = connection.prepareStatement(sql);
+
+    statement.setInt(1, emotionCheckInId);
+
+    ResultSet resultSet = statement.executeQuery();
+
+    List<Reaction> reactions = new ArrayList<>();
+
+    while (resultSet.next()) {
+      reactions.add(new Reaction(
+          resultSet.getInt("user_id"),
+          resultSet.getInt("emotion_checkin_id"),
+          resultSet.getString("emoji"),
+          resultSet.getTimestamp("created_at"),
+          resultSet.getTimestamp("updated_at")
+      ));
+    }
+
+    return reactions;
   }
 }

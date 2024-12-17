@@ -1,0 +1,54 @@
+@page "/CheckIn/Reactions/{id:int}"
+@using DTO
+@using Frontend.Services
+@using Frontend.Services.Interfaces
+@using Humanizer
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IReactionService ReactionService
+@inject IEmotionCheckInService EmotionCheckInService
+@inject IUsersService UsersService
+
+<h3>Reactions</h3>
+
+@if (reactions == null)
+{
+  <p>Loading...</p>
+}
+else if (!reactions.Any())
+{
+  <p>No reactions found.</p>
+}
+else
+{
+  <div class="card-deck">
+    @foreach (var reaction in reactions)
+    {
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">@reaction.Emoji</h4>
+          @* user name *@
+          <h5 class="card-text">@users.FirstOrDefault(u => u.Id == reaction.UserId).Username</h5>
+          <h6 class="card-footer">@DateTime.Parse(reaction.CreatedAt).Humanize()</h6>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+@code {
+  [Parameter] public int Id { get; set; }
+  private List<ReactionDto>? reactions;
+  private List<UserReturnDto> users = new List<UserReturnDto>();
+
+  protected override async Task OnInitializedAsync()
+  {
+    reactions = await ReactionService.GetByReactionsByEmotionCheckIn(Id);
+
+    foreach (var reaction in reactions)
+    {
+      var user = await UsersService.GetById(reaction.UserId);
+      users.Add(user);
+    }
+  }
+
+}

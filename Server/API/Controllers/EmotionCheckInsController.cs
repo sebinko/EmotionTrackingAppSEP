@@ -10,7 +10,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class EmotionCheckInsController(IEmotionCheckInService emotionCheckInService) : ControllerBase
+public class EmotionCheckInsController(IEmotionCheckInService emotionCheckInService, IReactionService reactionService) : ControllerBase
 {
   [HttpGet]
   [Authorize]
@@ -37,6 +37,22 @@ public class EmotionCheckInsController(IEmotionCheckInService emotionCheckInServ
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     return Ok(await emotionCheckInService.GetById(id, int.Parse(userId)));
+  }
+  
+  [HttpGet("{id}/reactions")]
+  [Authorize]
+  public async Task<IActionResult> GetReactions(int id)
+  {
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+    
+    var emotionCheckIn = await emotionCheckInService.GetById(id, int.Parse(userId));
+    
+    if (emotionCheckIn == null)
+    {
+      throw new NotFoundException("EmotionCheckIn not found");
+    }
+
+    return Ok(await reactionService.GetByReactionsByEmotionCheckIn(id));
   }
 
 
