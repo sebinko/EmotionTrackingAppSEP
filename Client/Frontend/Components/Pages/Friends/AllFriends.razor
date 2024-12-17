@@ -12,7 +12,7 @@
     <div class="col-12">
       <div class="card">
         <div class="card-body">
-          <form @onsubmit="ShowYesNoPopup">
+          <form @onsubmit="AddFriend">
             <div class="form-group">
               <label for="username">Username</label>
               <input type="text" class="form-control" id="username" @bind="newFriendUsername"
@@ -41,26 +41,29 @@
   </div>
 </div>
 
-<YesNoPopup Title="Confirm" Message="Are you sure you want to add this friend?" OnYes="AddFriend"/>
+<YesNoPopup Title="Confirm" Message="@yesNoMessage" OnYes="AddFriendConfirm"/>
+<YesNoPopup Title="Confirm" ModalId="confirmRemove" Message="@yesNoMessage" OnYes="() => RemoveFriendConfirm()"/>
 <OkPopup Title="Success" Message="@okMessage"/>
 
 @code {
   private List<UserWithLatestCheckIn> userFriends = new List<UserWithLatestCheckIn>();
   private string newFriendUsername;
   private string okMessage;
+  private string yesNoMessage;
+  private string userToRemove;
 
   protected override async Task OnInitializedAsync()
   {
     userFriends = await UserFriendsService.GetFriends();
-    okMessage = "Friend added successfully!";
-  }
-
-  private async Task ShowYesNoPopup()
-  {
-    await JSRuntime.InvokeVoidAsync("modalHelper.showModal", "yesNoModal");
   }
 
   private async Task AddFriend()
+  {
+    yesNoMessage = $"Are you sure you want to add {newFriendUsername} as friend?";
+    await JSRuntime.InvokeVoidAsync("modalHelper.showModal", "yesNoModal");
+  }
+
+  private async Task AddFriendConfirm()
   {
     try
     {
@@ -84,10 +87,22 @@
     
     newFriendUsername = "";
   }
+  
   private async Task RemoveFriend(string username)
   {
-    await UserFriendsService.RemoveFriendship(username);
+    yesNoMessage = $"Are you sure you want to remove {username} as friend?";
+    await JSRuntime.InvokeVoidAsync("modalHelper.showModal", "confirmRemove");
+    userToRemove = username;
+  }
+  
+  private async Task RemoveFriendConfirm()
+  {
+    await UserFriendsService.RemoveFriendship(userToRemove);
     userFriends = await UserFriendsService.GetFriends();
+    okMessage = "Friend removed successfully!";
+    await JSRuntime.InvokeVoidAsync("modalHelper.hideModal", "confirmRemove");
+    await JSRuntime.InvokeVoidAsync("modalHelper.showModal", "okModal");
+    userToRemove = "";
   }
 
 }
