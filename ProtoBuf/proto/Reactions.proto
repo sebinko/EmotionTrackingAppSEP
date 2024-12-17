@@ -9,6 +9,15 @@ package Reactions;
 service ReactionService {
   rpc Create(ReactionCreateMessage) returns (ReactionMessage);
   rpc Delete(ReactionDeleteMessage) returns (ReactionMessage);
+  rpc GetForReactionsCheckIn(EmotionCheckInIdMessage) returns (ListReactionMessage);
+}
+
+message EmotionCheckInIdMessage {
+  int32 id = 1;
+}
+
+message ListReactionMessage {
+  repeated ReactionMessage reactions = 1;
 }
 
 message ReactionMessage {

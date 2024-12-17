@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using DTO;
 using Microsoft.AspNetCore.Authorization;
@@ -20,18 +21,22 @@ public class ReactionsController(IReactionService reactionService) : ControllerB
 
     return Ok(await reactionService.Create(reactionDto, int.Parse(userId)));
   }
-  [HttpDelete]
+
+  [HttpDelete("{id}")]
   [Authorize]
-  public async Task<ActionResult> Delete([FromBody] ReactionDeleteDto reactionDto)
+  public async Task<ActionResult> Delete([Required] int id)
   {
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        
+
     if (userId == null)
     {
       return Unauthorized();
     }
 
-    await reactionService.Delete(reactionDto, int.Parse(userId));
+    await reactionService.Delete(new ReactionDeleteDto()
+    {
+      EmotionCheckInId = id
+    }, int.Parse(userId));
     return Ok();
   }
 }

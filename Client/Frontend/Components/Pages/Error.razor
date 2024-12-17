@@ -1,10 +1,17 @@
 ﻿@page "/Error"
 @using System.Diagnostics
+@using Microsoft.AspNetCore.WebUtilities
+@inject NavigationManager Navigation
 
 <PageTitle>Error</PageTitle>
 
 <h1 class="text-danger">Error.</h1>
 <h2 class="text-danger">An error occurred while processing your request.</h2>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+  <p class="text-danger">@ErrorMessage</p>
+}
 
 @if (ShowRequestId)
 {
@@ -24,15 +31,20 @@
   and restarting the app.
 </p>
 
-@code{
+@code {
   [CascadingParameter] private HttpContext? HttpContext { get; set; }
 
   private string? RequestId { get; set; }
   private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+  private string? ErrorMessage { get; set; }
 
   protected override void OnInitialized()
   {
     RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+    var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+    if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("message", out var message))
+    {
+      ErrorMessage = message;
+    }
   }
-
 }

@@ -67,4 +67,33 @@ public class ReactionsServiceImpl extends ReactionServiceImplBase {
           Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
     }
   }
+
+  @Override
+  public void getForReactionsCheckIn(EmotionCheckInIdMessage request,
+      StreamObserver<ListReactionMessage> responseObserver) {
+    try {
+      java.util.List<dk.via.JavaDAO.Models.Reaction> reactions = reactionsDAO.GetReactionsForEmotionCheckIn(request.getId());
+
+      ListReactionMessage.Builder listReactionBuilder = ListReactionMessage.newBuilder();
+
+      for (dk.via.JavaDAO.Models.Reaction reaction : reactions) {
+        ReactionMessage.Builder reactionBuilder = ReactionMessage.newBuilder();
+        reactionBuilder.setEmoji(reaction.getEmoji());
+        reactionBuilder.setCreatedAt(reaction.getCreatedAt().toString());
+        reactionBuilder.setUpdatedAt(reaction.getUpdatedAt().toString());
+        reactionBuilder.setUserId(reaction.getUserId());
+        reactionBuilder.setEmotionCheckInId(reaction.getEmotionCheckinId());
+
+        listReactionBuilder.addReactions(reactionBuilder.build());
+      }
+
+      responseObserver.onNext(listReactionBuilder.build());
+      responseObserver.onCompleted();
+    } catch (PSQLException e) {
+      SQLExceptionParser.Parse(e, responseObserver);
+    } catch (Exception e) {
+      responseObserver.onError(
+          Status.INTERNAL.withCause(e).withDescription(e.getMessage()).asException());
+    }
+  }
 }

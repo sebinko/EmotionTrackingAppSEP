@@ -6,5 +6,7 @@ namespace Protobuf.Services.Interfaces
   {
     Task<ReactionDto> Create(ReactionCreateDto reactionCreateDTO, int userId);
     Task Delete(ReactionDeleteDto reactionCreateDTO, int userId);
+    
+    Task<List<ReactionDto>> GetByReactionsByEmotionCheckIn(int emotionCheckInId);
   }
 }

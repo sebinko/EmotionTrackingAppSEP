@@ -1,10 +1,10 @@
 @page "/CheckIn"
 @using DTO
 @using Frontend.Services.Interfaces
+@using Humanizer
 @using Microsoft.AspNetCore.Components.Authorization
 @inject IEmotionCheckInService EmotionCheckInService
 @inject NavigationManager NavigationManager
-
 
 <AuthorizeView>
   <Authorized>
@@ -15,25 +15,36 @@
     <table class="table">
       <thead>
       <tr>
-        <th>Id</th>
         <th>Emotion</th>
         <th>Description</th>
         <th>Tags</th>
         <th>Created</th>
         <th>Edit</th>
+        <th>View Reactions</th>
       </tr>
       </thead>
       <tbody>
       @foreach (var checkIn in _checkIns)
       {
         <tr>
-          <td>@checkIn.Id</td>
           <td>@checkIn.Emotion</td>
           <td>@checkIn.Description</td>
-          <td>@string.Join(", ", checkIn.Tags.Select(tag => tag.Key))</td>
-          <td>@checkIn.CreatedAt</td>
+          <td>
+            <div class="tags mt-2">
+              @foreach (var tag in checkIn.Tags)
+              {
+                <span class="badge bg-secondary me-1">
+                  @tag.Key
+                </span>
+              }
+            </div>
+          </td>
+          <td>@DateTime.Parse(checkIn.CreatedAt).Humanize()</td>
           <td>
             <button class="btn btn-secondary" @onclick="() => NavigateToEditEmotion(checkIn.Id.Value)">Edit</button>
+          </td>
+          <td>
+            <button class="btn btn-warning" @onclick="() => NavigateToReactions(checkIn.Id.Value)">Reactions</button>
           </td>
         </tr>
       }
@@ -56,10 +67,13 @@
     NavigationManager.NavigateTo("/CheckIn/Create");
   }
 
-
   private void NavigateToEditEmotion(int id)
   {
     NavigationManager.NavigateTo($"/CheckIn/Edit/{id}");
   }
 
+  private void NavigateToReactions(int id)
+  {
+    NavigationManager.NavigateTo($"/CheckIn/Reactions/{id}");
+  }
 }
