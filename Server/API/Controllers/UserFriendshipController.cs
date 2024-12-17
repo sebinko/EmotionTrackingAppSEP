@@ -42,13 +42,13 @@ public class UserFriendshipController (IUserFriendsService userFriendsService, I
     return Ok();
   }
   
-  [HttpDelete]
+  [HttpDelete("{user2Username}")]
   [Authorize]
-  public async Task<IActionResult> RemoveFriendship(RemoveFriendshipDto removeFriendshipDto)
+  public async Task<IActionResult> RemoveFriendship(string user2Username)
   {
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
     
-    var user2 = await usersService.GetByUsername(removeFriendshipDto.user2UserName);
+    var user2 = await usersService.GetByUsername(user2Username);
     
     if (user2 == null)
     {

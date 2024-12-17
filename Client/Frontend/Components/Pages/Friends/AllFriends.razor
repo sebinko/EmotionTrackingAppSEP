@@ -33,6 +33,7 @@
           <div class="card-body">
             <h5 class="card-title">@friend.User.Username</h5>
             <h4 class="card-title">@friend.LatestCheckIn</h4>
+            <button class="btn btn-danger" @onclick="() => RemoveFriend(friend.User.Username)">Remove</button>
           </div>
         </div>
       </div>
@@ -82,6 +83,11 @@
     
     
     newFriendUsername = "";
+  }
+  private async Task RemoveFriend(string username)
+  {
+    await UserFriendsService.RemoveFriendship(username);
+    userFriends = await UserFriendsService.GetFriends();
   }
 
 }

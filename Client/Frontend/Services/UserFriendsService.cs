@@ -20,7 +20,8 @@ public class UserFriendsService (AuthedClient httpClient): IUserFriendsService
 
   public async Task RemoveFriendship(string user2Username)
   {
-    throw new NotImplementedException();
+    var response = await httpClient.DeleteAsync($"UserFriendship/{user2Username}");
+    await new ApiParsingUtils().Process(response);
   }
 
   public async Task<List<UserWithLatestCheckIn>> GetFriends()
