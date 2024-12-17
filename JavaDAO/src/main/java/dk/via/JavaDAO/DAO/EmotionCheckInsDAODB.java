@@ -55,7 +55,7 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
   @Override
   public ArrayList<EmotionCheckIn> GetAll(int userId) throws SQLException {
     Connection connection = connector.getConnection();
-    String sql = "select * from \"EmotionsTrackingWebsite\".emotion_checkins where user_id = ?;";
+    String sql = "select * from \"EmotionsTrackingWebsite\".emotion_checkins where user_id = ? ORDER BY id ASC;";
     ArrayList<EmotionCheckIn> emotionCheckIns = new ArrayList<>();
 
       PreparedStatement statement = connection.prepareStatement(sql);
