@@ -1,0 +1,21 @@
+@inherits ErrorBoundary
+@inject NavigationManager Navigation
+
+<div class="error-boundary">
+  @if (CurrentException is not null)
+  {
+    NavigateToErrorPage();
+  }
+  else
+  {
+    @ChildContent
+  }
+</div>
+
+@code {
+  private void NavigateToErrorPage()
+  {
+    var exceptionMessage = Uri.EscapeDataString(CurrentException?.Message ?? "Unknown error");
+    Navigation.NavigateTo($"/Error?message={exceptionMessage}", true);
+  }
+}
