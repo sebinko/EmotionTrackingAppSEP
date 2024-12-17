@@ -2,6 +2,7 @@ package dk.via.JavaDAO.Protobuf.Users;
 
 import com.google.inject.Inject;
 import dk.via.JavaDAO.DAO.UserFriendsDAO;
+import dk.via.JavaDAO.Models.EmotionCheckIn;
 import dk.via.JavaDAO.Models.Friendship;
 import dk.via.JavaDAO.Models.User;
 import dk.via.JavaDAO.Protobuf.Users.UserFriendsServiceGrpc.UserFriendsServiceImplBase;
@@ -126,11 +127,13 @@ public class UserFriendsServiceImpl extends UserFriendsServiceImplBase {
   @Override
   public void getAllFriends(UserId request, StreamObserver<FriendsWithCheckIns> responseObserver) {
     try {
-      HashMap<User, String> friendsWithCheckIn = userFriendsDAO.GetFriendsWithCheckIn(request.getId());
+      HashMap<User, EmotionCheckIn> friendsWithCheckIn = userFriendsDAO.GetFriendsWithCheckIn(request.getId());
 
       FriendsWithCheckIns.Builder friendsWithCheckInsBuilder = FriendsWithCheckIns.newBuilder();
 
       for (User user : friendsWithCheckIn.keySet()) {
+        EmotionCheckIn emotionCheckIn = friendsWithCheckIn.get(user);
+
         friendsWithCheckInsBuilder.addFriends(FriendWithCheckIn.newBuilder()
             .setFriend(dk.via.JavaDAO.Protobuf.Users.User.newBuilder()
                 .setId(user.getId())
@@ -140,8 +143,13 @@ public class UserFriendsServiceImpl extends UserFriendsServiceImplBase {
                 .setUpdatedAt(user.getUpdatedAt().toString())
                 .setStreak(user.getStreak())
                 .build())
-            .setEmotion(friendsWithCheckIn.get(user))
-            .build());
+            .setEmotion(dk.via.JavaDAO.Protobuf.Users.SimpleEmotionCheckIn.newBuilder()
+                .setEmotion(emotionCheckIn.getEmotion())
+                .setUpdatedAt(emotionCheckIn.getUpdatedAt().toString())
+                .setId(emotionCheckIn.getId()))
+                .build()
+            )
+            .build();
       }
 
       responseObserver.onNext(friendsWithCheckInsBuilder.build());

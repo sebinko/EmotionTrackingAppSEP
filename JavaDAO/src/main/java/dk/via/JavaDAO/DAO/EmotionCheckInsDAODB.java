@@ -42,8 +42,8 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
             resultSet.getInt("id"),
             resultSet.getString("emotion"),
             resultSet.getString("description"),
-            resultSet.getString("created_at"),
-            resultSet.getString("updated_at"),
+            resultSet.getTimestamp("created_at"),
+            resultSet.getTimestamp("updated_at"),
             resultSet.getInt("user_id")
         );
 
@@ -68,8 +68,8 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
             resultSet.getInt("id"),
             resultSet.getString("emotion"),
             resultSet.getString("description"),
-            resultSet.getString("created_at"),
-            resultSet.getString("updated_at"),
+            resultSet.getTimestamp("created_at"),
+            resultSet.getTimestamp("updated_at"),
             resultSet.getInt("user_id")
         );
         emotionCheckIns.add(emotionCheckIn);
@@ -94,8 +94,8 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
       emotionCheckIn.setId(resultSet.getInt("id"));
       emotionCheckIn.setEmotion(resultSet.getString("emotion"));
       emotionCheckIn.setDescription(resultSet.getString("description"));
-      emotionCheckIn.setCreatedAt(resultSet.getString("created_at"));
-      emotionCheckIn.setUpdatedAt(resultSet.getString("updated_at"));
+      emotionCheckIn.setCreatedAt(resultSet.getTimestamp("created_at"));
+      emotionCheckIn.setUpdatedAt(resultSet.getTimestamp("updated_at"));
       emotionCheckIn.setUserId(resultSet.getInt("user_id"));
     }
 
@@ -179,8 +179,8 @@ public class EmotionCheckInsDAODB implements EmotionCheckInsDAO {
           resultSet.getInt("id"),
           resultSet.getString("emotion"),
           resultSet.getString("description"),
-          resultSet.getString("created_at"),
-          resultSet.getString("updated_at"),
+          resultSet.getTimestamp("created_at"),
+          resultSet.getTimestamp("updated_at"),
           resultSet.getInt("user_id")
       );
       emotionCheckIns.add(emotionCheckIn);
