@@ -2,6 +2,7 @@
 using API.Exceptions;
 using DTO;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Protobuf.Services;
 using Protobuf.Services.Interfaces;
@@ -9,7 +10,7 @@ using Protobuf.Services.Interfaces;
 namespace API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Microsoft.AspNetCore.Mvc.Route("[controller]")]
 public class EmotionCheckInsController(IEmotionCheckInService emotionCheckInService, IReactionService reactionService) : ControllerBase
 {
   [HttpGet]
