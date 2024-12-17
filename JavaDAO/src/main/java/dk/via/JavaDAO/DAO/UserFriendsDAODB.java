@@ -39,10 +39,19 @@ public class UserFriendsDAODB implements UserFriendsDAO {
   public HashMap<User, String> GetFriendsWithCheckIn(Integer userId) throws SQLException {
     Connection connection = connector.getConnection();
 
-    String sql = "SELECT * FROM \"EmotionsTrackingWebsite\".users_with_streaks WHERE id IN (SELECT friend_id FROM \"EmotionsTrackingWebsite\".user_friends WHERE user_id = ? AND is_accepted = true);";
+    String sql = "SELECT * FROM \"EmotionsTrackingWebsite\".users_with_streaks WHERE id IN " +
+        "(SELECT friend_id FROM \"EmotionsTrackingWebsite\".user_friends WHERE " +
+        "(user_id = ? AND is_accepted = true) " +
+        "UNION " +
+        "SELECT user_id FROM \"EmotionsTrackingWebsite\".user_friends WHERE " +
+        "(friend_id = ? AND is_accepted = true)) " +
+        "AND id != ? " +
+        "ORDER BY id;";
 
     PreparedStatement statement = connection.prepareStatement(sql);
     statement.setInt(1, userId);
+    statement.setInt(2, userId);
+    statement.setInt(3, userId);
 
     ResultSet resultSet = statement.executeQuery();
 
@@ -54,7 +63,6 @@ public class UserFriendsDAODB implements UserFriendsDAO {
           resultSet.getTimestamp("updated_at"), resultSet.getInt("current_streak")));
     }
 
-    // now fetch latest checkin for each friend
     HashMap<User, String> friendsWithCheckIn = new HashMap<>();
 
     for (User user : users) {
