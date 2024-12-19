@@ -17,4 +17,12 @@
         <ProjectReference Include="..\..\Shared\Dto\Dto.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <InternalsVisibleTo Include="..\..\Server\API_Integration_Tests\API_Integration_Tests.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Controllers\StatusCheckController.cs" />
+    </ItemGroup>
+
 </Project>
