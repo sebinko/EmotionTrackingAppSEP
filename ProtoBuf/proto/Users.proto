@@ -38,7 +38,13 @@ service UserFriendsService{
 
 message FriendWithCheckIn {
   User friend = 1;
+  SimpleEmotionCheckIn emotion = 2;
+}
+
+message SimpleEmotionCheckIn {
+  int32 id = 1;
   string emotion = 2;
+  string updated_at = 3;
 }
 
 message FriendsWithCheckIns {

@@ -1,8 +1,14 @@
 @page "/Friends"
+@using System.Security.Claims
 @using DTO
 @using Frontend.Services.Interfaces
 @using Frontend.Components.Shared
+@using Frontend.Utils
+@using Humanizer
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IUserFriendsService UserFriendsService
+@inject IReactionService ReactionService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IJSRuntime JSRuntime
 
 <h3>All Friends</h3>
@@ -31,9 +37,46 @@
       <div class="col-12 mb-3">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">@friend.User.Username</h5>
-            <h4 class="card-title">@friend.LatestCheckIn</h4>
-            <button class="btn btn-danger" @onclick="() => RemoveFriend(friend.User.Username)">Remove</button>
+            <div class="row">
+              <div class="col-md-6">
+                <h5 class="card-title">@friend.User.Username</h5>
+                @if (friend.LatestCheckIn == null)
+                {
+                  <p class="card-text">No check-ins yet</p>
+                }
+                else
+                {
+                  <p class="card-text">@friend.LatestCheckIn.Emotion</p>
+                  <p
+                    class="card-text">@DateTime.Parse(friend.LatestCheckIn.UpdatedAt).Humanize()</p>
+                }
+              </div>
+              <div class="col-md-6">
+                @if (!reactions.Any(r => r.EmotionCheckInId == friend.LatestCheckIn?.Id && r.UserId == userId))
+                {
+                  <button class="btn btn-outline-primary"
+                          @onclick='() => ReactToFriend("👍", friend.LatestCheckIn.Id.Value)'>👍
+                  </button>
+                  <button class="btn btn-outline-secondary"
+                          @onclick='() => ReactToFriend("👎", friend.LatestCheckIn.Id.Value)'>👎
+                  </button>
+                  <button class="btn btn-outline-danger"
+                          @onclick='() => ReactToFriend("❤️", friend.LatestCheckIn.Id.Value)'>❤️
+                  </button>
+                }
+
+                else
+                {
+                <p class="card-text">Your reaction: @reactions.Where(r => r.EmotionCheckInId == friend.LatestCheckIn.Id && r.UserId == userId).First().Emoji</p>
+                <button class="btn btn-danger"
+                @onclick="() => RemoveReaction(friend.LatestCheckIn.Id.Value)">Remove Reaction
+                </button>
+                }
+              </div>
+            </div>
+            <button class="btn btn-danger mt-2" @onclick="() => RemoveFriend(friend.User.Username)">
+              Remove
+            </button>
           </div>
         </div>
       </div>
@@ -42,19 +85,42 @@
 </div>
 
 <YesNoPopup Title="Confirm" Message="@yesNoMessage" OnYes="AddFriendConfirm"/>
-<YesNoPopup Title="Confirm" ModalId="confirmRemove" Message="@yesNoMessage" OnYes="() => RemoveFriendConfirm()"/>
+<YesNoPopup Title="Confirm" ModalId="confirmRemove" Message="@yesNoMessage"
+            OnYes="() => RemoveFriendConfirm()"/>
 <OkPopup Title="Success" Message="@okMessage"/>
 
 @code {
   private List<UserWithLatestCheckIn> userFriends = new List<UserWithLatestCheckIn>();
+  private List<ReactionDto> reactions = new List<ReactionDto>();
   private string newFriendUsername;
   private string okMessage;
   private string yesNoMessage;
   private string userToRemove;
+  private AuthenticationState? state;
+  private int? userId;
 
   protected override async Task OnInitializedAsync()
   {
     userFriends = await UserFriendsService.GetFriends();
+    state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+    userId = int.Parse(state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+    await RecalculateReactions();
+  }
+
+  private async Task RecalculateReactions()
+  {
+    reactions = new List<ReactionDto>();
+    
+    foreach (var friend in userFriends)
+    {
+      var reaction = await ReactionService.GetByReactionsByEmotionCheckIn(friend.LatestCheckIn.Id.Value);
+
+      if (reaction.Where(r => r.UserId == userId).Any())
+      {
+        reactions.Add(reaction.Where(r => r.UserId == userId).FirstOrDefault());
+      }
+    }
   }
 
   private async Task AddFriend()
@@ -83,18 +149,18 @@
     await JSRuntime.InvokeVoidAsync("modalHelper.hideModal", "yesNoModal");
     await JSRuntime.InvokeVoidAsync("modalHelper.showModal", "okModal");
     await InvokeAsync(StateHasChanged);
-    
-    
+
+
     newFriendUsername = "";
   }
-  
+
   private async Task RemoveFriend(string username)
   {
     yesNoMessage = $"Are you sure you want to remove {username} as friend?";
     await JSRuntime.InvokeVoidAsync("modalHelper.showModal", "confirmRemove");
     userToRemove = username;
   }
-  
+
   private async Task RemoveFriendConfirm()
   {
     await UserFriendsService.RemoveFriendship(userToRemove);
@@ -105,4 +171,24 @@
     userToRemove = "";
   }
 
+  private async Task ReactToFriend(string reaction, int checkInId)
+  {
+    ReactionService.Create(new ReactionCreateDto()
+    {
+      Emoji = reaction,
+      EmotionCheckInId = checkInId
+    });
+    await RecalculateReactions();
+    await InvokeAsync(StateHasChanged);
+  }
+
+  private async Task RemoveReaction(int checkInId)
+  {
+    ReactionService.Delete(new ReactionDeleteDto()
+    {
+      EmotionCheckInId = checkInId
+    });
+    await RecalculateReactions();
+    await InvokeAsync(StateHasChanged);
+  }
 }

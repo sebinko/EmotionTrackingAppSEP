@@ -237,44 +237,42 @@ VALUES
     ,     -- Evening Walk
 (25, 38); -- Alone Time
 
-INSERT INTO "EmotionsTrackingWebsite".user_friends (user_id, friend_id)
-VALUES (1, 2), -- Jake Peralta and Amy Santiago
-       (1, 3), -- Jake Peralta and Raymond Holt
-       (2, 4), -- Amy Santiago and Rosa Diaz
-       (2, 5), -- Amy Santiago and Terry Jeffords
-       (3, 4), -- Raymond Holt and Rosa Diaz
-       (3, 5), -- Raymond Holt and Terry Jeffords
-       (4, 1), -- Rosa Diaz and Jake Peralta
-       (4, 5), -- Rosa Diaz and Terry Jeffords
-       (5, 1), -- Terry Jeffords and Jake Peralta
-       (5, 2); -- Terry Jeffords and Amy Santiago
+INSERT INTO "EmotionsTrackingWebsite".user_friends (user_id, friend_id, is_accepted)
+VALUES (1, 2, true), -- Jake Peralta and Amy Santiago
+       (1, 3, true), -- Jake Peralta and Raymond Holt
+       (2, 4, true), -- Amy Santiago and Rosa Diaz
+       (2, 5, true), -- Amy Santiago and Terry Jeffords
+       (3, 4, true), -- Raymond Holt and Rosa Diaz
+       (3, 5, true), -- Raymond Holt and Terry Jeffords
+       (4, 1, true), -- Rosa Diaz and Jake Peralta
+       (4, 5, true), -- Rosa Diaz and Terry Jeffords
+       (5, 1, true), -- Terry Jeffords and Jake Peralta
+       (5, 2, true); -- Terry Jeffords and Amy Santiago
 
 INSERT INTO "EmotionsTrackingWebsite".reactions (user_id, emotion_checkin_id, emoji)
 VALUES
 -- Jake Peralta reacts to Amy Santiago's check-ins
 (1, 6, '👍'),  -- Jake reacts positively to Amy's "Confident"
-(1, 7, '🔥'),  -- Jake reacts to Amy's "Determined"
+(1, 7, '❤️'),  -- Jake reacts to Amy's "Determined"
 
 -- Amy Santiago reacts to Jake Peralta's check-ins
-(2, 1, '👏'),  -- Amy reacts to Jake's "Accomplished"
-(2, 3, '😢'),  -- Amy reacts to Jake's "Frustrated"
+(2, 1, '👍'),  -- Amy reacts to Jake's "Accomplished"
+(2, 3, '👎'),  -- Amy reacts to Jake's "Frustrated"
 
 -- Raymond Holt reacts to Rosa Diaz's check-ins
-(3, 16, '😡'), -- Holt reacts to Rosa's "Agitated"
-(3, 19, '🤔'), -- Holt reacts to Rosa's "Alienated"
+(3, 16, '👎'), -- Holt reacts to Rosa's "Agitated"
+(3, 19, '👍'), -- Holt reacts to Rosa's "Alienated"
 
 -- Rosa Diaz reacts to Terry Jeffords's check-ins
-(4, 21, '😎'), -- Rosa reacts to Terry's "Energized"
-(4, 23, '😂'), -- Rosa reacts to Terry's "Cheerful"
+(4, 21, '👍'), -- Rosa reacts to Terry's "Energized"
+(4, 23, '❤️'), -- Rosa reacts to Terry's "Cheerful"
 
 -- Terry Jeffords reacts to Jake Peralta's check-ins
-(5, 2, '💯'),  -- Terry reacts to Jake's "Excited"
-(5, 4, '😲'),  -- Terry reacts to Jake's "Alert"
+(5, 2, '❤️'),  -- Terry reacts to Jake's "Excited"
+(5, 4, '👍'),  -- Terry reacts to Jake's "Alert"
 
 -- Cross-user reactions
-(3, 9, '🙌'),  -- Holt reacts to Amy's "Empowered"
-(4, 14, '🌴'), -- Rosa reacts to Holt's "On Vacation"
-(5, 18, '🤯'), -- Terry reacts to Rosa's "Exploring"
-(2, 25, '🙏'); -- Amy reacts to Terry's "Blessed"
-
-
+(3, 9, '👍'),  -- Holt reacts to Amy's "Empowered"
+(4, 14, '❤️'), -- Rosa reacts to Holt's "On Vacation"
+(5, 18, '👍'), -- Terry reacts to Rosa's "Exploring"
+(2, 25, '❤️'); -- Amy reacts to Terry's "Blessed"

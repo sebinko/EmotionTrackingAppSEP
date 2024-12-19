@@ -1,6 +1,7 @@
 package dk.via.JavaDAO.DAO;
 
 import com.google.inject.Inject;
+import dk.via.JavaDAO.Models.EmotionCheckIn;
 import dk.via.JavaDAO.Models.Friendship;
 import dk.via.JavaDAO.Models.User;
 import dk.via.JavaDAO.Util.Interfaces.DBConnector;
@@ -36,7 +37,7 @@ public class UserFriendsDAODB implements UserFriendsDAO {
   }
 
   @Override
-  public HashMap<User, String> GetFriendsWithCheckIn(Integer userId) throws SQLException {
+  public HashMap<User, EmotionCheckIn> GetFriendsWithCheckIn(Integer userId) throws SQLException {
     Connection connection = connector.getConnection();
 
     String sql = "SELECT * FROM \"EmotionsTrackingWebsite\".users_with_streaks WHERE id IN " +
@@ -63,7 +64,7 @@ public class UserFriendsDAODB implements UserFriendsDAO {
           resultSet.getTimestamp("updated_at"), resultSet.getInt("current_streak")));
     }
 
-    HashMap<User, String> friendsWithCheckIn = new HashMap<>();
+    HashMap<User, EmotionCheckIn> friendsWithCheckIn = new HashMap<>();
 
     for (User user : users) {
       String sql2 = "SELECT * FROM \"EmotionsTrackingWebsite\".emotion_checkins WHERE user_id = ? ORDER BY created_at DESC LIMIT 1;";
@@ -74,11 +75,18 @@ public class UserFriendsDAODB implements UserFriendsDAO {
       ResultSet resultSet2 = statement2.executeQuery();
 
       if (resultSet2.next()) {
-        friendsWithCheckIn.put(user, resultSet2.getString("emotion"));
+        EmotionCheckIn emotionCheckIn = new EmotionCheckIn(
+            resultSet2.getInt("id"),
+            resultSet2.getString("emotion"),
+            resultSet2.getString("description"),
+            resultSet2.getTimestamp("created_at"),
+            resultSet2.getTimestamp("updated_at"),
+            resultSet2.getInt("user_id")
+        );
+        friendsWithCheckIn.put(user, emotionCheckIn);
       } else {
         friendsWithCheckIn.put(user, null);
       }
-
     }
 
     return friendsWithCheckIn;

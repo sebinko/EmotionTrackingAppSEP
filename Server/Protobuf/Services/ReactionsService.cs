@@ -41,4 +41,25 @@ public class ReactionService : IReactionService
       UserId = userId
     });
   }
+
+  public async Task<List<ReactionDto>> GetByReactionsByEmotionCheckIn(int emotionCheckInId)
+  {
+    using var channel = GrpcChannel.ForAddress("http://localhost:8888");
+    var client = new Reactions.ReactionService.ReactionServiceClient(channel);
+
+    var reply = await client.GetForReactionsCheckInAsync(new Reactions.EmotionCheckInIdMessage()
+    {
+      Id = emotionCheckInId
+    });
+
+    return reply.Reactions.Select(r => new ReactionDto()
+    {
+      Emoji = r.Emoji,
+      UserId = Convert.ToInt32(r.UserId),
+      EmotionCheckInId = Convert.ToInt32(r.EmotionCheckInId),
+      CreatedAt = DateTime.Parse(r.CreatedAt).ToString(),
+      UpdatedAt = DateTime.Parse(r.UpdatedAt).ToString()
+    }).ToList();
+    
+  }
 }

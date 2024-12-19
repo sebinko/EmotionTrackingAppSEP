@@ -9,29 +9,44 @@
 
 <AuthorizeView>
   <Authorized>
-    <h3>Edit Emotion</h3>
-    <p1>Description</p1>
-    <input type="text" class="form-control" id="description" @bind="Description"><br/>
-    <h1>What</h1>
-    <TagAdd Tags="whatTags" ExistingTags="existingWhatTags" TagsChanged="TagsChanged"></TagAdd>
-    <TagPicker Tags="whatTags" TagType="TagType.WHAT" TagsChanged="TagsChanged"></TagPicker>
-    <TagDisplay Tags="whatTags"></TagDisplay>
-    <h1>With</h1>
-    <TagAdd Tags="withTags" ExistingTags="existingWithTags" TagsChanged="TagsChanged"></TagAdd>
-    <TagPicker Tags="withTags" TagType="TagType.WITH" TagsChanged="TagsChanged"></TagPicker>
-    <TagDisplay Tags="withTags"></TagDisplay>
-    <h1>Where</h1>
-    <TagAdd Tags="whereTags" ExistingTags="existingWhereTags" TagsChanged="TagsChanged"></TagAdd>
-    <TagPicker Tags="whereTags" TagType="TagType.WHERE" TagsChanged="TagsChanged"></TagPicker>
-    <TagDisplay Tags="whereTags"></TagDisplay>
-    <button class="btn btn-success" @onclick="Save">
-      Save
-    </button>
-    <br/>
-    <hr/>
-    <button class="btn btn-danger" @onclick="NavigateToDeletePage">Delete</button>
-    <button class="btn btn-primary" @onclick="NavigateToPickColorUpdatePage">Edit Emotion</button>
-    <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+    <div class="container mt-4">
+      <h3>Edit CheckIn</h3>
+      <form>
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <input type="text" class="form-control" id="description" @bind="Description">
+        </div>
+        <div class="mb-3">
+          <h4>What</h4>
+          <TagAdd Tags="whatTags" ExistingTags="existingWhatTags"
+                  TagsChanged="TagsChanged"></TagAdd>
+          <TagPicker Tags="whatTags" TagType="TagType.WHAT" TagsChanged="TagsChanged"></TagPicker>
+          <TagDisplay Tags="whatTags" OnTagRemoved="TagRemoved"></TagDisplay>
+        </div>
+        <div class="mb-3">
+          <h4>With</h4>
+          <TagAdd Tags="withTags" ExistingTags="existingWithTags"
+                  TagsChanged="TagsChanged"></TagAdd>
+          <TagPicker Tags="withTags" TagType="TagType.WITH" TagsChanged="TagsChanged"></TagPicker>
+          <TagDisplay Tags="withTags" OnTagRemoved="TagRemoved"></TagDisplay>
+        </div>
+        <div class="mb-3">
+          <h4>Where</h4>
+          <TagAdd Tags="whereTags" ExistingTags="existingWhereTags"
+                  TagsChanged="TagsChanged"></TagAdd>
+          <TagPicker Tags="whereTags" TagType="TagType.WHERE" TagsChanged="TagsChanged"></TagPicker>
+          <TagDisplay Tags="whereTags" OnTagRemoved="TagRemoved"></TagDisplay>
+        </div>
+        <button type="button" class="btn btn-success" @onclick="Save">Save CheckIn</button>
+      </form>
+      <hr/>
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-danger" @onclick="NavigateToDeletePage">Delete</button>
+        <button class="btn btn-primary" @onclick="NavigateToPickColorUpdatePage">Edit Emotion
+        </button>
+        <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+      </div>
+    </div>
   </Authorized>
 </AuthorizeView>
 
@@ -64,11 +79,49 @@
     whatTags = emotionCheckIn.Tags.Where(t => t.Type == TagType.WHAT).ToList();
     withTags = emotionCheckIn.Tags.Where(t => t.Type == TagType.WITH).ToList();
     whereTags = emotionCheckIn.Tags.Where(t => t.Type == TagType.WHERE).ToList();
+
+    foreach (var tag in withTags)
+    {
+      existingWithTags.RemoveAll(t => t.Key == tag.Key);
+    }
+
+    foreach (var tag in whatTags)
+    {
+      existingWhatTags.RemoveAll(t => t.Key == tag.Key);
+    }
+
+    foreach (var tag in whereTags)
+    {
+      existingWhereTags.RemoveAll(t => t.Key == tag.Key);
+    }
   }
 
   private async Task TagsChanged(List<TagDto> tags)
   {
     await InvokeAsync(StateHasChanged);
+  }
+
+  private async Task TagRemoved(TagDto tag)
+  {
+    if (tag.Type == TagType.WHAT)
+    {
+      existingWhatTags.Add(tag);
+      whatTags.Remove(tag);
+    }
+    else if (tag.Type == TagType.WITH)
+    {
+      existingWithTags.Add(tag);
+      withTags.Remove(tag);
+    }
+    else if (tag.Type == TagType.WHERE)
+    {
+      existingWhereTags.Add(tag);
+      whereTags.Remove(tag);
+    }
+
+    await TagsChanged(whatTags);
+    await TagsChanged(withTags);
+    await TagsChanged(whereTags);
   }
 
   private async Task Save()
@@ -105,6 +158,26 @@
   private void CancelEdit()
   {
     NavigationManager.NavigateTo("/CheckIn");
+  }
+
+  class LambdaComparer<T> : IEqualityComparer<T>
+  {
+    private readonly Func<T, T, bool> _comparer;
+
+    public LambdaComparer(Func<T, T, bool> comparer)
+    {
+      _comparer = comparer;
+    }
+
+    public bool Equals(T x, T y)
+    {
+      return _comparer(x, y);
+    }
+
+    public int GetHashCode(T obj)
+    {
+      return obj.GetHashCode();
+    }
   }
 
 }
