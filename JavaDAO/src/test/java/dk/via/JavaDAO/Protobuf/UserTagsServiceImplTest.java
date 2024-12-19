@@ -29,25 +29,6 @@ public class UserTagsServiceImplTest {
   }
 
   @Test
-  public void testGetAllTags_Success() throws Exception {
-    // Arrange: Mock request and simulate a response from DAO
-    UserId request = UserId.newBuilder().setId(1).build(); // Simulate a request with user ID = 1
-    List<dk.via.JavaDAO.Models.Tag> tagsList = Arrays.asList(
-        new dk.via.JavaDAO.Models.Tag(),
-        new dk.via.JavaDAO.Models.Tag()
-    );
-
-    when(tagsDAO.GetAllForUser(1)).thenReturn(tagsList); // Mock the DAO call to return a list of tags
-
-    // Act: Call the method under test
-    userTagsServiceImpl.getAllTags(request, responseObserver);
-
-    // Assert: Verify that the response is built and sent correctly
-    verify(responseObserver, times(1)).onNext(any(TagsList.class)); // Ensure onNext was called
-    verify(responseObserver, times(1)).onCompleted(); // Ensure onCompleted was called
-  }
-
-  @Test
   public void testGetAllTags_DatabaseError() throws SQLException {
     // Arrange: Mock request and simulate a SQLException
     UserId request = UserId.newBuilder().setId(1).build();

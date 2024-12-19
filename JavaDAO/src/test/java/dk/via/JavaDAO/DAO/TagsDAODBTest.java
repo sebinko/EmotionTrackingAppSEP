@@ -8,6 +8,7 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,9 +36,9 @@ class TagsDAODBTest {
   @Test
   void testGetSingle_ById() throws SQLException {
     int tagId = 1;
-    when(mockConnection.prepareStatement(anyString())).thenReturn(mockStatement);
+    when(mockConnection.prepareStatement("select * from \"EmotionsTrackingWebsite\".tags where id = ?;")).thenReturn(mockStatement);
     when(mockStatement.executeQuery()).thenReturn(mockResultSet);
-    when(mockResultSet.next()).thenReturn(true);
+    when(mockResultSet.next()).thenReturn(true).thenReturn(false);
     when(mockResultSet.getInt("id")).thenReturn(tagId);
     when(mockResultSet.getString("key")).thenReturn("TestTag");
     when(mockResultSet.getString("type")).thenReturn("WHAT");
@@ -54,8 +55,9 @@ class TagsDAODBTest {
     verify(mockConnection).prepareStatement("select * from \"EmotionsTrackingWebsite\".tags where id = ?;");
     verify(mockStatement).setInt(1, tagId);
     verify(mockStatement).executeQuery();
-    verify(mockResultSet).next();
+    verify(mockResultSet, times(2)).next(); // Expect next() to be called twice
   }
+
 
   @Test
   void testGetSingle_ByKeyTypeUserId() throws SQLException {
@@ -65,7 +67,7 @@ class TagsDAODBTest {
 
     when(mockConnection.prepareStatement(anyString())).thenReturn(mockStatement);
     when(mockStatement.executeQuery()).thenReturn(mockResultSet);
-    when(mockResultSet.next()).thenReturn(true);
+    when(mockResultSet.next()).thenReturn(true).thenReturn(false);
     when(mockResultSet.getInt("id")).thenReturn(2);
     when(mockResultSet.getString("key")).thenReturn(key);
     when(mockResultSet.getString("type")).thenReturn(type.toString());
@@ -85,7 +87,7 @@ class TagsDAODBTest {
 
   @Test
   void testGetAllForCheckIn() throws SQLException {
-    EmotionCheckIn checkIn = new EmotionCheckIn(1, "Happy", "Felt good", "now", "later", 10);
+    EmotionCheckIn checkIn = new EmotionCheckIn(1, "Happy", "Felt good", Timestamp.from(Instant.now()), Timestamp.from(Instant.now()), 10);
 
     when(mockConnection.prepareStatement(anyString())).thenReturn(mockStatement);
     when(mockStatement.executeQuery()).thenReturn(mockResultSet);
@@ -110,13 +112,14 @@ class TagsDAODBTest {
   void testAssignTag() throws SQLException {
     // Assuming TagType is required to be non-null:
     Tag tag = new Tag(2, "NewTag", TagType.WHERE, null, null, 10);  // Ensure non-null tagType (e.g., WHERE)
-    EmotionCheckIn checkIn = new EmotionCheckIn(1, "Happy", "Test", "now", "later", 10);
+    EmotionCheckIn checkIn = new EmotionCheckIn(1, "Happy", "Test", Timestamp.from(Instant.now()), Timestamp.from(Instant.now()), 10);
 
     // Mocks for tag insertion
     when(mockConnection.prepareStatement(anyString())).thenReturn(mockStatement);
     when(mockStatement.executeQuery()).thenReturn(mockResultSet);
     when(mockResultSet.next()).thenReturn(true);
     when(mockResultSet.getInt("id")).thenReturn(2);
+    when(mockResultSet.getString("type")).thenReturn(TagType.WHERE.toString()); // Ensure non-null type
 
     // Act
     tagsDAODB.AssignTag(tag, checkIn);

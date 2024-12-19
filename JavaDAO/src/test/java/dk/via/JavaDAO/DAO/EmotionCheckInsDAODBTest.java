@@ -115,15 +115,13 @@ public class EmotionCheckInsDAODBTest {
     verify(tagsDAO, times(1)).AssignTag(sampleTag, result);
 
     // Ensure `next()` is called only once.
-    verify(resultSet, times(1)).next();
+    verify(resultSet, times(2)).next();
     verify(statement, times(1)).executeQuery();
     verify(connection, times(1)).prepareStatement(anyString());
   }
 
 
 
-
-  // Test for Update()
   @Test
   void testUpdate_Success() throws Exception {
     // Arrange
@@ -139,7 +137,7 @@ public class EmotionCheckInsDAODBTest {
 
     // Simulating fetching the updated EmotionCheckIn
     when(statement.executeQuery()).thenReturn(resultSet);
-    when(resultSet.next()).thenReturn(true);
+    when(resultSet.next()).thenReturn(true).thenReturn(false); // Ensure it stops after one iteration
     when(resultSet.getInt("id")).thenReturn(1);
     when(resultSet.getString("emotion")).thenReturn("Calm");
     when(resultSet.getString("description")).thenReturn("Relaxing day");
@@ -159,7 +157,7 @@ public class EmotionCheckInsDAODBTest {
 
     // Verify prepared statements were used
     verify(statement, times(1)).executeUpdate();
-    verify(connection, times(1)).prepareStatement(anyString());
+    verify(connection, times(2)).prepareStatement(anyString());
   }
 
 

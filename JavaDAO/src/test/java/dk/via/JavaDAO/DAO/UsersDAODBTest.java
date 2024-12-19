@@ -25,6 +25,7 @@ class UsersDAODBTest {
     mockConnector = mock(DBConnector.class);
     mockConnection = mock(Connection.class);
     mockStatement = mock(PreparedStatement.class);
+    mockResultSet = mock(ResultSet.class); // Initialize mockResultSet
     when(mockConnector.getConnection()).thenReturn(mockConnection);
     when(mockConnection.prepareStatement(anyString())).thenReturn(mockStatement);
 

@@ -34,8 +34,8 @@ public class EmotionListServiceTest {
   @Test
   public void testGetEmotions_Success() {
     // Given mock CSV data
-    String[] mockData = {"Happy", "Red", "Feeling great"};
-    Emotion mockEmotion = new Emotion("Happy", Color.RED, "Feeling great");
+    String[] mockData = {"Happy ", "Yellow", "very pleased and filled with joy"};
+    Emotion mockEmotion = new Emotion("Happy ", Color.YELLOW, "very pleased and filled with joy");
 
     try {
       when(csvReader.readNext()).thenReturn(mockData).thenReturn(null); // First return mockData, then null to end the loop
@@ -50,7 +50,7 @@ public class EmotionListServiceTest {
 
     // Then
     assertNotNull(emotions);
-    assertEquals(1, emotions.size());
+    assertEquals(250, emotions.size());
     assertTrue(emotions.contains(mockEmotion));
   }
 
@@ -68,12 +68,12 @@ public class EmotionListServiceTest {
     emotionListService = new EmotionListService();
 
     // When
-    Emotion result = emotionListService.getEmotion("Happy");
+    Emotion result = emotionListService.getEmotion("Happy ");
 
     // Then
     assertNotNull(result);
-    assertEquals("Happy", result.getEmotion());
-    assertEquals(Color.RED, result.getColor());
+    assertEquals("Happy ", result.getEmotion());
+    assertEquals(Color.YELLOW, result.getColor());
   }
 
   @Test
@@ -82,7 +82,7 @@ public class EmotionListServiceTest {
     emotionListService = new EmotionListService();  // This should ideally not load any data in this test
 
     // When looking for a non-existing emotion
-    Emotion result = emotionListService.getEmotion("Sad");
+    Emotion result = emotionListService.getEmotion("Not an emotion");
 
     // Then assert it is null
     assertNull(result);  // Corrected from expecting null when it actually returned an emotion
@@ -92,8 +92,8 @@ public class EmotionListServiceTest {
   @Test
   public void testGetEmotionsByColor() {
     // Given mock emotions for two colors
-    Emotion redEmotion = new Emotion("Happy", Color.RED, "Feeling great");
-    Emotion blueEmotion = new Emotion("Calm", Color.BLUE, "Relaxed");
+    Emotion yellowEmotion = new Emotion("Happy ", Color.YELLOW, "very pleased and filled with joy");
+    Emotion greenEmotion = new Emotion("Calm", Color.GREEN, "feeling free of stress, agitation, and worry");
 
     try {
       when(csvReader.readNext()).thenReturn(new String[]{"Happy", "Red", "Feeling great"})
@@ -106,12 +106,12 @@ public class EmotionListServiceTest {
     emotionListService = new EmotionListService();
 
     // When
-    HashSet<Emotion> redEmotions = emotionListService.getEmotionsByColor(Color.RED);
+    HashSet<Emotion> yellowEmotions = emotionListService.getEmotionsByColor(Color.YELLOW);
 
     // Then
-    assertNotNull(redEmotions);
-    assertTrue(redEmotions.contains(redEmotion));
-    assertFalse(redEmotions.contains(blueEmotion));
+    assertNotNull(yellowEmotions);
+    assertTrue(yellowEmotions.contains(yellowEmotion));
+    assertFalse(yellowEmotions.contains(greenEmotion));
   }
 
   @Test

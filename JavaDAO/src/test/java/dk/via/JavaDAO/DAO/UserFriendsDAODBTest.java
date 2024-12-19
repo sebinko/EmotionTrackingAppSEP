@@ -1,5 +1,6 @@
 package dk.via.JavaDAO.DAO;
 
+import dk.via.JavaDAO.Models.EmotionCheckIn;
 import dk.via.JavaDAO.Models.Friendship;
 import dk.via.JavaDAO.Models.User;
 import dk.via.JavaDAO.Util.Interfaces.DBConnector;
@@ -18,7 +19,8 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-@RunWith(MockitoJUnitRunner.class)
+
+//@RunWith(MockitoJUnitRunner.class)
 public class UserFriendsDAODBTest {
 
   private DBConnector mockDBConnector;
@@ -43,12 +45,12 @@ public class UserFriendsDAODBTest {
   }
 
   @Test
-  void testCreateFriendship() throws SQLException {
+  public void testCreateFriendship() throws SQLException {
     // Arrange: Mock the connection, statement, and execute method properly
     when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
-    // Ensure execute() is mocked as a void method
-    doNothing().when(mockPreparedStatement).execute();
+    // Ensure execute() is mocked correctly
+    doReturn(true).when(mockPreparedStatement).execute();
 
     // Act: Call the method under test
     userFriendsDAODB.CreateFriendship(1, 2);
@@ -59,12 +61,8 @@ public class UserFriendsDAODBTest {
     verify(mockPreparedStatement, times(1)).execute();     // Ensure execute() was called once
   }
 
-
-
-
-
   @Test
-  void testGetFriendship() throws SQLException {
+  public void testGetFriendship() throws SQLException {
     // Arrange
     when(mockPreparedStatement.executeQuery()).thenReturn(mockResultSet);
     when(mockResultSet.next()).thenReturn(true);
@@ -83,7 +81,7 @@ public class UserFriendsDAODBTest {
   }
 
   @Test
-  void testRemoveFriendship() throws SQLException {
+  public void testRemoveFriendship() throws SQLException {
     // Arrange
     when(mockPreparedStatement.executeUpdate()).thenReturn(1); // Simulate one row affected by the update
 
@@ -98,9 +96,8 @@ public class UserFriendsDAODBTest {
     verify(mockPreparedStatement, times(1)).executeUpdate(); // Verify executeUpdate is called
   }
 
-
   @Test
-  void testUpdateFriendship() throws SQLException {
+  public void testUpdateFriendship() throws SQLException {
     // Arrange
     Friendship friendship = new Friendship(1, 2, true);
 
@@ -120,7 +117,6 @@ public class UserFriendsDAODBTest {
     assertEquals(friendship, updatedFriendship);                   // Assert the returned object matches the input
   }
 
-
   @Test
   public void testGetFriendsWithCheckIn() throws SQLException {
     // Simulate primary query (retrieve friends)
@@ -128,7 +124,14 @@ public class UserFriendsDAODBTest {
     ResultSet mockResultSet1 = mock(ResultSet.class);
 
     // Mock behavior for first query
-    when(mockConnection.prepareStatement("SELECT * FROM friends WHERE user_id = ?")).thenReturn(mockStatement1);
+    when(mockConnection.prepareStatement("SELECT * FROM \"EmotionsTrackingWebsite\".users_with_streaks WHERE id IN " +
+        "(SELECT friend_id FROM \"EmotionsTrackingWebsite\".user_friends WHERE " +
+        "(user_id = ? AND is_accepted = true) " +
+        "UNION " +
+        "SELECT user_id FROM \"EmotionsTrackingWebsite\".user_friends WHERE " +
+        "(friend_id = ? AND is_accepted = true)) " +
+        "AND id != ? " +
+        "ORDER BY id;")).thenReturn(mockStatement1);
     when(mockStatement1.executeQuery()).thenReturn(mockResultSet1);
 
     // Simulate friends retrieval (one friend in database)
@@ -145,7 +148,7 @@ public class UserFriendsDAODBTest {
     ResultSet mockResultSet2 = mock(ResultSet.class);
 
     // Mock behavior for second query
-    when(mockConnection.prepareStatement("SELECT emotion FROM check_ins WHERE user_id = ?")).thenReturn(mockStatement2);
+    when(mockConnection.prepareStatement("SELECT * FROM \"EmotionsTrackingWebsite\".emotion_checkins WHERE user_id = ? ORDER BY created_at DESC LIMIT 1;")).thenReturn(mockStatement2);
     when(mockStatement2.executeQuery()).thenReturn(mockResultSet2);
 
     // Simulate check-in retrieval (one record found with emotion 'happy')
@@ -153,20 +156,25 @@ public class UserFriendsDAODBTest {
     when(mockResultSet2.getString("emotion")).thenReturn("happy");
 
     // Act
-    HashMap<User, String> result = userFriendsDAODB.GetFriendsWithCheckIn(1);
+    HashMap<User, EmotionCheckIn> result = userFriendsDAODB.GetFriendsWithCheckIn(1);
 
     // Assert
     assertEquals(1, result.size());  // Ensure there's exactly one friend in the result
     User user = result.keySet().iterator().next();
     assertEquals("friend1", user.getUsername());  // Ensure username is correct
-    assertEquals("happy", result.get(user));     // Ensure emotion is correct
+    assertEquals("happy", result.get(user).getEmotion());  // Ensure emotion is correct
 
     // Verify queries
-    verify(mockConnection).prepareStatement("SELECT * FROM friends WHERE user_id = ?");
+    verify(mockConnection).prepareStatement("SELECT * FROM \"EmotionsTrackingWebsite\".users_with_streaks WHERE id IN " +
+        "(SELECT friend_id FROM \"EmotionsTrackingWebsite\".user_friends WHERE " +
+        "(user_id = ? AND is_accepted = true) " +
+        "UNION " +
+        "SELECT user_id FROM \"EmotionsTrackingWebsite\".user_friends WHERE " +
+        "(friend_id = ? AND is_accepted = true)) " +
+        "AND id != ? " +
+        "ORDER BY id;");
     verify(mockStatement1).executeQuery();
-    verify(mockConnection).prepareStatement("SELECT emotion FROM check_ins WHERE user_id = ?");
+    verify(mockConnection).prepareStatement("SELECT * FROM \"EmotionsTrackingWebsite\".emotion_checkins WHERE user_id = ? ORDER BY created_at DESC LIMIT 1;");
     verify(mockStatement2).executeQuery();
   }
-
-
 }
