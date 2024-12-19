@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class EmotionCheckInsDAODBIntegrationTests {
 
-  private EmotionCheckInsDAODB emotionCheckInsDAODB;
+  private EmotionCheckInsDAO emotionCheckInsDAO;
   private DBConnector dbConnector;
   private Connection connection;
 
@@ -32,16 +32,16 @@ public class EmotionCheckInsDAODBIntegrationTests {
   void setUp() throws SQLException {
     AppConfig appConfig = new AppConfig();
     dbConnector = new PostgresConnector(appConfig);
-    emotionCheckInsDAODB = new EmotionCheckInsDAODB(dbConnector, new TagsDAODB(dbConnector));
+    emotionCheckInsDAO = new EmotionCheckInsDAODB(dbConnector, new TagsDAODB(dbConnector));
     connection = dbConnector.getConnection();
   }
 
   @Test
   void testGetSingle() throws SQLException {
-    EmotionCheckIn emotionCheckIn = new EmotionCheckIn(0, "Accomplished", null, null, null, 1);
-    emotionCheckIn = emotionCheckInsDAODB.Create(emotionCheckIn, new ArrayList<>());
+    EmotionCheckIn emotionCheckIn = new EmotionCheckIn(1, "Accomplished", null, null, null, 1);
+    emotionCheckIn = emotionCheckInsDAO.Create(emotionCheckIn, new ArrayList<>());
 
-    EmotionCheckIn result = emotionCheckInsDAODB.GetSingle(emotionCheckIn.getId());
+    EmotionCheckIn result = emotionCheckInsDAO.GetSingle(emotionCheckIn.getId());
 
     assertNotNull(result);
     assertEquals(emotionCheckIn.getId(), result.getId());
@@ -52,7 +52,7 @@ public class EmotionCheckInsDAODBIntegrationTests {
   @Test
   void testGetAll() throws SQLException {
     int userId = 1;
-    ArrayList<EmotionCheckIn> result = emotionCheckInsDAODB.GetAll(userId);
+    ArrayList<EmotionCheckIn> result = emotionCheckInsDAO.GetAll(userId);
 
     assertNotNull(result);
     assertFalse(result.isEmpty());
@@ -60,10 +60,10 @@ public class EmotionCheckInsDAODBIntegrationTests {
 
   @Test
   void testCreate() throws SQLException {
-    EmotionCheckIn emotionCheckIn = new EmotionCheckIn(0, "happy", "Feeling good", null, null, 1);
+    EmotionCheckIn emotionCheckIn = new EmotionCheckIn(1, "happy", "Feeling good", null, null, 1);
     List<Tag> tags = new ArrayList<>();
 
-    EmotionCheckIn result = emotionCheckInsDAODB.Create(emotionCheckIn, tags);
+    EmotionCheckIn result = emotionCheckInsDAO.Create(emotionCheckIn, tags);
 
     assertNotNull(result);
     assertTrue(result.getId() > 0);
@@ -72,11 +72,11 @@ public class EmotionCheckInsDAODBIntegrationTests {
 
   @Test
   void testUpdate() throws SQLException {
-    EmotionCheckIn emotionCheckIn = new EmotionCheckIn(0, "happy", "Feeling good", null, null, 1);
-    emotionCheckIn = emotionCheckInsDAODB.Create(emotionCheckIn, new ArrayList<>());
+    EmotionCheckIn emotionCheckIn = new EmotionCheckIn(1, "happy", "Feeling good", null, null, 1);
+    emotionCheckIn = emotionCheckInsDAO.Create(emotionCheckIn, new ArrayList<>());
 
     emotionCheckIn.setEmotion("excited");
-    EmotionCheckIn result = emotionCheckInsDAODB.Update(emotionCheckIn, new ArrayList<>());
+    EmotionCheckIn result = emotionCheckInsDAO.Update(emotionCheckIn, new ArrayList<>());
 
     assertNotNull(result);
     assertEquals("excited", result.getEmotion());
@@ -85,46 +85,46 @@ public class EmotionCheckInsDAODBIntegrationTests {
   @Test
   void testDelete() throws SQLException {
     EmotionCheckIn emotionCheckIn = new EmotionCheckIn(1, "happy", "Feeling good", null, null, 1);
-    emotionCheckIn = emotionCheckInsDAODB.Create(emotionCheckIn, new ArrayList<>());
+    emotionCheckIn = emotionCheckInsDAO.Create(emotionCheckIn, new ArrayList<>());
 
     final int emotionCheckInId = emotionCheckIn.getId();
 
-    assertDoesNotThrow(() -> emotionCheckInsDAODB.Delete(emotionCheckInId));
+    assertDoesNotThrow(() -> emotionCheckInsDAO.Delete(emotionCheckInId));
 
-    EmotionCheckIn result = emotionCheckInsDAODB.GetSingle(emotionCheckInId);
+    EmotionCheckIn result = emotionCheckInsDAO.GetSingle(emotionCheckInId);
     assertNull(result);
   }
 
   @Test
   void testGetSingleNotExisting() throws SQLException {
-    EmotionCheckIn result = emotionCheckInsDAODB.GetSingle(9999);
+    EmotionCheckIn result = emotionCheckInsDAO.GetSingle(9999);
     assertNull(result);
   }
 
   @Test
   void testCreateWithInvalidData() {
-    EmotionCheckIn invalidEmotionCheckIn = new EmotionCheckIn(0, null, null, null, null, 1);
+    EmotionCheckIn invalidEmotionCheckIn = new EmotionCheckIn(1, null, null, null, null, 1);
     assertThrows(SQLException.class, () -> {
-      emotionCheckInsDAODB.Create(invalidEmotionCheckIn, new ArrayList<>());
+      emotionCheckInsDAO.Create(invalidEmotionCheckIn, new ArrayList<>());
     });
   }
 
   @Test
   void testUpdateWithInvalidData() throws SQLException {
-    EmotionCheckIn emotionCheckIn = new EmotionCheckIn(0, "happy", "Feeling good", null, null, 1);
-    emotionCheckIn = emotionCheckInsDAODB.Create(emotionCheckIn, new ArrayList<>());
+    EmotionCheckIn emotionCheckIn = new EmotionCheckIn(1, "happy", "Feeling good", null, null, 1);
+    emotionCheckIn = emotionCheckInsDAO.Create(emotionCheckIn, new ArrayList<>());
 
     EmotionCheckIn updatedEmotionCheckIn = new EmotionCheckIn(emotionCheckIn.getId(), null, "Feeling good", null, null, 1);
     assertThrows(SQLException.class, () -> {
-      emotionCheckInsDAODB.Update(updatedEmotionCheckIn, new ArrayList<>());
+      emotionCheckInsDAO.Update(updatedEmotionCheckIn, new ArrayList<>());
     });
   }
 
   @Test
   void testDeleteWithInvalidId() throws SQLException {
     int invalidId = 9999;
-    emotionCheckInsDAODB.Delete(invalidId);
-    EmotionCheckIn result = emotionCheckInsDAODB.GetSingle(invalidId);
+    emotionCheckInsDAO.Delete(invalidId);
+    EmotionCheckIn result = emotionCheckInsDAO.GetSingle(invalidId);
     assertNull(result);
   }
 }
