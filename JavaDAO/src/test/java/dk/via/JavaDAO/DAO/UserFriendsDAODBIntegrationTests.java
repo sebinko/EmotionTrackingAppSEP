@@ -44,8 +44,8 @@ public class UserFriendsDAODBIntegrationTests {
     deleteUserIfExists("testUser1");
     deleteUserIfExists("testUser2");
 
-    User user = new User("testUser1", "password", "user11@example.com");
-    User friend = new User("testUser2", "password", "friend11@example.com");
+    User user = new User("testUser1", "password", "user1@example.com");
+    User friend = new User("testUser2", "password", "friend1@example.com");
     usersDAO.Create(user);
     usersDAO.Create(friend);
 
@@ -62,8 +62,8 @@ public class UserFriendsDAODBIntegrationTests {
     deleteUserIfExists("testUser1");
     deleteUserIfExists("testUser2");
 
-    User user = new User("testUser1", "password", "user3@example.com");
-    User friend = new User("testUser2", "password", "friend3@example.com");
+    User user = new User("testUser1", "password", "user1@example.com");
+    User friend = new User("testUser2", "password", "friend1@example.com");
     usersDAO.Create(user);
     usersDAO.Create(friend);
 
@@ -79,8 +79,8 @@ public class UserFriendsDAODBIntegrationTests {
     deleteUserIfExists("testUser1");
     deleteUserIfExists("testUser2");
 
-    User user = new User("testUser1", "password", "user5@example.com");
-    User friend = new User("testUser2", "password", "friend5@example.com");
+    User user = new User("testUser1", "password", "user1@example.com");
+    User friend = new User("testUser2", "password", "friend1@example.com");
     usersDAO.Create(user);
     usersDAO.Create(friend);
 
