@@ -1,5 +1,6 @@
 package dk.via.JavaDAO.Models;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class EmotionCheckIn {
@@ -7,8 +8,8 @@ public class EmotionCheckIn {
   private Integer id;
   private String emotion;
   private String description;
-  private String createdAt;
-  private String updatedAt;
+  private Timestamp createdAt;
+  private Timestamp updatedAt;
   private Integer userId;
   private List<Tag> tags;
 
@@ -21,8 +22,8 @@ public class EmotionCheckIn {
     userId = null;
   }
 
-  public EmotionCheckIn(Integer id, String emotion, String description, String createdAt,
-      String updatedAt, Integer userId) {
+  public EmotionCheckIn(Integer id, String emotion, String description, Timestamp createdAt,
+      Timestamp updatedAt, Integer userId) {
     this.id = id;
     this.emotion = emotion;
     this.description = description;
@@ -55,19 +56,19 @@ public class EmotionCheckIn {
     this.description = description;
   }
 
-  public String getCreatedAt() {
+  public Timestamp getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(String createdAt) {
+  public void setCreatedAt(Timestamp createdAt) {
     this.createdAt = createdAt;
   }
 
-  public String getUpdatedAt() {
+  public Timestamp getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(String updatedAt) {
+  public void setUpdatedAt(Timestamp updatedAt) {
     this.updatedAt = updatedAt;
   }
 

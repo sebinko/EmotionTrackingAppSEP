@@ -34,8 +34,6 @@ public class EmotionsServiceImpl extends EmotionsServiceImplBase {
         && !request.getColor().isEmpty()) {
       handleFilterByColor(request, responseObserver);
     } else {
-      logger.info("GetEmotionsMethod - GET ALL");
-
       EmotionsMessage.Builder builder = EmotionsMessage.newBuilder();
 
       emotionListService.getEmotions().forEach(e -> {

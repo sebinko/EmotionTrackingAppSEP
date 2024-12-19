@@ -1,4 +1,4 @@
-<div class="modal fade" id="yesNoModal" tabindex="-1" aria-labelledby="yesNoModalLabel" aria-hidden="true">
+<div class="modal fade" id="@ModalId" tabindex="-1" aria-labelledby="yesNoModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -20,4 +20,5 @@
   [Parameter] public string Title { get; set; }
   [Parameter] public string Message { get; set; }
   [Parameter] public EventCallback OnYes { get; set; }
+  [Parameter] public string ModalId { get; set; } = "yesNoModal";
 }

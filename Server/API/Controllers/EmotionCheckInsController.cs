@@ -2,6 +2,7 @@
 using API.Exceptions;
 using DTO;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Protobuf.Services;
 using Protobuf.Services.Interfaces;
@@ -9,8 +10,8 @@ using Protobuf.Services.Interfaces;
 namespace API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-public class EmotionCheckInsController(IEmotionCheckInService emotionCheckInService) : ControllerBase
+[Microsoft.AspNetCore.Mvc.Route("[controller]")]
+public class EmotionCheckInsController(IEmotionCheckInService emotionCheckInService, IReactionService reactionService) : ControllerBase
 {
   [HttpGet]
   [Authorize]
@@ -37,6 +38,22 @@ public class EmotionCheckInsController(IEmotionCheckInService emotionCheckInServ
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     return Ok(await emotionCheckInService.GetById(id, int.Parse(userId)));
+  }
+  
+  [HttpGet("{id}/reactions")]
+  [Authorize]
+  public async Task<IActionResult> GetReactions(int id)
+  {
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+    
+    var emotionCheckIn = await emotionCheckInService.GetById(id, int.Parse(userId));
+    
+    if (emotionCheckIn == null)
+    {
+      throw new NotFoundException("EmotionCheckIn not found");
+    }
+
+    return Ok(await reactionService.GetByReactionsByEmotionCheckIn(id));
   }
 
 

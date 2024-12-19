@@ -98,7 +98,12 @@ public class UserFriendsService : IUserFriendsService
         UpdatedAt = DateTime.Parse(f.Friend.UpdatedAt),
         Streak = f.Friend.Streak
       },
-      LatestCheckIn = f.Emotion
+      LatestCheckIn = new EmotionCheckInSimpleDto()
+      {
+        Emotion = f.Emotion.Emotion,
+        Id = f.Emotion.Id,
+        UpdatedAt = f.Emotion.UpdatedAt
+      }
     }).ToList();
   }
 }

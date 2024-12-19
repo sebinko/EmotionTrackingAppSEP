@@ -32,8 +32,6 @@ public class User {
     this.streak = streak;
   }
 
-
-
   public User(String username, String password, String email, Timestamp createdAt,
       Timestamp updatedAt, Integer streak) {
     this.username = username;

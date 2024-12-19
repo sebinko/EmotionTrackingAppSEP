@@ -36,8 +36,8 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
       EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
       emotionCheckInBuilder.setEmotion(emotionCheckIn.getEmotion());
       emotionCheckInBuilder.setId(emotionCheckIn.getId());
-      emotionCheckInBuilder.setCreatedAt(emotionCheckIn.getCreatedAt());
-      emotionCheckInBuilder.setUpdatedAt(emotionCheckIn.getUpdatedAt());
+      emotionCheckInBuilder.setCreatedAt(emotionCheckIn.getCreatedAt().toString());
+      emotionCheckInBuilder.setUpdatedAt(emotionCheckIn.getUpdatedAt().toString());
       emotionCheckInBuilder.setUserId(emotionCheckIn.getUserId());
 
       List<dk.via.JavaDAO.Models.Tag> tagsList = tagsDAO.GetAllForCheckIn(emotionCheckIn);
@@ -81,8 +81,8 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
         }
 
         emotionCheckInBuilder.setId(emotionCheckIn.getId());
-        emotionCheckInBuilder.setCreatedAt(emotionCheckIn.getCreatedAt());
-        emotionCheckInBuilder.setUpdatedAt(emotionCheckIn.getUpdatedAt());
+        emotionCheckInBuilder.setCreatedAt(emotionCheckIn.getCreatedAt().toString());
+        emotionCheckInBuilder.setUpdatedAt(emotionCheckIn.getUpdatedAt().toString());
         emotionCheckInBuilder.setUserId(emotionCheckIn.getUserId());
 
         List<dk.via.JavaDAO.Models.Tag> tagsList = tagsDAO.GetAllForCheckIn(emotionCheckIn);
@@ -130,8 +130,8 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
       EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
       emotionCheckInBuilder.setEmotion(newEmotionCheckIn.getEmotion());
       emotionCheckInBuilder.setId(newEmotionCheckIn.getId());
-      emotionCheckInBuilder.setCreatedAt(newEmotionCheckIn.getCreatedAt());
-      emotionCheckInBuilder.setUpdatedAt(newEmotionCheckIn.getUpdatedAt());
+      emotionCheckInBuilder.setCreatedAt(newEmotionCheckIn.getCreatedAt().toString());
+      emotionCheckInBuilder.setUpdatedAt(newEmotionCheckIn.getUpdatedAt().toString());
       emotionCheckInBuilder.setUserId(newEmotionCheckIn.getUserId());
 
       for (dk.via.JavaDAO.Models.Tag tag : tagsList) {
@@ -180,9 +180,9 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
       EmotionCheckInMessage.Builder emotionCheckInBuilder = EmotionCheckInMessage.newBuilder();
       emotionCheckInBuilder.setEmotion(request.getEmotion());
       emotionCheckInBuilder.setId(existingEmotionCheckIn.getId());
-      emotionCheckInBuilder.setUpdatedAt(existingEmotionCheckIn.getUpdatedAt());
+      emotionCheckInBuilder.setUpdatedAt(existingEmotionCheckIn.getUpdatedAt().toString());
       emotionCheckInBuilder.setUserId(existingEmotionCheckIn.getUserId());
-      emotionCheckInBuilder.setCreatedAt(existingEmotionCheckIn.getCreatedAt());
+      emotionCheckInBuilder.setCreatedAt(existingEmotionCheckIn.getCreatedAt().toString());
 
       for (dk.via.JavaDAO.Models.Tag tag : tagsList) {
         emotionCheckInBuilder.addTags(dk.via.JavaDAO.Protobuf.EmotionCheckIns.Tag.newBuilder()
@@ -218,8 +218,8 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
           .newBuilder()
           .setId(emotionCheckInToDelete.getId())
           .setEmotion(emotionCheckInToDelete.getEmotion())
-          .setCreatedAt(emotionCheckInToDelete.getCreatedAt())
-          .setUpdatedAt(emotionCheckInToDelete.getUpdatedAt())
+          .setCreatedAt(emotionCheckInToDelete.getCreatedAt().toString())
+          .setUpdatedAt(emotionCheckInToDelete.getUpdatedAt().toString())
           .setUserId(emotionCheckInToDelete.getUserId())
           .build()
       );
@@ -254,8 +254,8 @@ public class EmotionCheckInsServiceImpl extends EmotionCheckInsServiceImplBase {
         }
 
         emotionCheckInBuilder.setId(emotionCheckIn.getId());
-        emotionCheckInBuilder.setCreatedAt(emotionCheckIn.getCreatedAt());
-        emotionCheckInBuilder.setUpdatedAt(emotionCheckIn.getUpdatedAt());
+        emotionCheckInBuilder.setCreatedAt(emotionCheckIn.getCreatedAt().toString());
+        emotionCheckInBuilder.setUpdatedAt(emotionCheckIn.getUpdatedAt().toString());
         emotionCheckInBuilder.setUserId(emotionCheckIn.getUserId());
 
         List<dk.via.JavaDAO.Models.Tag> tagsList = tagsDAO.GetAllForCheckIn(emotionCheckIn);
