@@ -44,7 +44,7 @@ public class EmotionCheckInServiceIntegrationTests
         {
             new TagDto { Key = "1", Type = TagType.WHAT }
         };
-        int userId = 19;
+        int userId = 1;
 
         var result = await service.GetByTags(tags, userId);
 
@@ -59,7 +59,7 @@ public class EmotionCheckInServiceIntegrationTests
       {
         new TagDto { Key = "nonexistent", Type = TagType.WHAT }
       };
-      int userId = 19;
+      int userId = 1;
 
       var result = await service.GetByTags(tags, userId);
 
@@ -70,7 +70,7 @@ public class EmotionCheckInServiceIntegrationTests
     [Fact]
     public async Task GetAll_ShouldReturnAllEmotionCheckIns()
     {
-        int userId = 19;
+        int userId = 1;
 
         var result = await service.GetAll(userId);
 
@@ -90,7 +90,7 @@ public class EmotionCheckInServiceIntegrationTests
                 new TagDto { Key = "happy", Type = TagType.WHAT }
             }
         };
-        int userId = 19;
+        int userId = 1;
 
         var result = await service.Create(emotionCheckIn, userId);
 
@@ -110,7 +110,7 @@ public class EmotionCheckInServiceIntegrationTests
           new TagDto { Key = "happy", Type = TagType.WHAT }
         }
       };
-      int userId = 19;
+      int userId = 1;
 
       await Assert.ThrowsAsync<ArgumentNullException>(() => service.Create(emotionCheckIn, userId));
     }
@@ -120,7 +120,7 @@ public class EmotionCheckInServiceIntegrationTests
     {
         var emotionCheckIn = new EmotionCheckInUpdateDto
         {
-            Id = 27,
+            Id = 1,
             Emotion = "sad",
             Description = "Feeling down.",
             Tags = new List<TagDto>
@@ -128,7 +128,7 @@ public class EmotionCheckInServiceIntegrationTests
                 new TagDto { Key = "sad", Type = TagType.WHAT }
             }
         };
-        int userId = 19;
+        int userId = 1;
 
         var result = await service.Update(emotionCheckIn, userId);
 
@@ -149,7 +149,7 @@ public class EmotionCheckInServiceIntegrationTests
           new TagDto { Key = "sad", Type = TagType.WHAT }
         }
       };
-      int userId = 19;
+      int userId = 1;
 
       var exception = await Assert.ThrowsAsync<Grpc.Core.RpcException>(() => service.Update(emotionCheckIn, userId));
 
@@ -160,7 +160,7 @@ public class EmotionCheckInServiceIntegrationTests
     [Fact]
     public async Task Delete_ShouldDeleteEmotionCheckIn()
     {
-        int id = 28;
+        int id = 1;
 
         var result = await service.Delete(id);
 

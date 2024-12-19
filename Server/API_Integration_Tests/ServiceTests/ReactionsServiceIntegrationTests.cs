@@ -21,7 +21,7 @@ public class ReactionsServiceIntegrationTests
       Emoji = "😊",
       EmotionCheckInId = 2
     };
-    int userId = 19;
+    int userId = 1;
 
     var result = await service.Create(reactionCreateDto, userId);
 
@@ -38,7 +38,7 @@ public class ReactionsServiceIntegrationTests
       Emoji = null,
       EmotionCheckInId = 2
     };
-    int userId = 19;
+    int userId = 1;
 
     await Assert.ThrowsAsync<ArgumentNullException>(() => service.Create(reactionCreateDto, userId));
   }
@@ -51,7 +51,7 @@ public class ReactionsServiceIntegrationTests
       Emoji = "😊",
       EmotionCheckInId = -1
     };
-    int userId = 19;
+    int userId = 1;
 
     var exception = await Assert.ThrowsAsync<RpcException>(() => service.Create(reactionCreateDto, userId));
     Assert.Equal(StatusCode.NotFound, exception.StatusCode);
@@ -65,7 +65,7 @@ public class ReactionsServiceIntegrationTests
     {
       EmotionCheckInId = 2
     };
-    int userId = 19;
+    int userId = 1;
 
     await service.Delete(reactionDeleteDto, userId);
   }

@@ -1,4 +1,5 @@
-﻿using Grpc.Core;
+﻿using DTO;
+using Grpc.Core;
 using Protobuf.Services;
 
 namespace API_Integration_Tests;
@@ -15,8 +16,18 @@ public class UserFriendsServiceIntegrationTests
   [Fact]
   public async Task CreateFriendship_ShouldCreateFriendship()
   {
-    int user1Id = 19;
-    int user2Id = 2;
+    var newUser = new UserRegisterDto
+    {
+      Username = "newuser6",
+      Password = "password",
+      Email = "newuser6@gmail.com"
+    };
+    
+    var usersService = new UsersService();
+    var createdUser = await usersService.Create(newUser);
+    
+    int user1Id = 1;
+    int user2Id = createdUser.Id;
 
     var exception = await Record.ExceptionAsync(() => service.CreateFriendship(user1Id, user2Id));
 
@@ -38,7 +49,7 @@ public class UserFriendsServiceIntegrationTests
   [Fact]
   public async Task RemoveFriendship_ShouldRemoveFriendship()
   {
-    int user1Id = 19;
+    int user1Id = 1;
     int user2Id = 2;
 
     var exception = await Record.ExceptionAsync(() => service.RemoveFriendship(user1Id, user2Id));
@@ -60,7 +71,7 @@ public class UserFriendsServiceIntegrationTests
   [Fact]
   public async Task GetFriends_ShouldReturnFriendsList()
   {
-    int userId = 19;
+    int userId = 1;
 
     var result = await service.GetFriends(userId);
 

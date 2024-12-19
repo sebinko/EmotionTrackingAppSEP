@@ -14,7 +14,7 @@ public class UserTagsServiceIntegrationTests
     [Fact]
     public void GetAllTags_ShouldReturnTags()
     {
-        int userId = 19;
+        int userId = 1;
 
         var result = service.GetAllTags(userId);
 

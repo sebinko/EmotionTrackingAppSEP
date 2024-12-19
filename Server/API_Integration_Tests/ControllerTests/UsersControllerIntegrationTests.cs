@@ -1,36 +1,39 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using API.Auth;
 using DTO;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Protobuf.Services.Interfaces;
 
 namespace API_Integration_Tests;
 
 public class UsersControllerIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
 {
   private readonly HttpClient client;
+  private readonly IUsersService usersService;
+  private readonly AuthUtilities authUtilities;
+  private string token;
 
   public UsersControllerIntegrationTests(WebApplicationFactory<Program> factory)
   {
     client = factory.CreateClient();
+    var scope = factory.Services.CreateScope();
+    usersService = scope.ServiceProvider.GetRequiredService<IUsersService>();
+    authUtilities = scope.ServiceProvider.GetRequiredService<AuthUtilities>();
+    GenerateToken();
+  }
+
+  private void GenerateToken()
+  {
+    var user = usersService.GetByUsername("newuser").Result;
+    token = authUtilities.GenerateJwtToken(new UserReturnDto { Id = user.Id, Username = user.Username, Email = user.Email });
   }
 
   private async Task AuthenticateAsync()
   {
-    var loginDto = new UserLoginDto
-    {
-      Username = "newuser",
-      Password = "password"
-    };
-
-    var loginContent = new StringContent(JsonSerializer.Serialize(loginDto), System.Text.Encoding.UTF8, "application/json");
-    var loginResponse = await client.PostAsync("/Auth/login", loginContent);
-    loginResponse.EnsureSuccessStatusCode();
-
-    var loginResponseString = await loginResponse.Content.ReadAsStringAsync();
-    var userWithTokenDto = JsonSerializer.Deserialize<UserWithTokenDto>(loginResponseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userWithTokenDto.Token);
+    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
   }
 
   [Fact]

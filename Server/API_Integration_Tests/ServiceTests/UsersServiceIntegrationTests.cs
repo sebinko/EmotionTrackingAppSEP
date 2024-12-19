@@ -34,7 +34,7 @@ public class UsersServiceIntegrationTests
   {
     var invalidUser = new UserRegisterDto
     {
-      Username = "",
+      Username = null,
       Password = "password",
       Email = "invalidemail"
     };
@@ -42,13 +42,13 @@ public class UsersServiceIntegrationTests
     var exception = await Record.ExceptionAsync(() => service.Create(invalidUser));
 
     Assert.NotNull(exception);
-    Assert.IsType<RpcException>(exception);
+    Assert.IsType<ArgumentNullException>(exception);
   }
   
   [Fact]
   public async Task GetByUsernameAndPassword_ShouldReturnUser()
   {
-    var username = "newtestuser";
+    var username = "jake_peralta";
     var password = "password";
 
     var result = await service.GetByUsernameAndPassword(username, password);
@@ -71,7 +71,7 @@ public class UsersServiceIntegrationTests
   [Fact]
   public async Task GetByUsername_ShouldReturnUser()
   {
-    var username = "newtestuser";
+    var username = "jake_peralta";
 
     var result = await service.GetByUsername(username);
 
@@ -96,7 +96,7 @@ public class UsersServiceIntegrationTests
   [Fact]
   public async Task ChangePassword_ShouldChangePassword()
   {
-    int userId = 22;
+    int userId = 1;
     var changePasswordDto = new ChangePasswordDto
     {
       NewPassword = "password"
@@ -111,7 +111,7 @@ public class UsersServiceIntegrationTests
   [Fact]
   public async Task GetById_ShouldReturnUser()
   {
-    int userId = 22;
+    int userId = 1;
 
     var result = await service.GetById(userId);
 

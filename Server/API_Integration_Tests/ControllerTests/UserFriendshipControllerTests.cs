@@ -2,36 +2,40 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using API.Auth;
 using DTO;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Protobuf.Services.Interfaces;
 
 namespace API_Integration_Tests;
 
 public class UserFriendshipControllerTests : IClassFixture<WebApplicationFactory<Program>>
 {
   private readonly HttpClient client;
+  private readonly IUsersService usersService;
+  private readonly AuthUtilities authUtilities;
+  private string token;
 
     public UserFriendshipControllerTests(WebApplicationFactory<Program> factory)
     {
         client = factory.CreateClient();
+        var scope = factory.Services.CreateScope();
+        usersService = scope.ServiceProvider.GetRequiredService<IUsersService>();
+        authUtilities = scope.ServiceProvider.GetRequiredService<AuthUtilities>();
+        GenerateToken();
+    }
+
+    private void GenerateToken()
+    {
+      var user = usersService.GetByUsername("newuser").Result;
+      token = authUtilities.GenerateJwtToken(new UserReturnDto { Id = user.Id, Username = user.Username, Email = user.Email });
     }
 
     private async Task AuthenticateAsync()
     {
-        var loginDto = new UserLoginDto
-        {
-            Username = "newuser",
-            Password = "password"
-        };
-
-        var loginContent = new StringContent(JsonSerializer.Serialize(loginDto), Encoding.UTF8, "application/json");
-        var loginResponse = await client.PostAsync("/Auth/login", loginContent);
-        loginResponse.EnsureSuccessStatusCode();
-
-        var loginResponseString = await loginResponse.Content.ReadAsStringAsync();
-        var userWithTokenDto = JsonSerializer.Deserialize<UserWithTokenDto>(loginResponseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userWithTokenDto.Token);
+      client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
     [Fact]
@@ -43,9 +47,14 @@ public class UserFriendshipControllerTests : IClassFixture<WebApplicationFactory
         response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();
-        var friendships = JsonSerializer.Deserialize<List<CreateFriendshipDto>>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var friendships = JsonSerializer.Deserialize<List<CreateFriendshipDto>>(responseString, new JsonSerializerOptions 
+        { 
+          PropertyNameCaseInsensitive = true,
+          DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        });
 
         Assert.NotNull(friendships);
+        Assert.All(friendships, friendship => Assert.NotNull(friendship.user2UserName));
     }
 
     [Fact]
