@@ -85,5 +85,6 @@
     &lt;TestId&gt;xUnit::EFD3C3E7-FCDD-4E9A-96FA-D89431D0C07E::net8.0::API_Integration_Tests.UsersServiceIntegrationTests.GetById_ShouldReturnNull_WhenUserIdIsInvalid&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::EFD3C3E7-FCDD-4E9A-96FA-D89431D0C07E::net8.0::API_Integration_Tests.UserTagsServiceIntegrationTests.GetAllTags_ShouldReturnTags&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::EFD3C3E7-FCDD-4E9A-96FA-D89431D0C07E::net8.0::API_Integration_Tests.UserTagsServiceIntegrationTests.GetAllTags_ShouldReturnEmptyList_WhenUserIdIsInvalid&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::EFD3C3E7-FCDD-4E9A-96FA-D89431D0C07E::net8.0::API_Integration_Tests.EmotionCheckInsControllerIntegrationTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
