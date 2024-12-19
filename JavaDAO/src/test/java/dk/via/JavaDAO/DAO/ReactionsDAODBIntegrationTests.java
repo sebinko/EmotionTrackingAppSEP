@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReactionsDAODBIntegrationTests {
-  private ReactionsDAODB reactionsDAODB;
+  private ReactionsDAO reactionsDAO;
   private DBConnector dbConnector;
   private Connection connection;
 
@@ -26,13 +26,24 @@ public class ReactionsDAODBIntegrationTests {
   void setUp() throws SQLException {
     dbConnector = new PostgresConnector(new AppConfig());
     connection = dbConnector.getConnection();
-    reactionsDAODB = new ReactionsDAODB(dbConnector);
+    reactionsDAO = new ReactionsDAODB(dbConnector);
+  }
+
+  private void deleteReactionIfExists(int reactionId, int userId) throws SQLException {
+    String sql = "DELETE FROM \"EmotionsTrackingWebsite\".reactions WHERE emotion_checkin_id = ? AND user_id = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setInt(1, reactionId);
+      statement.setInt(2, userId);
+      statement.executeUpdate();
+    }
   }
 
   @Test
   void testCreateReaction() throws SQLException {
+    deleteReactionIfExists(1, 1);
+
     Reaction reaction = new Reaction(1, 1, "Like", null, null);
-    Reaction createdReaction = reactionsDAODB.Create(reaction);
+    Reaction createdReaction = reactionsDAO.Create(reaction);
 
     assertNotNull(createdReaction);
     assertEquals("Like", createdReaction.getEmoji());
@@ -42,7 +53,7 @@ public class ReactionsDAODBIntegrationTests {
 
   @Test
   void testGetAllReactions() throws SQLException {
-    List<Reaction> reactions = reactionsDAODB.GetReactionsForEmotionCheckIn(1);
+    List<Reaction> reactions = reactionsDAO.GetReactionsForEmotionCheckIn(1);
 
     assertNotNull(reactions);
     /*assertEquals(3, reactions.size());*/ //this may break the test if there are more reactions added from other tests
@@ -51,25 +62,25 @@ public class ReactionsDAODBIntegrationTests {
   @Test
   void testDeleteReaction() throws SQLException {
     Reaction reaction = new Reaction(2, 2, "Like", null, null);
-    reactionsDAODB.Create(reaction);
-    List<Reaction> reactionsBeforeDelete = reactionsDAODB.GetReactionsForEmotionCheckIn(1);
+    reactionsDAO.Create(reaction);
+    List<Reaction> reactionsBeforeDelete = reactionsDAO.GetReactionsForEmotionCheckIn(1);
     int initialCount = reactionsBeforeDelete.size();
 
-    reactionsDAODB.Delete(2, 2);
+    reactionsDAO.Delete(2, 2);
 
-    List<Reaction> reactionsAfterDelete = reactionsDAODB.GetReactionsForEmotionCheckIn(1);
+    List<Reaction> reactionsAfterDelete = reactionsDAO.GetReactionsForEmotionCheckIn(1);
     int finalCount = reactionsAfterDelete.size();
     assertEquals(initialCount, finalCount);
   }
 
   @Test
   void testDeleteNonExistentReaction() throws SQLException {
-    List<Reaction> reactionsBeforeDelete = reactionsDAODB.GetReactionsForEmotionCheckIn(1);
+    List<Reaction> reactionsBeforeDelete = reactionsDAO.GetReactionsForEmotionCheckIn(1);
     int initialCount = reactionsBeforeDelete.size();
 
-    reactionsDAODB.Delete(999, 999);
+    reactionsDAO.Delete(999, 999);
 
-    List<Reaction> reactionsAfterDelete = reactionsDAODB.GetReactionsForEmotionCheckIn(1);
+    List<Reaction> reactionsAfterDelete = reactionsDAO.GetReactionsForEmotionCheckIn(1);
     int finalCount = reactionsAfterDelete.size();
 
     assertEquals(initialCount, finalCount);
@@ -79,13 +90,13 @@ public class ReactionsDAODBIntegrationTests {
   void testCreateReactionWithInvalidData() {
     Reaction invalidReaction = new Reaction(null, null, null, null, null);
     assertThrows(NullPointerException.class, () -> {
-      reactionsDAODB.Create(invalidReaction);
+      reactionsDAO.Create(invalidReaction);
     });
   }
 
   @Test
   void testGetReactionsForNonExistentEmotionCheckIn() throws SQLException {
-    List<Reaction> reactions = reactionsDAODB.GetReactionsForEmotionCheckIn(999);
+    List<Reaction> reactions = reactionsDAO.GetReactionsForEmotionCheckIn(999);
     assertTrue(reactions.isEmpty());
   }
 }
