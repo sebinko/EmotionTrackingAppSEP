@@ -13,7 +13,8 @@ public class UserFriendsService : IUserFriendsService
     using var channel = GrpcChannel.ForAddress("http://localhost:8888");
     var client = new Users.UserFriendsService.UserFriendsServiceClient(channel);
 
-    
+
+    // print the user ids
     Console.WriteLine($"User1Id: {user1Id}, User2Id: {user2Id}");
 
 
@@ -26,7 +27,8 @@ public class UserFriendsService : IUserFriendsService
     bool doesRequestExist = existingFriendship.User1Id != 0 || existingFriendship.User2Id != 0;
     bool isAccepted = existingFriendship.IsAccepted;
     int requestUserId = existingFriendship.User1Id == user1Id ? user1Id : user2Id;
-    
+
+    // print existing friendship
     Console.WriteLine($"Existing friendship: {existingFriendship}");
 
     Console.WriteLine($"Does request exist: {doesRequestExist}");
