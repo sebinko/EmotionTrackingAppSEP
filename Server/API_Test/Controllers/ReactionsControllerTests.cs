@@ -49,7 +49,7 @@ namespace API_Test.Controllers
             var reactionDeleteDto = new ReactionDeleteDto{};
             _reactionServiceMock.Setup(service => service.Delete(It.IsAny<ReactionDeleteDto>(), It.IsAny<int>())).Returns(Task.CompletedTask);
 
-            var result = await _controller.Delete(reactionDeleteDto);
+            var result = await _controller.Delete(1);
 
             var okResult = result as OkResult;
             Assert.IsNotNull(okResult);
@@ -62,7 +62,7 @@ namespace API_Test.Controllers
             var reactionDeleteDto = new ReactionDeleteDto{};
             _controller.ControllerContext.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity());
 
-            var result = await _controller.Delete(reactionDeleteDto);
+            var result = await _controller.Delete(1);
 
             var unauthorizedResult = result as UnauthorizedResult;
             Assert.IsNotNull(unauthorizedResult);

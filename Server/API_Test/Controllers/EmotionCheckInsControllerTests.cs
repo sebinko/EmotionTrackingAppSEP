@@ -16,13 +16,17 @@ namespace API_Test.Controllers
   public class EmotionCheckInsControllerTests
   {
     private Mock<IEmotionCheckInService> _emotionCheckInServiceMock;
+    private Mock<IReactionService> _reactionServiceMock;
     private EmotionCheckInsController _controller;
 
     [SetUp]
     public void SetUp()
     {
       _emotionCheckInServiceMock = new Mock<IEmotionCheckInService>();
-      _controller = new EmotionCheckInsController(_emotionCheckInServiceMock.Object);
+      _reactionServiceMock = new Mock<IReactionService>();
+      _controller = new EmotionCheckInsController(_emotionCheckInServiceMock.Object, _reactionServiceMock.Object);
+      
+      
 
       var claimsIdentity = new ClaimsIdentity();
       claimsIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, "1"));

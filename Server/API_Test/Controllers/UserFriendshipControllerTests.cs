@@ -40,7 +40,12 @@ namespace API_Test.Controllers
             new UserWithLatestCheckIn 
             { 
               User = new UserReturnDto { Id = 1, Username = "user1", Email = "user1@example.com" }, 
-              LatestCheckIn = DateTime.Now.ToString("o") 
+              LatestCheckIn =  new EmotionCheckInSimpleDto
+              {
+                Id = 1,
+                Emotion = "Happy",
+                UpdatedAt = DateTime.Now.ToString()
+              }
             } 
           };
           _userFriendsServiceMock.Setup(service => service.GetFriends(It.IsAny<int>())).ReturnsAsync(friends);
